@@ -7,7 +7,13 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^1.1.4",
+    "axios": "^0.26.1",
+    "calculate-age": "^0.1.0",
+    "chinese-idcard-checker": "^2.0.0",
     "core-js": "^3.8.3",
+    "element-china-area-data": "^5.0.2",
+    "element-plus": "^2.1.4",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vuex": "^4.0.0"

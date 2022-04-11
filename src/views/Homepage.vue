@@ -1,0 +1,2741 @@
+<template>
+    <div id="container">
+        <el-row justify="center">
+            <!-- <el-col :span="5"></el-col> -->
+            <!-- <el-col style="width:auto"></el-col> -->
+            <!-- <el-col style="width:18rem !important"> -->
+            <div style="max-width: 59rem !important;min-width: 20rem !important">
+
+            
+                <div class="title">
+                    <h1>住 院 病 案 首 页</h1>
+                </div>
+                <el-form ref="form" :model="form" :inline="true">
+                    <el-row>
+                        <el-form-item label="医疗机构" class="w-16 mr-5">
+                            <el-input v-model="form.org_name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="组织机构代码" class="w-16 mr-5">
+                            <el-input v-model="form.org_code"></el-input>
+                        </el-form-item>
+                        <el-form-item label="医疗付费方式" id="purchase-method" class="w-16">
+                            <el-select v-model="form.purchase_method" placeholder="请选择" style="width:12rem">
+                                <el-option
+                                    v-for="method in purchase_methods"
+                                    :key="method.value"
+                                    :label="method.label"
+                                    :value="method.value"
+                                >
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="健康卡号" class="w-16 mr-5">
+                            <el-input v-model="form.health_card"></el-input>
+                        </el-form-item>
+                        <el-form-item label="第几次入院" id="admit-cnt" class="w-16 mr-5">
+                            <el-input-number
+                                v-model="form.visits"
+                                controls-position="right"
+                                :min="0"
+                                style="width:100% !important; height: 26px !important"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="病案号" class="w-16">
+                            <el-input v-model="form.case_num"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="姓名" class="label-emphasize w-11 mr-1">
+                            <el-input v-model="form.name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="性别" class="label-emphasize w-7 mr-2">
+                            <el-select v-model="form.gender" placeholder="请选择">
+                                <el-option
+                                    v-for="gender in genders"
+                                    :key="gender.value"
+                                    :label="gender.label"
+                                    :value="gender.value"
+                                >
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="出生日期" class="label-emphasize w-14 mr-2">
+                            <el-date-picker 
+                            v-model="form.birthday" 
+                            type="date" 
+                            format="YYYY/MM/DD"
+                            value-format="YYYY-MM-DD"
+                            :disabledDate="disabledDate0"
+                            @change="birthOrAdmitdayOnChange"
+                            placeholder="选择">
+                            </el-date-picker>
+                        </el-form-item>
+                        <!-- 待修改 -->
+                        <el-form-item label="年龄:" class="label-emphasize w-5">
+                        </el-form-item>
+                        <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{this.form.age}}</span>
+                        <!--默认使用-->
+                        <el-form-item label="国籍" class="w-11">
+                            <el-select placeholder="请选择国籍" @change="nationalityOnChange" v-model="form.nationality" filterable>
+                                <el-option-group v-for="group in countries" :key="group.label" :label="group.label">
+                                    <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.label">
+                                        <span style="float: left">{{ item.label }}</span>
+                                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
+                                    </el-option>
+                                </el-option-group>
+                                <!-- 版权声明：本文为CSDN博主「ryaaaaaaaa」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+                                原文链接：https://blog.csdn.net/weixin_42345894/article/details/85158130 -->
+                            </el-select>
+                        </el-form-item>
+                    </el-row>
+                    <el-row v-if="this.form.newborn_check" style="height:26px">
+                        <!-- 根据年龄决定是否出现 -->
+                        <el-form-item label="新生儿出生体重（克）" :max="8000" class="w-16 mr-5">
+                            <el-input-number v-model="form.newborn_birth_weight" controls-position="right"></el-input-number>
+                        </el-form-item>
+                        <el-form-item label="新生儿入院体重（克）" :max="8000" class="w-15">
+                            <el-input-number v-model="form.newborn_admit_weight" controls-position="right"></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="出生地" class="w-16 mr-5">
+                            <!-- <elui-china-area-dht :leave="3" @change="birthPlaceOnChange" style="width:100%"></elui-china-area-dht> -->
+                            <el-cascader
+                                size="large"
+                                :options="locations"
+                                v-model="form.birthplace"
+                                style="width:100%"
+                                >
+                            </el-cascader>
+                            <!-- <p>出生地：{{this.form.birthplace}}</p> -->
+                        </el-form-item>
+                        <el-form-item label="籍贯" class="w-16 mr-5">
+                            <!-- <elui-china-area-dht :leave="3" @change="parentBirthPlaceOnChange" style="width:100%"></elui-china-area-dht> -->
+                            <el-cascader
+                                size="large"
+                                :options="locations"
+                                v-model="form.parent_birthplace"
+                                style="width:100%"
+                                >
+                            </el-cascader>
+                        </el-form-item>
+                        <el-form-item label="民族" class="w-16">
+                            <el-select v-model="form.ethnicity" placeholder="民族" filterable style="width:100%">
+                                <el-option
+                                    v-for="eth in ethnicities"
+                                    :key="eth.id"
+                                    :label="eth.info"
+                                    :value="eth.id"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="证件类型" class="w-12 mr-3">
+                            <el-select v-model="form.id_type" placeholder="请选择" style="width:100%">
+                                <el-option
+                                    v-for="type in id_types"
+                                    :key="type.value"
+                                    :label="type.label"
+                                    :value="type.value"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="证件号" class="w-13 mr-3">
+                            <el-input 
+                            v-model="idNumVal"
+                            :disabled="this.form.id_type===''"
+                            ></el-input>
+                        </el-form-item>
+                        <el-form-item label="职业" class="w-12 mr-3">
+                            <el-select v-model="form.profession" placeholder="请选择" style="width:100%">
+                                <el-option
+                                    v-for="job in professions"
+                                    :key="job.value"
+                                    :label="job.label"
+                                    :value="job.value"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="婚姻" class="w-12">
+                            <el-select v-model="form.marriage_stat" placeholder="请选择" @change="marriageOnChange" style="width:100%">
+                                <el-option
+                                    v-for="stat in marriage_stats"
+                                    :key="stat.value"
+                                    :label="stat.label"
+                                    :value="stat.value"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="现住址" class="w-15">
+                            <!-- <elui-china-area-dht :leave="3" @change="presentAddrOnChange" style="width:100%"></elui-china-area-dht> -->
+                            <el-cascader
+                                size="large"
+                                :options="locations"
+                                v-model="form.present_addr1"
+                                style="width:100%"
+                                @change="presentAddrOnChange"
+                                >
+                            </el-cascader>
+                        </el-form-item>
+                        <el-form-item class="w-18 mr-1">
+                            <el-input v-model="form.present_addr2"></el-input>
+                        </el-form-item>
+                        <el-form-item label="电话" class="w-14 mr-1">
+                            <el-input v-model="form.present_phone"></el-input>
+                        </el-form-item>
+                        <el-form-item label="邮编" class="w-9">
+                            <el-input v-model="form.present_zip"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="户口住址" class="w-15">
+                            <!-- <elui-china-area-dht :leave="3" @change="registeredAddrOnChange" style="width:100%"></elui-china-area-dht> -->
+                            <el-cascader
+                                size="large"
+                                :options="locations"
+                                v-model="form.registered_addr1"
+                                style="width:100%"
+                                >
+                            </el-cascader>
+                        </el-form-item>
+                        <el-form-item class="w-18 mr-16">
+                            <el-input v-model="form.registered_addr2"></el-input>
+                        </el-form-item>
+                        <el-form-item label="邮编" class="w-9">
+                            <el-input v-model="form.registered_zip"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="工作单位及地址" class="w-15">
+                            <!-- <elui-china-area-dht :leave="3" @change="workAddrOnChange" style="width:100%"></elui-china-area-dht> -->
+                            <el-cascader
+                                size="large"
+                                :options="locations"
+                                v-model="form.work_addr1"
+                                style="width:100%"
+                                >
+                            </el-cascader>
+                        </el-form-item>
+                        <el-form-item class="w-18 mr-1">
+                            <el-input v-model="form.work_addr2"></el-input>
+                        </el-form-item>
+                        <el-form-item label="电话" class="w-14 mr-1">
+                            <el-input v-model="form.work_phone"></el-input>
+                        </el-form-item>
+                        <el-form-item label="邮编" class="w-9">
+                            <el-input v-model="form.work_zip"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="联系人姓名" class="label-emphasize w-12 mr-2">
+                            <el-input v-model="form.contact_name"></el-input>
+                        </el-form-item>
+                        <el-form-item label="电话" class="label-emphasize w-10 mr-2">
+                            <el-input v-model="form.contact_phone"></el-input>
+                        </el-form-item>
+                        <el-form-item label="关系" class="label-emphasize w-12 mr-2">
+                            <el-select v-model="form.contact_relation" placeholder="请选择">
+                                <el-option
+                                    v-for="rel in contact_relations"
+                                    :key="rel.value"
+                                    :label="rel.label"
+                                    :value="rel.value"
+                                    :disabled="rel.disabled"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <!-- 针对其他关系可进行说明 -->
+                        <el-form-item v-show="this.form.contact_relation==='8'" label="其他关系说明" class="w-18">
+                            <el-input v-model="form.contact_other_description"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize" style="margin-left:1rem">
+                        <el-form-item label="地址" class="w-17">
+                            <!-- <elui-china-area-dht :leave="3" @change="contactAddrOnChange" style="width:100%"></elui-china-area-dht> -->
+                            <el-cascader
+                                size="large"
+                                :options="locations"
+                                v-model="form.contact_addr1"
+                                style="width:100%"
+                                >
+                            </el-cascader>
+                        </el-form-item>
+                        <el-form-item class="w-20 mr-1">
+                            <el-input v-model="form.contact_addr2"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="入院途径" class="label-emphasize">
+                            <el-select v-model="form.admit_path" placeholder="请选择" style="width: 17rem;">
+                                <el-option
+                                    v-for="path in admit_paths"
+                                    :key="path.value"
+                                    :label="path.label"
+                                    :value="path.value"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="入院时间" class="w-12 mr-2">
+                            <el-date-picker 
+                            popper-class="datehr"
+                            v-model="form.admit_time" 
+                            type="datetime" 
+                            format="YYYY/MM/DD hh:mm"
+                            value-format="YYYY-MM-DD hh:MM"
+                            :disabledDate="disabledDate1"
+                            @change="birthOrAdmitdayOnChange();admitOrReleasedayOnChange()"
+                            placeholder="选择日期时间">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="入院科别" class="w-16 mr-2">
+                            <el-cascader
+                                v-model="form.admit_specialty"
+                                :options="specialties"
+                            ></el-cascader>
+                        </el-form-item>
+                        <el-form-item label="病房" class="w-7 mr-2">
+                            <el-input v-model="form.admit_sickroom"></el-input>
+                        </el-form-item>
+                        <el-form-item label="科转科别" class="w-17">
+                            <el-cascader
+                                v-model="form.trans_specialty"
+                                :options="specialties"
+                            ></el-cascader>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="出院时间" class="label-emphasize w-12 mr-2">
+                            <el-date-picker 
+                            popper-class="datehr"
+                            v-model="form.release_time" 
+                            type="datetime" 
+                            format="YYYY/MM/DD hh:mm"
+                            value-format="YYYY-MM-DD hh:mm"
+                            :disabledDate="disabledDate2"
+                            @change="admitOrReleasedayOnChange"
+                            placeholder="选择日期时间">
+                            </el-date-picker>
+                        </el-form-item>
+                        <el-form-item label="出院科别" class="label-emphasize w-16 mr-2">
+                            <el-cascader
+                                v-model="form.release_specialty"
+                                :options="specialties"
+                            ></el-cascader>
+                        </el-form-item>
+                        <el-form-item label="病房" class="label-emphasize w-7 mr-2">
+                            <el-input v-model="form.release_sickroom"></el-input>
+                        </el-form-item>
+                        <el-form-item label="实际入院天数:" class="label-emphasize w-6">
+                            <!-- <div class="el-form-item__label">{{this.form.age}}</div> -->
+                        </el-form-item>
+                        <span class="el-form-item__label w-12">{{getHospDuration()}}</span>
+                    </el-row>
+                    <el-row class="label-emphasize" style="height: auto !important">
+                        <el-form-item label="门（急）诊诊断" style="width:39rem; margin-right:2rem !important; height: auto !important">
+                            <el-input v-model="form.diagnosis" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                        </el-form-item>
+                        <el-form-item label="疾病编码" style="width:17rem; height:26px !important">
+                            <el-input v-model="form.disease_code"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <h5 class="label-emphasize" style="margin: 0.5rem 0 0 0;">主要诊断：</h5>
+                    </el-row>
+                    <el-form-item style="height: auto !important;">
+                        <el-row class="label-emphasize" style="margin-left:1rem">
+                            <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important">
+                                <el-input v-model="form.main_diagnosis.release" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                            </el-form-item>
+                            <el-form-item label="疾病编码" class="w-15 mr-1">
+                                <el-input v-model="form.main_diagnosis.code"></el-input>
+                            </el-form-item>
+                            <el-form-item label="入院病情" class="w-14">
+                                <!-- <el-input v-model="form.main_diagnosis.condition"></el-input> -->
+                                <el-select v-model="form.main_diagnosis.condition" placeholder="请选择">
+                                    <el-option
+                                        v-for="cond in ad_conditions"
+                                        :key="cond.value"
+                                        :label="cond.label"
+                                        :value="cond.value"
+                                    ></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-row>
+                    </el-form-item>
+                    <el-row>
+                        <h5 class="label-emphasize" style="margin: 0.5rem 0 0 0;">其他诊断：</h5>
+                    </el-row>
+
+                    <el-form
+                    :model="form.other_diagnosis"
+                    ref="form.other_diagnosis"
+                    label-with="100px"
+                    class="demo-dynami"
+                    style="margin-bottom:.5rem;"
+                    >
+                        <el-form-item
+                        v-for="(diag) in form.other_diagnosis"
+                        :key="diag.key"
+                        style="height: auto !important;"
+                        >
+                            <el-row class="label-emphasize-light" style="padding-left:1rem; height: auto !important">
+                                <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important; vertical-align:bottom !important">
+                                    <el-input v-model="diag.release" :autosize="{ minRows: 1, maxRows: 6 }"  type="textarea"></el-input>
+                                </el-form-item>
+                                <el-form-item label="疾病编码" class="w-15 mr-1">
+                                    <el-input v-model="diag.code"></el-input>
+                                </el-form-item>
+                                <el-form-item label="入院病情" class="w-12">
+                                    <!-- <el-input v-model="diag.condition"></el-input> -->
+                                    <el-select v-model="diag.condition" placeholder="请选择">
+                                        <el-option
+                                            v-for="cond in ad_conditions"
+                                            :key="cond.value"
+                                            :label="cond.label"
+                                            :value="cond.value"
+                                        ></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-button class="remove-diag" @click.prevent="removeDiag(diag)">-</el-button>
+                            </el-row>
+                        </el-form-item>
+                        <el-row justify="end">
+                            <el-button class="add-diag" style="margin-right:.9rem" @click="addDiag">+ 其他诊断</el-button>
+                        </el-row>
+                        
+                    </el-form>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="损伤，中毒的外部原因" style="width:43rem; margin-right:1rem !important">
+                            <el-input v-model="form.lesion_reason.description"></el-input>
+                        </el-form-item>
+                        <el-form-item label="疾病编码" class="w-14">
+                            <el-input v-model="form.lesion_reason.code"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <span class="mr-1" style="width:43rem">
+                            <el-form-item label="病理诊断" style="width:100%; height: auto !important; vertical-align:bottom !important">
+                                <el-input
+                                v-model="form.pathology.description" 
+                                :autosize="{ minRows: 1, maxRows: 3 }" 
+                                type="textarea"></el-input>
+                            </el-form-item>
+                        </span>
+                        <span>
+                            <el-row>
+                                <el-form-item label="疾病编码" class="w-14">
+                                    <el-input v-model="form.pathology.code"></el-input>
+                                </el-form-item>
+                            </el-row>
+                            <el-row>
+                                <el-form-item label="病理号" class="w-14">
+                                    <el-input v-model="form.pathology.number"></el-input>
+                                </el-form-item>
+                            </el-row>
+                        </span>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <span>
+                            <el-form-item label="药物过敏" class="mr-2">
+                                <el-checkbox v-model="form.drug_allergy_check" true-label=true false-label=false ></el-checkbox>
+                                <span>
+                                    <el-input v-if="form.drug_allergy_check=='true'" style="margin-left:.5rem !important; width: 15rem" v-model="form.drug_allergy" placeholder="过敏药物"></el-input>
+                                </span>
+                            </el-form-item>
+                        </span>
+                        <span>
+                            <el-form-item label="死亡患者尸检" class="mr-2">
+                                <el-checkbox v-model="form.necropsy_check" true-label=true false-label=false ></el-checkbox>
+                            </el-form-item>
+                        </span>
+                        <span>
+                            <el-form-item label="血型" class="w-13 mr-2">
+                                <el-select v-model="form.blood_group" placeholder="请选择">
+                                    <el-option
+                                        v-for="group in blood_groups"
+                                        :key="group.value"
+                                        :label="group.label"
+                                        :value="group.value"
+                                    ></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </span>
+                        <span>
+                            <el-form-item label="Rh" class="w-13">
+                                <el-select v-model="form.rh" placeholder="请选择">
+                                    <el-option
+                                        v-for="rh in rhs"
+                                        :key="rh.value"
+                                        :label="rh.label"
+                                        :value="rh.value"
+                                    ></el-option>
+                                </el-select>
+                            </el-form-item>
+                        </span>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="科主任" class="w-13 mr-1">
+                            <el-input v-model="form.director"></el-input>
+                        </el-form-item>
+                        <el-form-item label="主任（副主任）医师" class="w-16 mr-1">
+                            <el-input v-model="form.chief"></el-input>
+                        </el-form-item>
+                        <el-form-item label="主治医师" class="w-13 mr-1">
+                            <el-input v-model="form.physician_ic"></el-input>
+                        </el-form-item>
+                        <el-form-item label="住院医师" class="w-13">
+                            <el-input v-model="form.resident"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row class="label-emphasize">
+                        <el-form-item label="责任护士" class="w-13 mr-1">
+                            <el-input v-model="form.nurse_ic"></el-input>
+                        </el-form-item>
+                        <el-form-item label="进修医师" class="w-16 mr-1">
+                            <el-input v-model="form.refresher"></el-input>
+                        </el-form-item>
+                        <el-form-item label="实习医师" class="w-13 mr-1">
+                            <el-input v-model="form.trainee"></el-input>
+                        </el-form-item>
+                        <el-form-item label="编码员" class="w-13">
+                            <el-input v-model="form.coder"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="病案质量" class="label-emphasize w-13 mr-1">
+                            <el-select v-model="form.record_quality" placeholder="请选择">
+                                <el-option
+                                    v-for="rq in record_qualities"
+                                    :key="rq.value"
+                                    :label="rq.label"
+                                    :value="rq.value"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>                
+                        <el-form-item label="质控医师" class="label-emphasize w-16 mr-1">
+                            <el-input v-model="form.qc_doctor"></el-input>
+                        </el-form-item>
+                        <el-form-item label="质控护士" class="label-emphasize w-13 mr-1">
+                            <el-input v-model="form.qc_nurse"></el-input>
+                        </el-form-item>
+                        <el-form-item label="质控日期" class="w-13">
+                            <el-date-picker 
+                            v-model="form.qc_date" 
+                            type="date" 
+                            format="YYYY/MM/DD"
+                            value-format="YYYY-MM-DD"
+                            placeholder="选择">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <h5 class="label-emphasize" style="margin: 0.5rem 0 0 0;">手术：</h5>
+                    </el-row>
+
+                    <el-form
+                    :model="form.operations"
+                    ref="form.operations"
+                    label-with="100px"
+                    class="demo-dynamic label-emphasize-light"
+                    >
+                        <el-form-item
+                        v-for="(op) in form.operations"
+                        :key="op.key"
+                        style="height: auto !important;"
+                        >
+                            <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
+                                <el-col :span="23.8">
+                                    <el-row>
+                                        <el-form-item label="手术及操作编码" class="w-13 mr-1">
+                                            <el-input v-model="op.code"></el-input>
+                                        </el-form-item>
+                                        <el-form-item label="手术及操作日期" class="w-13 mr-1">
+                                            <el-date-picker 
+                                            v-model="op.date" 
+                                            type="date" 
+                                            format="YYYY/MM/DD"
+                                            value-format="YYYY-MM-DD"
+                                            placeholder="选择">
+                                            </el-date-picker>
+                                        </el-form-item>
+                                        <el-form-item label="手术级别" class="w-9 mr-1">
+                                            <el-select v-model="op.level" placeholder="请选择">
+                                                <el-option
+                                                    v-for="lvl in op_lvls"
+                                                    :key="lvl.value"
+                                                    :label="lvl.label"
+                                                    :value="lvl.value"
+                                                ></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item label="手术及操作名称" class="w-16 mr-1">
+                                            <el-input v-model="op.name"></el-input>
+                                        </el-form-item>
+                                    </el-row>
+                                    <el-row>
+                                        <el-form>
+                                            <el-form-item label="手术及操作医师:术者" class="w-18 mr-2">
+                                                <el-input v-model="op.operator"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="I助" class="w-16 mr-2">
+                                                <el-input v-model="op.assis1"></el-input>
+                                            </el-form-item>
+                                            <el-form-item label="II助" class="w-16">
+                                                <el-input v-model="op.assis2"></el-input>
+                                            </el-form-item>
+                                        </el-form>
+                                    </el-row>
+                                    <el-row>
+                                        <el-form-item label="切口愈合等级" class="w-18 mr-2">
+                                            <el-cascader
+                                                v-model="op.wound_healing_lvl"
+                                                :options="wh_lvls"
+                                            ></el-cascader>
+                                        </el-form-item>
+                                        <el-form-item label="麻醉方式" class="w-16 mr-2">
+                                            <el-select v-model="op.anaesthesia_type" placeholder="请选择">
+                                                <el-option
+                                                    v-for="type in anaesthesia_types"
+                                                    :key="type.value"
+                                                    :label="type.label"
+                                                    :value="type.value"
+                                                ></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                        <el-form-item label="麻醉医师" class="w-16">
+                                            <el-input v-model="op.anaesthetist"></el-input>
+                                        </el-form-item>
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="0.2">
+                                    <el-button class="remove-op" @click.prevent="removeOp(op)">-</el-button>
+                                </el-col>
+                            </el-row>                            
+                        </el-form-item>
+                        <el-row justify="end">
+                            <el-button class="add-op" style="margin-right:.9rem" @click="addOp">+ 手术</el-button>
+                        </el-row>
+                    </el-form>
+                    <el-row>
+                        <el-form-item label="离院方式" class="label-emphasize">
+                            <el-select v-model="form.release_type" placeholder="请选择">
+                                <el-option
+                                    v-for="type in release_types"
+                                    :key="type.value"
+                                    :label="type.label"
+                                    :value="type.value"
+                                ></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <span>
+                            <el-form-item v-if="form.release_type===release_types[1].value" label="拟接收医疗机构名称">
+                                <el-input v-model="form.accept_hosp_2"></el-input>
+                            </el-form-item>
+                        </span>
+                        <span>
+                            <el-form-item v-if="form.release_type===release_types[2].value" label="拟接收医疗机构名称">
+                                <el-input v-model="form.accept_hosp_3"></el-input>
+                            </el-form-item>
+                        </span>
+
+                        <!-- 需根据选项添加内容 -->
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="有出院31天内再住院计划">
+                            <el-checkbox class="mr-1" v-model="form.cont_hosp_check" true-label=true false-label=false ></el-checkbox>
+                            <span>
+                                <el-input v-if="form.cont_hosp_check=='true'" v-model="form.cont_hosp_plan" placeholder="目的"></el-input>
+                            </span>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="颅脑损伤患者昏迷时间" class="mr-1">
+                            <el-checkbox v-model="form.head_injury_check" true-label=true false-label=false ></el-checkbox>
+                        </el-form-item>
+                        <!-- <span> -->
+                        <el-form-item v-if="form.head_injury_check=='true'">
+                            <span>
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    入院前
+                                </label>
+                                <el-input-number
+                                    v-model="form.pre_admit_coma.days"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:3rem"
+                                ></el-input-number>
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    天
+                                </label>
+                                <el-input-number
+                                    v-model="form.pre_admit_coma.hrs"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:3rem"
+                                ></el-input-number>
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    小时
+                                </label>
+                                <el-input-number
+                                    v-model="form.pre_admit_coma.mins"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:3rem"
+                                ></el-input-number>
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    分钟
+                                </label>
+                            </span>
+                            <span style="margin-left:1rem">
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    入院后
+                                </label>
+                                <el-input-number
+                                    v-model="form.post_admit_coma.days"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:3rem"
+                                ></el-input-number>
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    天
+                                </label>
+                                <el-input-number
+                                    v-model="form.post_admit_coma.hrs"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:3rem"
+                                ></el-input-number>
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    小时
+                                </label>
+                                <el-input-number
+                                    v-model="form.post_admit_coma.mins"
+                                    :precision="0"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:3rem"
+                                ></el-input-number>
+                                <label class="el-form-item__label" style="line-height:28px !important">
+                                    分钟
+                                </label>
+                            </span>
+
+                        </el-form-item>
+                        <!-- </span> -->
+                    </el-row>
+
+                    <el-form>
+                        <el-row>
+                            <el-form-item label="住院费用（元）：  &nbsp&nbsp&nbsp总费用" class="label-emphasize" style="width:19.8rem">
+                                <el-input-number
+                                    v-model="form.charge.total"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important">
+                                （
+                            </label>
+                            <el-form-item label="自付金额">
+                                <el-input-number
+                                    v-model="form.charge.self_pay"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important">
+                                ）
+                            </label>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="1.综合医疗服务类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="一般医疗服务费" class="w-12 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.general_service"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="一般治疗操作费" class="w-12 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.general_operation"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="护理费" class="w-11 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.general_nursing"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="其他费用" class="w-12">
+                                <el-input-number
+                                    v-model="form.charge.general_other"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="2.诊断类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="病理诊断费" class="w-13 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.pathologic_diag"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="实验室诊断费" class="w-13 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.lab_diag"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="影像学诊断费" class="w-12 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.scan_diag"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="临床诊断项目费" style="width:12.5rem !important">
+                                <el-input-number
+                                    v-model="form.charge.clinic_diag"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="3.治疗类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="非手术治疗项目费" style="width:12rem">
+                                <el-input-number
+                                    v-model="form.charge.non_operational"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important">
+                                （
+                            </label>
+                            <el-form-item label="临床物理治疗费" style="width:12rem">
+                                <el-input-number
+                                    v-model="form.charge.clinic_physic"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important; margin-right:.5rem">
+                                ）
+                            </label>
+                            <el-form-item label="手术治疗费" style="width:10rem">
+                                <el-input-number
+                                    v-model="form.charge.operational"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important">
+                                （
+                            </label>
+                            <el-form-item label="麻醉费" style="width:8rem">
+                                <el-input-number
+                                    v-model="form.charge.anaesthesia"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="手术费" style="width:8rem">
+                                <el-input-number
+                                    v-model="form.charge.operation"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important">
+                                ）
+                            </label>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="4.康复类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="康复费" class="w-14">
+                            <el-input-number
+                                v-model="form.charge.recover"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                style="width:100%"
+                            ></el-input-number>
+                        </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="5.中医类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="中医治疗费" class="w-14">
+                                <el-input-number
+                                    v-model="form.charge.traditional_treat"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="6.西药类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="西药费" class="w-14">
+                                <el-input-number
+                                    v-model="form.charge.western_med"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important">
+                                （
+                            </label>
+                            <el-form-item label="抗菌药物费用">
+                                <el-input-number
+                                    v-model="form.charge.antibio_med"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <label class="el-form-item__label" style="padding-right:0px !important">
+                                ）
+                            </label>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="7.中药类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="中成药费" class="w-14 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.traditional_patent_drug"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="中草药费">
+                                <el-input-number
+                                    v-model="form.charge.traditional_herb"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="8.血液和血液制品类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="血费" class="w-7 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.blood"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="蛋白质类制品费" class="w-13 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.proteins"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="球蛋白类制品费" class="w-13 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.globulins"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="凝血因子类制品费" class="w-13">
+                                <el-input-number
+                                    v-model="form.charge.coagulation"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="细胞因子类制品费" style="margin-left:1rem !important" class="w-15">
+                                <el-input-number
+                                    v-model="form.charge.cytokine"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item> 
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="9.耗材类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="检查用一次性医用材料费" class="w-18 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.examine_supplies"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="治疗用一次性医用材料费" class="w-17 mr-1">
+                                <el-input-number
+                                    v-model="form.charge.treat_supplies"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="手术用一次性医用材料费" style="width:16.5rem !important">
+                                <el-input-number
+                                    v-model="form.charge.operation_supplies"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="10.其他类：" class="label-emphasize"></el-form-item>
+                            <el-form-item label="其他费" style="width:11.2rem !important">
+                                <el-input-number
+                                    v-model="form.charge.other"
+                                    :precision="2"
+                                    :controls="false"
+                                    :min="0"
+                                    style="width:100%"
+                                ></el-input-number>
+                            </el-form-item>
+                        </el-row>
+                    </el-form>
+                    <el-row justify="end" style="margin-bottom:5rem">
+                        <el-form-item>
+                            <el-button 
+                            class="cancel"
+                            @click="cancelForm"
+                            style="margin:1rem 1rem 5rem 0;"
+                            >取消操作</el-button>
+                        </el-form-item>
+                        <el-form-item>
+                            <el-button 
+                            @click="submitForm"
+                            style="margin:1rem 1rem 5rem 0;"
+                            >提交首页</el-button>
+                        </el-form-item>
+                    </el-row>
+                </el-form>
+            </div>
+            <!-- </el-col> -->
+            <!-- <el-col style="width:auto"></el-col> -->
+        </el-row>
+    </div>
+</template>
+
+<script>
+import { regionData, CodeToText } from 'element-china-area-data'
+import { validate, province, birthDate, gender, pattern } from 'chinese-idcard-checker'
+import { ElMessageBox, ElMessage } from 'element-plus'
+
+import calculateAge from 'calculate-age'
+import axios from 'axios'
+
+export default {
+    name: 'homepage',
+    components: {
+    },
+    data() {
+        // 添加其他选项
+        const getChinaData = ()=>{
+            if(regionData[regionData.length-1].label != '其他') {
+                regionData.push({value: '000000', label: '其他'})
+            }
+            return regionData
+        }
+        return {
+            form: {
+                org_name: '',
+                org_code: '',
+                purchase_method: '',
+                health_card: '',
+                admit_cnt: 0,
+                case_num: '',
+                name: '',
+                gender: '',
+                birthday: '',
+                age: '请先输入其他信息',
+                nationality: '',
+                newborn_check: false,
+                newborn_birth_weight: 0,
+                newborn_admit_weight: 0,
+                birthplace: [],
+                parent_birthplace: [],
+                ethnicity: '',
+                id_type: '',
+                id_num: '',
+
+                id_card_num: '',
+                passport_num: '',
+                officer_num: '',
+
+                profession: '',
+                marriage_stat: '',
+                present_addr1: [],
+                present_addr2: '',
+                present_phone: '',
+                present_zip: '',
+                registered_addr1: [],
+                registered_addr2: '',
+                registered_zip: '',
+                work_addr1: [],
+                work_addr2: '',
+                work_phone: '',
+                work_zip: '',
+                contact_name: '',
+                contact_relation: '',
+                contact_other_description: '',
+                contact_addr1: [],
+                contact_addr2: '',
+                contact_phone: '',
+                admit_path: '',
+                admit_time: '',
+                admit_specialty: [],
+                admit_sickroom: '',
+                trans_specialty: [],
+                release_time: '',
+                release_specialty: [],
+                release_sickroom: '',
+                hosp_duration: -1,
+                diagnosis: '',
+                disease_code: '',
+                main_diagnosis: {
+                    release: '',
+                    code: '',
+                    condition: ''
+                },
+                other_diagnosis: [
+                    {
+                        release: '',
+                        code: '',
+                        condition: ''
+                    },
+                ],
+                // for each other_diag
+                // od_release: '',
+                // od_code: '',
+                // od_condition: '',
+                lesion_reason: {
+                    description: '',
+                    code: '',
+                },
+                pathology: {
+                    description: '',
+                    code: '',
+                    number: '',
+                },
+                drug_allergy_check: false,
+                drug_allergy: '',
+                necropsy_check: false,
+                blood_group: '',
+                rh: '',
+                director: '',
+                chief: '',
+                physician_ic: '',
+                resident: '',
+                nurse_ic: '',
+                refresher: '',
+                trainee: '',
+                coder: '',
+                record_quality: '',
+                qc_doctor: '',
+                qc_nurse: '',
+                qc_date: '',
+                operations: [
+                    {
+                        code: '',
+                        date: '',
+                        level: '',
+                        name: '',
+                        operator: '',
+                        assis1: '',
+                        assis2: '',
+                        wound_healing_lvl: [],
+                        anaesthesia_type: '',
+                        anaesthetist: '',
+                    }
+                ],
+                release_type: '',
+                accept_hosp_2: '',
+                accept_hosp_3: '',
+                cont_hosp_check: false,
+                cont_hosp_plan: '',
+                head_injury_check: false,
+                pre_admit_coma: {
+                    days: 0,
+                    hrs: 0,
+                    mins: 0
+                },
+                post_admit_coma: {
+                    days: 0,
+                    hrs: 0,
+                    mins: 0
+                },
+                charge: {
+                    total: 0,
+                    self_pay: 0,
+                    general_service: 0,
+                    general_operation: 0,
+                    general_nursing: 0,
+                    general_other: 0,
+                    pathologic_diag: 0,
+                    lab_diag: 0,
+                    scan_diag: 0,
+                    clinic_diag: 0,
+                    non_operational: 0,
+                    operational: 0,
+                    clinic_physic: 0,
+                    anaesthesia: 0,
+                    operation: 0,
+                    recover: 0,
+                    traditional_treat: 0,
+                    western_med: 0,
+                    antibio_med: 0,
+                    traditional_patent_drug: 0,
+                    traditional_herb: 0,
+                    blood: 0,
+                    proteins: 0,
+                    globulins: 0,
+                    coagulation: 0,
+                    cytokine: 0,
+                    examine_supplies: 0,
+                    treat_supplies: 0,
+                    operation_supplies: 0,
+                    other: 0
+                }
+            },
+            purchase_methods: [
+                {
+                    value: '1',
+                    label: '城镇职工基本医疗保险'
+                },
+                {
+                    value: '2',
+                    label: '城镇居民基本医疗保险'
+                },
+                {
+                    value: '3',
+                    label: '新型农村合作医疗'
+                },
+                {
+                    value: '4',
+                    label: '贫困救助'
+                },
+                {
+                    value: '5',
+                    label: '商业医疗保险'
+                },
+                {
+                    value: '6',
+                    label: '全公费'
+                },
+                {
+                    value: '7',
+                    label: '全自费'
+                },
+                {
+                    value: '8',
+                    label: '其他社会保险'
+                },
+                {
+                    value: '9',
+                    label: '其他'
+                },
+            ],
+            genders: [
+                {
+                    value: '1',
+                    label: '男'
+                },
+                {
+                    value: '2',
+                    label: '女'
+                }
+            ],
+            countries:[{
+    			label: '热门国家',
+    			options: [{value:'China',label:'中国'},]
+    		},{
+    			label: '所有国家',
+    			options: [
+    			    {value:'Angola',label:'安哥拉'},
+					{value:'Afghanistan',label:'阿富汗'},
+					{value:'Albania',label:'阿尔巴尼亚'},
+					{value:'Algeria',label:'阿尔及利亚'},
+					{value:'Andorra',label:'安道尔共和国'},
+					{value:'Anguilla',label:'安圭拉岛'},
+					{value:'Antigua and Barbuda',label:'安提瓜和巴布达'},
+					{value:'Argentina',label:'阿根廷'},
+					{value:'Armenia',label:'亚美尼亚'},
+					{value:'Ascension',label:'阿森松'},
+					{value:'Australia',label:'澳大利亚'},
+					{value:'Austria',label:'奥地利'},
+					{value:'Azerbaijan',label:'阿塞拜疆'},
+					{value:'Bahamas',label:'巴哈马'},
+					{value:'Bahrain',label:'巴林'},
+					{value:'Bangladesh',label:'孟加拉国'},
+					{value:'Barbados',label:'巴巴多斯'},
+					{value:'Belarus',label:'白俄罗斯'},
+					{value:'Belgium',label:'比利时'},
+					{value:'Belize',label:'伯利兹'},
+					{value:'Benin',label:'贝宁'},
+					{value:'Bermuda Is',label:'百慕大群岛'},
+					{value:'Bolivia',label:'玻利维亚'},
+					{value:'Botswana',label:'博茨瓦纳'},
+					{value:'Brazil',label:'巴西'},
+					{value:'Brunei',label:'文莱'},
+					{value:'Bulgaria',label:'保加利亚'},
+					{value:'Burkina Faso',label:'布基纳法索'},
+					{value:'Burma',label:'缅甸'},
+					{value:'Burundi',label:'布隆迪'},
+					{value:'Cameroon',label:'喀麦隆'},
+					{value:'Canada',label:'加拿大'},
+					{value:'Cayman Is',label:'开曼群岛'},
+					{value:'Central African Republic',label:'中非共和国'},
+					{value:'Chad',label:'乍得'},
+					{value:'Chile',label:'智利'},
+					{value:'China',label:'中国'},
+					{value:'Colombia',label:'哥伦比亚'},
+					{value:'Congo',label:'刚果'},
+					{value:'Cook Is',label:'库克群岛'},
+					{value:'Costa Rica',label:'哥斯达黎加'},
+					{value:'Cuba',label:'古巴'},
+					{value:'Cyprus',label:'塞浦路斯'},
+					{value:'Czech Republic',label:'捷克'},
+					{value:'Denmark',label:'丹麦'},
+					{value:'Djibouti',label:'吉布提'},
+					{value:'Dominica Rep',label:'多米尼加共和国'},
+					{value:'Ecuador',label:'厄瓜多尔'},
+					{value:'Egypt',label:'埃及'},
+					{value:'EI Salvador',label:'萨尔瓦多'},
+					{value:'Estonia',label:'爱沙尼亚'},
+					{value:'Ethiopia',label:'埃塞俄比亚'},
+					{value:'Fiji',label:'斐济'},
+					{value:'Finland',label:'芬兰'},
+					{value:'France',label:'法国'},
+					{value:'French Guiana',label:'法属圭亚那'},
+					{value:'French Polynesia',label:'法属玻利尼西亚'},
+					{value:'Gabon',label:'加蓬'},
+					{value:'Gambia',label:'冈比亚'},
+					{value:'Georgia',label:'格鲁吉亚'},
+					{value:'Germany',label:'德国'},
+					{value:'Ghana',label:'加纳'},
+					{value:'Gibraltar',label:'直布罗陀'},
+					{value:'Greece',label:'希腊'},
+					{value:'Grenada',label:'格林纳达'},
+					{value:'Guam',label:'关岛'},
+					{value:'Guatemala',label:'危地马拉'},
+					{value:'Guinea',label:'几内亚'},
+					{value:'Guyana',label:'圭亚那'},
+					{value:'Haiti',label:'海地'},
+					{value:'Honduras',label:'洪都拉斯'},
+					{value:'Hungary',label:'匈牙利'},
+					{value:'Iceland',label:'冰岛'},
+					{value:'India',label:'印度'},
+					{value:'Indonesia',label:'印度尼西亚'},
+					{value:'Iran',label:'伊朗'},
+					{value:'Iraq',label:'伊拉克'},
+					{value:'Ireland',label:'爱尔兰'},
+					{value:'Israel',label:'以色列'},
+					{value:'Italy',label:'意大利'},
+					{value:'Ivory Coast',label:'科特迪瓦'},
+					{value:'Jamaica',label:'牙买加'},
+					{value:'Japan',label:'日本'},
+					{value:'Jordan',label:'约旦'},
+					{value:'Kampuchea (Cambodia )',label:'柬埔寨'},
+					{value:'Kazakstan',label:'哈萨克斯坦'},
+					{value:'Kenya',label:'肯尼亚'},
+					{value:'Korea',label:'韩国'},
+					{value:'Kuwait',label:'科威特'},
+					{value:'Kyrgyzstan',label:'吉尔吉斯坦'},
+					{value:'Laos',label:'老挝'},
+					{value:'Latvia',label:'拉脱维亚'},
+					{value:'Lebanon',label:'黎巴嫩'},
+					{value:'Lesotho',label:'莱索托'},
+					{value:'Liberia',label:'利比里亚'},
+					{value:'Libya',label:'利比亚'},
+					{value:'Liechtenstein',label:'列支敦士登'},
+					{value:'Lithuania',label:'立陶宛'},
+					{value:'Luxembourg',label:'卢森堡'},
+					{value:'Madagascar',label:'马达加斯加'},
+					{value:'Malawi',label:'马拉维'},
+					{value:'Malaysia',label:'马来西亚'},
+					{value:'Maldives',label:'马尔代夫'},
+					{value:'Mali',label:'马里'},
+					{value:'Malta',label:'马耳他'},
+					{value:'Mariana Is',label:'马里亚那群岛'},
+					{value:'Martinique',label:'马提尼克'},
+					{value:'Mauritius',label:'毛里求斯'},
+					{value:'Mexico',label:'墨西哥'},
+					{value:'Moldova',label:'摩尔多瓦'},
+					{value:'Monaco',label:'摩纳哥'},
+					{value:'Mongolia',label:'蒙古'},
+					{value:'Montserrat Is',label:'蒙特塞拉特岛'},
+					{value:'Morocco',label:'摩洛哥'},
+					{value:'Mozambique',label:'莫桑比克'},
+					{value:'Namibia',label:'纳米比亚'},
+					{value:'Nauru',label:'瑙鲁'},
+					{value:'Nepal',label:'尼泊尔'},
+					{value:'Netheriands Antilles',label:'荷属安的列斯'},
+					{value:'Netherlands',label:'荷兰'},
+					{value:'New Zealand',label:'新西兰'},
+					{value:'Nicaragua',label:'尼加拉瓜'},
+					{value:'Niger',label:'尼日尔'},
+					{value:'Nigeria',label:'尼日利亚'},
+					{value:'North Korea',label:'朝鲜'},
+					{value:'Norway',label:'挪威'},
+					{value:'Oman',label:'阿曼'},
+					{value:'Pakistan',label:'巴基斯坦'},
+					{value:'Panama',label:'巴拿马'},
+					{value:'Papua New Cuinea',label:'巴布亚新几内亚'},
+					{value:'Paraguay',label:'巴拉圭'},
+					{value:'Peru',label:'秘鲁'},
+					{value:'Philippines',label:'菲律宾'},
+					{value:'Poland',label:'波兰'},
+					{value:'Portugal',label:'葡萄牙'},
+					{value:'Puerto Rico',label:'波多黎各'},
+					{value:'Qatar',label:'卡塔尔'},
+					{value:'Reunion',label:'留尼旺'},
+					{value:'Romania',label:'罗马尼亚'},
+					{value:'Russia',label:'俄罗斯'},
+					{value:'Saint Lueia',label:'圣卢西亚'},
+					{value:'Saint Vincent',label:'圣文森特岛'},
+					{value:'Samoa Eastern',label:'东萨摩亚(美)'},
+					{value:'Samoa Western',label:'西萨摩亚'},
+					{value:'San Marino',label:'圣马力诺'},
+					{value:'Sao Tome and Principe',label:'圣多美和普林西比'},
+					{value:'Saudi Arabia',label:'沙特阿拉伯'},
+					{value:'Senegal',label:'塞内加尔'},
+					{value:'Seychelles',label:'塞舌尔'},
+					{value:'Sierra Leone',label:'塞拉利昂'},
+					{value:'Singapore',label:'新加坡'},
+					{value:'Slovakia',label:'斯洛伐克'},
+					{value:'Slovenia',label:'斯洛文尼亚'},
+					{value:'Solomon Is',label:'所罗门群岛'},
+					{value:'Somali',label:'索马里'},
+					{value:'South Africa',label:'南非'},
+					{value:'Spain',label:'西班牙'},
+					{value:'SriLanka',label:'斯里兰卡'},
+					{value:'St.Lucia',label:'圣卢西亚'},
+					{value:'St.Vincent',label:'圣文森特'},
+					{value:'Sudan',label:'苏丹'},
+					{value:'Suriname',label:'苏里南'},
+					{value:'Swaziland',label:'斯威士兰'},
+					{value:'Sweden',label:'瑞典'},
+					{value:'Switzerland',label:'瑞士'},
+					{value:'Syria',label:'叙利亚'},
+					{value:'Tajikstan',label:'塔吉克斯坦'},
+					{value:'Tanzania',label:'坦桑尼亚'},
+					{value:'Thailand',label:'泰国'},
+					{value:'Togo',label:'多哥'},
+					{value:'Tonga',label:'汤加'},
+					{value:'Trinidad and Tobago',label:'特立尼达和多巴哥'},
+					{value:'Tunisia',label:'突尼斯'},
+					{value:'Turkey',label:'土耳其'},
+					{value:'Turkmenistan',label:'土库曼斯坦'},
+					{value:'Uganda',label:'乌干达'},
+					{value:'Ukraine',label:'乌克兰'},
+					{value:'United Arab Emirates',label:'阿拉伯联合酋长国'},
+					{value:'United Kiongdom',label:'英国'},
+					{value:'United States of America',label:'美国'},
+					{value:'Uruguay',label:'乌拉圭'},
+					{value:'Uzbekistan',label:'乌兹别克斯坦'},
+					{value:'Venezuela',label:'委内瑞拉'},
+					{value:'Vietnam',label:'越南'},
+					{value:'Yemen',label:'也门'},
+					{value:'Yugoslavia',label:'南斯拉夫'},
+					{value:'Zimbabwe',label:'津巴布韦'},
+					{value:'Zaire',label:'扎伊尔'},
+					{value:'Zambia',label:'赞比亚'}
+    			]
+    		}],
+            locations: getChinaData(),
+            ethnicities:[
+                {
+                id: 1,
+                info: "汉族",
+                },
+                {
+                id: 2,
+                info: "壮族",
+                },
+                {
+                id: 3,
+                info: "满族",
+                },
+                {
+                id: 4,
+                info: "回族",
+                value: 4,
+                },
+                {
+                id: 5,
+                info: "苗族",
+                },
+                {
+                id: 6,
+                info: "维吾尔族",
+                },
+                {
+                id: 7,
+                info: "土家族",
+                },
+                {
+                id: 8,
+                info: "彝族",
+                },
+                {
+                id: 9,
+                info: "蒙古族",
+                },
+                {
+                id: 10,
+                info: "藏族",
+                },
+                {
+                id: 11,
+                info: "布依族",
+                },
+                {
+                id: 12,
+                info: "侗族",
+                },
+                {
+                id: 13,
+                info: "瑶族",
+                },
+                {
+                id: 14,
+                info: "朝鲜族",
+                },
+                {
+                id: 15,
+                info: "白族",
+                },
+                {
+                id: 16,
+                info: "哈尼族",
+                },
+                {
+                id: 17,
+                info: "哈萨克族",
+                },
+                {
+                id: 18,
+                info: "黎族",
+                },
+                {
+                id: 19,
+                info: "傣族",
+                },
+                {
+                id: 20,
+                info: "畲族",
+                },
+                {
+                id: 21,
+                info: "傈僳族",
+                },
+                {
+                id: 22,
+                info: "仡佬族",
+                },
+                {
+                id: 23,
+                info: "东乡族",
+                },
+                {
+                id: 24,
+                info: "高山族",
+                },
+                {
+                id: 25,
+                info: "拉祜族",
+                },
+                {
+                id: 26,
+                info: "水族",
+                },
+                {
+                id: 27,
+                info: "佤族",
+                },
+                {
+                id: 28,
+                info: "纳西族",
+                },
+                {
+                id: 29,
+                info: "羌族",
+                },
+                {
+                id: 30,
+                info: "土族",
+                },
+                {
+                id: 31,
+                info: "仫佬族",
+                },
+                {
+                id: 32,
+                info: "锡伯族",
+                },
+                {
+                id: 33,
+                info: "柯尔克孜族",
+                },
+                {
+                id: 34,
+                info: "达斡尔族",
+                },
+                {
+                id: 35,
+                info: "景颇族",
+                },
+                {
+                id: 36,
+                info: "毛南族",
+                },
+                {
+                id: 37,
+                info: "撒拉族",
+                },
+                {
+                id: 38,
+                info: "布朗族",
+                },
+                {
+                id: 39,
+                info: "塔吉克族",
+                },
+                {
+                id: 40,
+                info: "阿昌族",
+                },
+                {
+                id: 41,
+                info: "普米族",
+                },
+                {
+                id: 42,
+                info: "鄂温克族",
+                },
+                {
+                id: 43,
+                info: "怒族",
+                },
+                {
+                id: 44,
+                info: "京族",
+                },
+                {
+                id: 45,
+                info: "基诺族",
+                },
+                {
+                id: 46,
+                info: "德昂族",
+                },
+                {
+                id: 47,
+                info: "保安族",
+                },
+                {
+                id: 48,
+                info: "俄罗斯族",
+                },
+                {
+                id: 49,
+                info: "裕固族",
+                },
+                {
+                id: 50,
+                info: "乌孜别克族",
+                },
+                {
+                id: 51,
+                info: "门巴族",
+                },
+                {
+                id: 52,
+                info: "鄂伦春族",
+                },
+                {
+                id: 53,
+                info: "独龙族",
+                },
+                {
+                id: 54,
+                info: "塔塔尔族",
+                },
+                {
+                id: 55,
+                info: "赫哲族",
+                },
+                {
+                id: 56,
+                info: "珞巴族",
+                },
+                // 版权声明：本文为CSDN博主「码农陈冠希」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+                // 原文链接：https://blog.csdn.net/qq_48895397/article/details/121249251
+            ],
+            id_types: [
+                {
+                    value: '1',
+                    label: '身份证',
+                },
+                {
+                    value: '2',
+                    label: '护照',
+                },
+                {
+                    value: '3',
+                    label: '军官证',
+                },
+            ],
+            professions: [
+                {
+                    value: '11',
+                    label: '国家公务员'
+                },
+                {
+                    value: '13',
+                    label: '专业技术人员'
+                },
+                {
+                    value: '17',
+                    label: '职员'
+                },
+                {
+                    value: '21',
+                    label: '企业管理人员'
+                },
+                {
+                    value: '24',
+                    label: '工人'
+                },
+                {
+                    value: '27',
+                    label: '农民'
+                },
+                {
+                    value: '31',
+                    label: '学生'
+                },
+                {
+                    value: '37',
+                    label: '现役军人'
+                },
+                {
+                    value: '51',
+                    label: '自由职业者'
+                },
+                {
+                    value: '54',
+                    label: '个体经营者'
+                },
+                {
+                    value: '70',
+                    label: '无业人员'
+                },
+                {
+                    value: '80',
+                    label: '退（离）修人员'
+                },
+                {
+                    value: '90',
+                    label: '其他'
+                },
+            ],
+            marriage_stats: [
+                {
+                    value: '1',
+                    label: '未婚'
+                },
+                {
+                    value: '2',
+                    label: '已婚'
+                },
+                {
+                    value: '3',
+                    label: '丧偶'
+                },
+                {
+                    value: '4',
+                    label: '离婚'
+                },
+                {
+                    value: '9',
+                    label: '其他'
+                },
+            ],
+            contact_relations: [
+                {
+                    value: '1',
+                    label: '配偶',
+                    disabled: true
+                },
+                {
+                    value: '2',
+                    label: '子'
+                },
+                {
+                    value: '3',
+                    label: '女'
+                },
+                {
+                    value: '4',
+                    label: '孙子，孙女或外孙子，外孙女'
+                },
+                {
+                    value: '5',
+                    label: '父母'
+                },
+                {
+                    value: '6',
+                    label: '祖父母或外祖父母'
+                },
+                {
+                    value: '8',
+                    label: '其他'
+                }
+            ],
+            admit_paths: [
+                {
+                    value: '1',
+                    label: '经由本院急诊、门诊诊疗后入院'
+                },
+                {
+                    value: '2',
+                    label: '经由其他医疗机构诊治后转诊入院'
+                },
+                {
+                    value: '3',
+                    label: '其他途径入院'
+                }
+            ],
+            // 待补充
+            specialties: [
+                {
+                    value: '50',
+                    label: '中医科',
+                    children: [
+                        {
+                            value: '01',
+                            label: '内科专业',
+                            children: [
+                                {
+                                    value: '01',
+                                    label: '肺病科专业'
+                                },
+                                {
+                                    value: '02',
+                                    label: '脾胃病科专业'
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {}
+            ],
+            ad_conditions: [
+                {
+                    value: '1',
+                    label: '有'
+                },
+                {
+                    value: '2',
+                    label: '临床未确定'
+                },
+                {
+                    value: '3',
+                    label: '情况不明'
+                },
+                {
+                    value: '4',
+                    label: '无'
+                }
+            ],
+            blood_groups: [
+                {
+                    value: '1',
+                    label: 'A'
+                },
+                {
+                    value: '2',
+                    label: 'B'
+                },
+                {
+                    value: '3',
+                    label: 'O'
+                },
+                {
+                    value: '4',
+                    label: 'AB'
+                },
+                {
+                    value: '5',
+                    label: '不详'
+                },
+                {
+                    value: '6',
+                    label: '未查'
+                },
+            ],
+            rhs: [
+                {
+                    value: '1',
+                    label: '阴'
+                },
+                {
+                    value: '2',
+                    label: '阳'
+                },
+                {
+                    value: '3',
+                    label: '不详'
+                },
+                {
+                    value: '4',
+                    label: '未查'
+                }
+            ],
+            record_qualities: [
+                {
+                    value: '1',
+                    label: '甲'
+                },
+                {
+                    value: '2',
+                    label: '乙'
+                },
+                {
+                    value: '3',
+                    label: '丙'
+                },
+            ],
+            op_lvls: [
+                {
+                    value: '1',
+                    label: '一级手术'
+                },
+                {
+                    value: '2',
+                    label: '二级手术'
+                },
+                {
+                    value: '3',
+                    label: '三级手术'
+                },
+                {
+                    value: '4',
+                    label: '四级手术'
+                },
+            ],
+            wh_lvls: [
+                {
+                    value: '0',
+                    label: '0类切口'
+                },
+                {
+                    value: '1',
+                    label: 'I类切口',
+                    children: [
+                        {
+                            value: '1',
+                            label: '甲'
+                        },
+                        {
+                            value: '2',
+                            label: '乙'
+                        },
+                        {
+                            value: '3',
+                            label: '丙'
+                        },
+                        {
+                            value: '4',
+                            label: '其他'
+                        }
+                    ]
+                },
+                {
+                    value: '2',
+                    label: 'II类切口',
+                    children: [
+                        {
+                            value: '1',
+                            label: '甲'
+                        },
+                        {
+                            value: '2',
+                            label: '乙'
+                        },
+                        {
+                            value: '3',
+                            label: '丙'
+                        },
+                        {
+                            value: '4',
+                            label: '其他'
+                        }
+                    ]
+                },
+                {
+                    value: '1',
+                    label: 'III类切口',
+                    children: [
+                        {
+                            value: '1',
+                            label: '甲'
+                        },
+                        {
+                            value: '2',
+                            label: '乙'
+                        },
+                        {
+                            value: '3',
+                            label: '丙'
+                        },
+                        {
+                            value: '4',
+                            label: '其他'
+                        }
+                    ]
+                }
+            ],
+            anaesthesia_types: [
+                {
+                    value: '1',
+                    label: '全麻'
+                },
+                {
+                    value: '2',
+                    label: '局麻'
+                },
+                {
+                    value: '3',
+                    label: '硬膜外麻'
+                },
+            ],
+            release_types: [
+                {
+                    value: '1',
+                    label: '医嘱离院'
+                },
+                {
+                    value: '2',
+                    label: '医嘱转院'
+                },
+                {
+                    value: '3',
+                    label: '医嘱转社区卫生服务机构/乡镇卫生院'
+                },
+                {
+                    value: '4',
+                    label: '非医嘱离院'
+                },
+                {
+                    value: '5',
+                    label: '死亡'
+                },
+                {
+                    value: '6',
+                    label: '其他'
+                },
+            ]
+        }
+    },
+    mounted() {
+        document.title = '住院病案首页'
+    },
+    computed: {
+        idNumVal: {
+            get() {
+                if(this.form.id_type==='1')
+                    return this.form.id_card_num
+                else if(this.form.id_type==='2')
+                    return this.form.passport_num
+                else if(this.form.id_type==='3')
+                    return this.form.officer_num
+            },
+            set(val) {
+                if(this.form.id_type==='1')
+                    this.form.id_card_num = val
+                else if(this.form.id_type==='2')
+                    this.form.passport_num = val
+                else if(this.form.id_type==='3')
+                    this.form.officer_num = val
+            }
+        }
+    },
+    methods: {
+        presentAddrOnChange(val) {
+            console.log(val)
+            // this.form.present_zip = val[val.length-1]
+            // console.log(this.form.present_zip)
+        },
+        async submitForm() {
+            console.log('submitting...')
+            
+            const formData = this.form
+            // formData.birthplace = this.getPlaceText(formData.birthplace)
+            // formData.parent_birthplace = this.getPlaceText(formData.parent_birthplace)
+            // formData.present_addr1 = this.getPlaceText(formData.present_addr1)
+            // formData.registered_addr1 = this.getPlaceText(formData.registered_addr1)
+            // formData.work_addr1 = this.getPlaceText(formData.work_addr1)
+            // formData.contact_addr1 = this.getPlaceText(formData.contact_addr1)
+            console.log(formData)
+            console.log('这里开始')
+            console.log(this.form.id_type)
+            // 检验
+            if(this.form.id_type==='1'&&!validate(this.form.id_card_num)) {
+                console.log(this.form.id_card_num)
+                console.log('兄弟你这个身份证号不太对啊')
+                ElMessage({
+                    showClose: true,
+                    message: '兄弟你这个身份证号不太对啊!',
+                    type: 'error',
+                    duration: 10000
+                })
+            } else {
+                // 上传
+                await axios
+                    .post('/api/v1/post-homepage/',{'form':formData})
+                    .then(response=>{
+                        console.log('submitted and got response:')
+                        console.log(response)
+                    })
+                    .catch(error=>{
+                        console.log(error)
+                    })
+                console.log('应该跳转了')
+                // this.$router.replace('/success')
+                this.$router.push('/success')
+            }
+        },
+        cancelForm() {
+            this.$router.push('/')
+        },
+        marriageOnChange(val) {
+            console.log('婚姻状态')
+            console.log(val)
+            if(val==='2') {
+                this.contact_relations[0].disabled=false
+            } else {
+                this.contact_relations[0].disabled=true
+                this.form.contact_relation=''
+            }
+        },
+        birthOrAdmitdayOnChange() {
+            if(!this.form.birthday)
+                this.form.birthday = ''
+            if(!this.form.admit_time)
+                this.form.admit_time = ''
+            if(this.form.birthday!=='' && this.form.admit_time!=='') {
+                console.log('入院：'+this.form.admit_time)
+                console.log('生日：'+this.form.birthday)
+                let birthday = this.form.birthday
+                let admitday = this.form.admit_time.split(' ')[0]
+                if(birthday===admitday) {
+                    this.form.age = '第0天'
+                } else {
+                    console.log(birthday, admitday)
+                    // 计算年龄
+                    let age = new calculateAge(birthday, admitday)
+                    console.log(age.getString())
+                    age = age.getObject()
+                    this.form.newborn_check = false
+                    if(age.years < 1) {
+                        if(age.days <= 28 && age.months<1) {
+                            this.form.newborn_check = true
+                        }
+                        this.form.age = age.months.toString()+' '+age.days.toString()+'/30月'
+                    } else {
+                        this.form.age = age.years.toString()
+                    }
+                }
+            } else {
+                this.form.age = '请先输入其他信息'
+            }
+            console.log('age - this.form.age')
+        },
+        admitOrReleasedayOnChange() {
+            if(!this.form.admit_time)
+                this.form.admit_time = ''
+            if(!this.form.release_time)
+                this.form.release_time = ''
+            if(this.form.admit_time!=='' && this.form.release_time!=='') {
+                console.log('入院：'+this.form.admit_time)
+                console.log('出院：'+this.form.release_time)
+                let admitday = this.form.admit_time.split(' ')[0]
+                let releaseday = this.form.release_time.split(' ')[0]
+                console.log(admitday, releaseday)
+                // 计算住院时间
+                if(admitday===releaseday) {
+                    this.form.hosp_duration=1
+                } else {
+                    let ad = new Date(admitday)
+                    let rd = new Date(releaseday)
+                    let duration = rd.getTime() - ad.getTime()
+                    duration = parseInt(duration/(1000*60*60*24))
+                    console.log(duration)
+                    this.form.hosp_duration = duration
+                }                
+            } else {
+                this.form.hosp_duration = -1
+            }
+        },
+        nationalityOnChange(val) {
+            console.log(val)
+            if(this.form.nationality!=='中国') {
+                console.log('this damn ass is not a Chinese')
+                this.form.birthplace = ['000000']
+                this.form.parent_birthplace = ['000000']
+            }
+        },
+        getPlaceText(val) {
+            // console.log('getting place text')
+            // console.log(val[0])
+            if(val[0]==='000000')
+                return '其他'
+            let loc = '';
+            for (let i = 0; i < val.length; i++) {
+                loc += CodeToText[val[i]]+'/';
+            }
+            return loc.substr(0,loc.length-1)
+        },
+        disabledDate0(time) {
+            let return_val = time.getTime() > Date.now()
+            if (this.form.admit_time) {
+                let admit_nums = this.form.admit_time.split(' ')[0].split('-')
+                // console.log(admit_nums)
+                let admitday=new Date()
+                admitday.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2]))
+                return_val = return_val || time.getTime() > admitday
+            }
+            if (this.form.release_time) {
+                let release_nums = this.form.release_time.split(' ')[0].split('-')
+                // console.log(admit_nums)
+                let releaseday=new Date()
+                releaseday.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
+                return_val = return_val || time.getTime() > releaseday
+            }
+            console.log('disableDate0 finish')
+            return return_val
+        },
+        disabledDate1(time) {
+            let return_val = time.getTime() > Date.now()
+            if (this.form.birthday) {
+                let birth_nums = this.form.birthday.split('-')
+                // console.log(birth_nums)
+                let birthday=new Date()
+                birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
+                return_val = return_val || time.getTime() < birthday //birthday?
+            }
+            if (this.form.release_time) {
+                let release_nums = this.form.release_time.split(' ')[0].split('-')
+                // console.log(admit_nums)
+                let releaseday=new Date()
+                releaseday.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
+                return_val = return_val || time.getTime() > releaseday
+            }
+            return return_val
+        },
+        disabledDate2(time) {
+            let return_val = time.getTime() > Date.now()
+            if (this.form.birthday) {
+                let birth_nums = this.form.birthday.split('-')
+                // console.log(birth_nums)
+                let birthday=new Date()
+                birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
+                return_val = return_val || time.getTime() < birthday //birthday?
+            }
+            if (this.form.admit_time) {
+                let admit_nums = this.form.admit_time.split(' ')[0].split('-')
+                // console.log(birth_nums)
+                let admitday=new Date()
+                admitday.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2])-1)
+                return_val = return_val || time.getTime() < admitday
+            }
+            return return_val
+        },
+        getHospDuration() {
+            if(this.form.hosp_duration<0)
+                return '请输入入院和出院时间'
+            else
+                return this.form.hosp_duration
+        },
+        addDiag(diag) {
+            this.form.other_diagnosis.push({
+                release: '',
+                code: '',
+                condition: '',
+                key: Date.now(),
+            })
+        },
+        removeDiag(diag) {
+            let index = this.form.other_diagnosis.indexOf(diag)
+            if(index != -1) {
+                this.form.other_diagnosis.splice(index, 1)
+            }
+        },
+        addOp(op) {
+            this.form.operations.push({
+                code: '',
+                date: '',
+                level: '',
+                name: '',
+                operator: '',
+                assis1: '',
+                assis2: '',
+                wound_healing_lvl: '',
+                anaesthesia_type: '',
+                anaesthetist: '',
+                key: Date.now(),
+            })
+        },
+        removeOp(op) {
+            let index = this.form.operations.indexOf(op)
+            if(index != -1) {
+                this.form.operations.splice(index, 1)
+            }
+        }
+    }
+}
+</script>
+
+<style lang="scss">
+.el-message .el-message-icon--error {
+    --el-message-text-color: #d32a2a !important;
+    color: #d32a2a !important;
+}
+.el-message .el-message__closeBtn {
+    color: #d32a2a !important;
+}
+.el-message--error {
+    background-color: #ffffff;
+    border-color: #d32a2a;
+    --el-message-text-color: #d32a2a;
+}
+.el-message {
+    border-radius: 0% !important;
+}
+.el-select-dropdown__item.selected {
+    color: rgb(0, 133, 133) !important;
+}
+.el-select .el-input.is-focus .el-input__inner {
+    // box-shadow: 0 0 0px rgb(0, 133, 133) !important;
+
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+}
+.el-select .el-input__inner:focus {
+    // box-shadow: 0 0 0px rgb(0, 133, 133) !important;
+
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+}
+.el-input-number__increase {
+    border:none !important;
+    border-radius: 0% !important;
+
+    height: 9px !important;
+    top: 4px !important;
+    width: 16px;
+    right: 0px !important;
+}
+.el-input-number__increase:hover {
+    background-color: rgb(209, 209, 209) !important;
+    border-radius: 0% !important;
+    color: rgb(255, 255, 255) !important;
+}
+.el-input-number__decrease {
+    border:none !important;
+    border-radius: 0% !important;
+
+    height: 9px !important;
+    bottom: 4px !important;
+    width: 16px;
+    right: 0px !important;
+}
+.el-input-number__decrease:hover {
+    background-color: rgb(209, 209, 209) !important;
+    border-radius: 0% !important;
+    color: rgb(255, 255, 255) !important;
+}
+.el-popper {
+    border-radius: 0% !important;
+    box-shadow: 0 0 0px rgb(0, 133, 133) !important;
+}
+.el-input__inner:hover {
+    box-shadow: 0 0 0px rgb(0, 133, 133) !important;
+    background-color: rgb(245, 245, 245) !important;
+
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+}
+.el-input__inner:focus {
+    box-shadow: 0 0 0px rgb(0, 133, 133) !important;
+    background-color: rgb(228, 228, 228) !important;
+
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+}
+.el-input__inner {
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+    border-radius: 0% !important;
+
+    height: 18px !important;
+    padding: 4px 5px 0px 5px !important;
+}
+.el-checkbox__inner {
+    border-radius:0% !important;    
+}
+.el-checkbox__inner:hover {
+    border: 1px solid rgb(0, 133, 133) !important;
+}
+// .el-checkbox:focus {
+//     border: 1px solid rgb(0, 133, 133) !important;
+// }
+.el-checkbox__input.is-checked .el-checkbox__inner {
+    background-color:rgb(0, 133, 133) !important;
+    border-color: rgb(0, 133, 133) !important;
+}
+.el-input-number__decrease:hover~.el-input:not(.is-disabled) .el-input__inner,
+.el-input-number__increase:hover~.el-input:not(.is-disabled) .el-input__inner {
+    box-shadow: 0 0 1px rgb(0, 133, 133) !important;
+}
+.el-date-picker {
+    --el-datepicker-active-color: rgb(0, 163, 163) !important;
+    --el-datepicker-hover-text-color: rgb(0, 163, 163) !important;
+    --el-color-primary: rgb(0, 133, 133) !important;
+}
+.el-cascader-panel {
+    --el-cascader-menu-selected-text-color: rgb(0, 133, 133) !important;
+}
+.el-form-item--default {
+    margin-bottom: 0px !important;
+}
+.el-form-item__label {
+    text-align: left !important;
+    height: 26px !important;
+}
+.el-input--suffix .el-input__inner {
+    padding-left: 5px !important;
+    padding-right: 18px !important;
+}
+.el-input__suffix {
+    right: 3px !important;
+}
+.el-input__prefix {
+    left: 2% !important;
+    padding-top: 2px;
+}
+
+.datehr .el-scrollbar:nth-of-type(3) {
+  display: none !important;
+}
+.datehr .el-scrollbar {
+  width: 50% !important;
+}
+
+.el-date-editor .el-input__inner {
+    padding-left: 18px !important;
+    padding-left: 18px !important;
+}
+
+// .el-button--text {
+//     color: rgb(77, 77, 77) !important;
+// }
+// .el-button--text:hover {
+//     color: rgb(0, 133, 133) !important;
+// }
+
+.el-button {
+    border-radius: 0% !important;
+    background-color: rgb(255, 255, 255) !important;
+    border:1px solid rgb(228, 228, 228) !important;
+    color: rgb(77, 77, 77) !important;
+}
+.el-button:hover {
+    color: rgb(255, 255, 255) !important;
+    // border-color: rgb(0, 163, 163) !important;
+    border:1px solid rgb(0, 133, 133) !important;
+    // box-shadow: 0 0 1px rgb(0, 133, 133) !important;
+    background-color: rgb(0, 133, 133) !important;
+}
+.el-select-dropdown__list {
+    margin: 0 !important;
+}
+.el-select__popper.el-popper[role=tooltip] {
+    background: var(--el-color-white);
+    border: 1px solid var(--el-bg-color) !important;
+    // box-shadow: var(--el-box-shadow-light);
+}
+.el-form-item--default {
+    margin-right: 0px !important;
+}
+.el-form-item--default .el-form-item__label {
+    height: 26px !important;
+    padding-right: 2px !important;
+}
+#container {
+    // font-family: SimSun !important;
+    color: black;
+}
+.title {
+    text-align: center;
+    vertical-align: middle;
+    font-weight: bold;
+    font-family: SimSun !important;
+}
+.el-cascader {
+    line-height: 0px;
+    width: 100%;
+}
+.label-emphasize .el-form-item__label {
+    color: black;
+    font-weight: bold;
+}
+.label-emphasize-light .el-form-item__label {
+    // color: black;
+    font-weight: bold;
+}
+.el-button--small {
+    padding: 5px 11px !important;
+}
+.el-button.remove-diag {
+    margin-top: 4px;
+    height: 19px !important;
+    width: 19px !important;
+    border: 1px solid rgb(219, 219, 219) !important;
+    background-color: rgb(219, 219, 219) !important;
+}
+.el-button.remove-diag:hover {
+    color: rgb(255, 255, 255) !important;
+    border: 1px solid rgb(201, 45, 45) !important;
+    background-color: rgb(201, 45, 45) !important;
+}
+.el-button.add-diag {
+    margin-top: .5rem;
+    font: 0.8em sans-serif;
+    height: 1.5rem !important;
+    width: 5rem !important;
+    // border: none !important;
+    // background-color: rgb(235, 235, 235) !important;
+}
+.el-button.add-op {
+    margin-top: .2rem;
+    font: 0.8em sans-serif;
+    height: 1.5rem !important;
+    width: 5rem !important;
+}
+.el-button.remove-op {
+    margin-top: .2rem;
+    height: 95% !important;
+    width: 90% !important;
+    border: 1px solid rgb(219, 219, 219) !important;
+    background-color: rgb(219, 219, 219) !important;
+}
+.el-button.remove-op:hover {
+    color: rgb(255, 255, 255) !important;
+    border: 1px solid rgb(201, 45, 45) !important;
+    background-color: rgb(201, 45, 45) !important;
+}
+.el-textarea__inner {
+    padding: 4px 11px 0px !important;
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+    // border: .1px solid rgb(0,0,0,0.2) !important;
+    border-radius: 0% !important;
+    line-height: 1.1 !important;
+}
+.el-textarea__inner:hover {
+    box-shadow: 0 0 0px rgb(0, 133, 133) !important;
+    background-color: rgb(245, 245, 245) !important;
+
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+}
+.el-textarea__inner:focus {
+    box-shadow: 0 0 0px rgb(0, 133, 133) !important;
+    background-color: rgb(228, 228, 228) !important;
+
+    box-shadow: 0px 0.5px 0px rgb(78, 78, 78) !important;
+}
+.el-textarea.el-input--default {
+    padding-top: 0px !important;
+    line-height: 0 !important;
+}
+.el-form--inline .el-form-item {
+    height: 26px !important;
+}
+.el-form-item .el-form-item--default {
+    height: 26px !important;
+}
+.hover-shadow:hover {
+    // padding: 5px 5px 5px 5px;
+    background-color: rgb(215, 255, 255);
+    box-shadow: 2px 2px 1px rgb(0, 0, 0, 0.5);
+}
+.operations .el-form-item {
+    font-weight: normal !important;
+    height: 23px !important;
+}
+.w-6 {
+    width: 6rem !important;
+}
+.w-7 {
+    width: 7rem !important;
+}
+.w-8 {
+    width: 8rem !important;
+    margin-right: 1rem !important;
+}
+.w-9 {
+    width: 9rem !important;
+}
+.w-10 {
+    width: 10rem !important;
+}
+.w-11 {
+    width: 11rem !important;
+}
+.w-12 {
+    width: 12rem !important;
+}
+.w-13 {
+    width: 13rem !important;
+}
+.w-14 {
+    width: 14rem !important;
+}
+.w-15 {
+    width: 15rem !important;
+}
+.w-16 {
+    width: 16rem !important;
+}
+.w-17 {
+    width: 17rem !important;
+}
+.w-18 {
+    width: 18rem !important;
+}
+.w-19 {
+    width: 19rem !important;
+}
+.w-20 {
+    width: 20rem !important;
+}
+.w-21 {
+    width: 21rem !important;
+}
+.w-22 {
+    width: 22rem !important;
+}
+.w-23 {
+    width: 23rem !important;
+}
+.w-24 {
+    width: 24rem !important;
+}
+.w-25 {
+    width: 25rem !important;
+}
+.mr-1 {
+    margin-right: 1rem !important;
+}
+.mr-2 {
+    margin-right: 2rem !important;
+}
+.mr-3 {
+    margin-right: 3rem !important;
+}
+.mr-4 {
+    margin-right: 4rem !important;
+}
+.mr-5 {
+    margin-right: 5rem !important;
+}
+.mr-6 {
+    margin-right: 6rem !important;
+}
+.mr-7 {
+    margin-right: 7rem !important;
+}
+.mr-8 {
+    margin-right: 8rem !important;
+}
+.mr-9 {
+    margin-right: 9rem !important;
+}
+.mr-10 {
+    margin-right: 10rem !important;
+}
+.mr-11 {
+    margin-right: 11rem !important;
+}
+.mr-12 {
+    margin-right: 12rem !important;
+}
+.mr-13 {
+    margin-right: 13rem !important;
+}
+.mr-14 {
+    margin-right: 14rem !important;
+}
+.mr-15 {
+    margin-right: 15rem !important;
+}
+.mr-16 {
+    margin-right: 16rem !important;
+}
+.mr-17 {
+    margin-right: 17rem !important;
+}
+.mr-18 {
+    margin-right: 18rem !important;
+}
+.cancel:hover {
+    background-color:#c92d2d !important;
+    border: 1px solid rgb(201, 45, 45) !important;
+}
+</style>
