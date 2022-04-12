@@ -4,6 +4,7 @@ import Main from '../views/Main.vue'
 import Homepage from '../views/Homepage.vue'
 import Success from '../views/Success.vue'
 import View from '../views/View.vue'
+import SubmitSpecialties from '../views/SubmitSpecialties.vue'
 
 const routes = [
   {
@@ -26,7 +27,11 @@ const routes = [
     name: 'View',
     component: View
   },
-  
+  {
+    path: '/submit-specialties',
+    name: 'SubmitSpecialties',
+    component: SubmitSpecialties
+  }
 ]
 
 const router = createRouter({
