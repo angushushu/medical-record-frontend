@@ -1,25 +1,36 @@
 <template>
     <div class="container">
-        <el-upload
-            ref="upload"
-            action="http://127.0.0.1:8000/api/v1/upload-standards/"
-            accept=".xml"
-            :limit="1"
-            :on-exceed="handleExceed"
-            :auto-upload="false"
-        >
-            <template #trigger>
-            <el-button type="primary">select file</el-button>
-            </template>
-            <el-button class="ml-3" type="success" @click="submitUpload">
-            upload to server
-            </el-button>
-            <template #tip>
-            <div class="el-upload__tip text-red">
-                limit 1 file, new file will cover the old file
-            </div>
-            </template>
-        </el-upload>
+        <div style="max-width:59rem !important; margin-left:auto !important; margin-right:auto !important;">
+            <el-row justify="center">
+                <div class="title" style="margin: 3rem 0">
+                    <h1>标 准 上 传</h1>
+                </div>
+            </el-row>
+            <el-row justify="center">
+                <el-upload
+                ref="upload"
+                action="http://127.0.0.1:8000/api/v1/upload-standards/"
+                accept=".xml"
+                :limit="1"
+                :on-exceed="handleExceed"
+                :auto-upload="false"
+                style="width:30rem !important"
+                >
+                    <template #trigger>
+                    <el-button type="primary">选择</el-button>
+                    </template>
+                    <el-button class="ml-3" type="success" @click="submitUpload">
+                    上传
+                    </el-button>
+                    <template #tip>
+                    <div class="el-upload__tip text-red" style="margin-top:.7rem">
+                        仅限xml文件，旧文件将被覆盖
+                    </div>
+                    </template>
+                </el-upload>
+            </el-row>
+
+        </div>
     </div>
 </template>
 
@@ -41,3 +52,10 @@ const submitUpload = () => {
   upload.value!.submit()
 }
 </script>
+
+<style>
+.el-upload {
+    display: inline !important;
+    margin-right: 1rem !important;
+}
+</style>
