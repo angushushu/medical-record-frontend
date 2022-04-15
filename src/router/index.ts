@@ -43,7 +43,7 @@ const routes = [
         component:Specialties,
       },
       {
-        path:'submit-specialities',
+        path:'submit-specialties',
         component:SubmitSpecialties
       }
     ]

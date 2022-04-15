@@ -1875,6 +1875,11 @@ export default {
                                     label: '脾胃病科专业'
                                 }
                             ]
+                        },
+                        {
+                            value: '02',
+                            label: '测试用',
+                            children: []
                         }
                     ]
                 },
