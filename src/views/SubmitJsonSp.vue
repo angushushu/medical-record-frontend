@@ -9,8 +9,8 @@
             <el-row justify="center">
                 <el-upload
                 ref="upload"
-                action="http://127.0.0.1:8000/api/v1/upload-standards/"
-                accept=".xml"
+                action="http://127.0.0.1:8000/api/v1/upload-std/json-sp/"
+                accept=".json"
                 :limit="1"
                 :on-exceed="handleExceed"
                 :auto-upload="false"

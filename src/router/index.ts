@@ -4,7 +4,7 @@ import Main from '../views/Main.vue'
 import Homepage from '../views/Homepage.vue'
 import Success from '../views/Success.vue'
 import View from '../views/View.vue'
-import SubmitSpecialties from '../views/SubmitSpecialties.vue'
+import SubmitJsonSp from '../views/SubmitJsonSp.vue'
 import EditStandards from '../views/EditStandards.vue'
 import Specialties from '../views/Specialties.vue'
 
@@ -39,12 +39,12 @@ const routes = [
     component: EditStandards,
     children:[
       {
-        path:'specialties',
+        path:'specialties/:name',
         component:Specialties,
       },
       {
         path:'submit-specialties',
-        component:SubmitSpecialties
+        component:SubmitJsonSp
       }
     ]
   },

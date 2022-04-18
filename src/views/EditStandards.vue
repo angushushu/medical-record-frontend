@@ -4,11 +4,26 @@
           <el-scrollbar>
             <el-menu
                 default-active='/edit-standards/specialties'
+                :default-openeds="['/edit-standards/specialties']"
                 @select="menuSelect"
             >
-                <el-menu-item index='/edit-standards/specialties'>
-                    科别
-                </el-menu-item>
+                <el-sub-menu index="1">
+                    <template #title>科别</template>
+                    <el-sub-menu index="1-1">
+                        <template #title>查看&修改</template>
+                        <el-menu-item index="1-1-1">sp1</el-menu-item>
+                    </el-sub-menu>
+                    <el-menu-item-group>
+                        <el-menu-item index='/edit-standards/specialties'>
+                            查看&修改
+                        </el-menu-item>
+                        <el-menu-item index='/edit-standards/submit-specialties'>
+                            上传json
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-sub-menu>
+
+                
             </el-menu>
         </el-scrollbar>
       </el-aside>

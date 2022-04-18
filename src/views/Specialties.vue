@@ -12,22 +12,25 @@
 import axios from "axios"
 import { reactive } from "vue"
 import { onMounted } from "vue-demi"
+import { useRoute } from "vue-router"
 
 // interface Tree {
 //     label: string
 //     children?: Tree[]
 // }
 let data = reactive([])
+const router = useRoute()
 const handleNodeClick = (data) => {
   console.log(data)
 }
 const updateData = onMounted(async ()=>{
+    const name = router.params.name
     await axios
-        .get('/api/v1/get-standards/')
+        .get('/api/v1/get-spstd/',{params:{name:name}})
         .then(
             response=>{
                 data.length=0
-                response.data.specialty1_list.forEach(sp1=>{
+                response.data.spstd.specialty1.forEach(sp1=>{
                     console.log(sp1)
                     sp1.children = sp1.specialty2
                     sp1.children.forEach(sp2=>{
