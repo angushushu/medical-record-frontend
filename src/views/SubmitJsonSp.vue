@@ -35,11 +35,13 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { getCurrentInstance, onMounted, ref } from 'vue'
 import { genFileId } from 'element-plus'
 import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 
+// const PARENT_PROVIDE = 'parentProvide'
 const upload = ref<UploadInstance>()
+const emit = defineEmits(['on-save-ok'])
 
 const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.clearFiles()
@@ -50,7 +52,19 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 
 const submitUpload = () => {
   upload.value!.submit()
+  console.log('parent')
+  emit('on-save-ok','111')
+  
+//   instance.parent.methods.updateData()
 }
+
+// onMounted(()=>{
+//     const parent = inject(PARENT_PROVIDE)
+//     console.log('parent root:', parent)
+
+//     const parentFunc = inject(`${PARENT_PROVIDE}/test`)
+    
+// })
 </script>
 
 <style>

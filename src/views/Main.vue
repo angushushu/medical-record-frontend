@@ -115,7 +115,7 @@ const handleDelete = async (index: number, row: Homepage) => {
     console.log(row.id)
     await axios
         .get('/api/v1/del-homepage/',{params:{id:row.id}})
-        .then(response=>{
+        .then(response=>{ // 可以改一下
             console.log(response)
             updateData()
         })
