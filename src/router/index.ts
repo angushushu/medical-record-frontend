@@ -29,11 +29,6 @@ const routes = [
     name: 'View',
     component: View
   },
-  // {
-  //   path: '/submit-specialties',
-  //   name: 'SubmitSpecialties',
-  //   component: SubmitSpecialties
-  // },
   {
     path: '/edit-standards',
     component: EditStandards,
@@ -44,7 +39,7 @@ const routes = [
       },
       {
         path:'submit-specialties',
-        component:SubmitJsonSp
+        component:SubmitJsonSp,
       }
     ]
   },

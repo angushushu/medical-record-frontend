@@ -1,6 +1,6 @@
 <template>
     <div class="container">
-        <div style="max-width:59rem !important; margin-left:auto !important; margin-right:auto !important;">
+        <div style="max-width:59rem !important; margin-left:10% !important; margin-right:auto !important;">
             <el-row justify="center">
                 <div class="title" style="margin: 3rem 0">
                     <h1>标 准 上 传</h1>
@@ -13,6 +13,7 @@
                 accept=".json"
                 :limit="1"
                 :on-exceed="handleExceed"
+                :on-success="submitDone"
                 :auto-upload="false"
                 style="width:30rem !important"
                 >
@@ -41,7 +42,7 @@ import type { UploadInstance, UploadProps, UploadRawFile } from 'element-plus'
 
 // const PARENT_PROVIDE = 'parentProvide'
 const upload = ref<UploadInstance>()
-const emit = defineEmits(['on-save-ok'])
+const emit = defineEmits(['list-change'])
 
 const handleExceed: UploadProps['onExceed'] = (files) => {
   upload.value!.clearFiles()
@@ -51,20 +52,14 @@ const handleExceed: UploadProps['onExceed'] = (files) => {
 }
 
 const submitUpload = () => {
-  upload.value!.submit()
-  console.log('parent')
-  emit('on-save-ok','111')
-  
+    upload.value!.submit()  
 //   instance.parent.methods.updateData()
 }
 
-// onMounted(()=>{
-//     const parent = inject(PARENT_PROVIDE)
-//     console.log('parent root:', parent)
+const submitDone = ()=>{
+    emit('list-change','111')
+}
 
-//     const parentFunc = inject(`${PARENT_PROVIDE}/test`)
-    
-// })
 </script>
 
 <style>

@@ -1,31 +1,41 @@
 <template>
     <el-container>
-      <el-aside width="200px" class="side">
+      <el-aside width="15rem" class="side">
           <el-scrollbar>
             <el-menu
+                active-text-color="#dfffff"
+                background-color="#008585"
+                text-color="#fff"
                 default-active='/edit-standards/submit-specialties'
                 :default-openeds="['1']"
                 @select="menuSelect"
             >
-                <el-sub-menu index="1">
-                    <template #title>科别</template>
-                    <el-menu-item-group>
-                        <el-sub-menu
-                    index="1-1"
-                    >
-                        <template #title>查看&修改</template>
+                <el-sub-menu index="1" class="specialty">
+                    <template #title class="specialty-title">科别</template>
+                    <!-- <el-menu-item-group> -->
+                        <el-sub-menu index="1-1" class="check">
+                            <template #title>查看&修改</template>
                             <el-menu-item
-                            v-for="spstd in spstd_list"
-                            :key="spstd.name"
-                            :index="'/edit-standards/specialties/'+spstd.name"
-                            >
-                            {{spstd.name}}
+                                v-for="spstd in spstd_list"
+                                :key="spstd.name"
+                                :index="'/edit-standards/specialties/'+spstd.name"
+                                >
+                                {{spstd.name}}
                             </el-menu-item>
+                            
                         </el-sub-menu>
                         <el-menu-item index='/edit-standards/submit-specialties'>
                             上传json
                         </el-menu-item>
-                    </el-menu-item-group>
+                            
+                            <!-- <template #title>item four</template>
+                            <el-menu-item index="1-4-1">item one</el-menu-item> -->
+                        <!-- </el-sub-menu> -->
+                        <!-- <el-sub-menu
+                        index="1-1"
+                        > -->
+                        
+                    <!-- </el-menu-item-group> -->
                 </el-sub-menu>
 
                 
@@ -34,7 +44,7 @@
       </el-aside>
       <el-main class="main">
             <router-view
-            @onSaveOk="paymentTest"
+            @listChange="update"
             ></router-view>
           
       </el-main>
@@ -43,7 +53,7 @@
 
 <script lang="ts" setup>
 import axios from "axios"
-import { provide, ref } from "vue"
+import { h, provide, ref, render } from "vue"
 import { onMounted, reactive, watch } from "vue-demi"
 import { useRouter, useRoute } from "vue-router"
 
@@ -53,8 +63,8 @@ interface SpecialtyStd {
 let spstd_list:SpecialtyStd[] = reactive([])
 const router = useRouter()
 const route = useRoute()
-const updateData = async ()=>{
-    console.log('updateData')
+const updateList = async ()=>{
+    console.log('updateList')
     await axios.get('/api/v1/get-spstds/')
         .then(response=>{
             spstd_list.length = 0
@@ -69,25 +79,20 @@ const updateData = async ()=>{
         })
 }
 const menuSelect = (val)=>{
-    console.log(val)
+    console.log('going to:',val)
     router.push(val)
-        .then(()=>{
-            console.log("let's update here")
-            updateData()
-        })
 }
-
-// const paymentDlg = ref(null)
-const paymentTest = (content)=>{console.log(content)}
-// const test = ()=>{
-//     console.log('test')
-// }
-
-// const root = ref(null)
-// const PARENT_PROVIDE = 'parentProvide'
-// provide(PARENT_PROVIDE, root)
-// provide(`${PARENT_PROVIDE}/test`, test)
-onMounted(updateData)
+const update = async (content)=>{
+    spstd_list.length = 0
+    await updateList()
+        .then(()=>{
+            console.log('updateList finished, replacing route')
+            router.replace({path: '/edit-standards/submit-specialties'})
+            console.log(spstd_list)
+        })
+    
+}
+onMounted(updateList)
 </script>
 
 <style>
@@ -103,9 +108,16 @@ body, html {
     height: 100% !important;
 }
 .side {
-    background-color: aqua;
+    background-color: white;
 }
 .main {
-    background-color: aquamarine;
+    box-shadow: 0 -5px 5px #dbdbdb inset;
+    border-left: 0px solid #f5f7fa !important;
 }
+.el-menu {
+    border-right: 0px;
+    /* --el-menu-border-color: white; */
+    height: 100%;
+}
+
 </style>
