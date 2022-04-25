@@ -15,6 +15,7 @@ import axios from 'axios'
 axios.defaults.baseURL = 'http://127.0.0.1:8000'
 
 const app = createApp(App)
+app.config.globalProperties.$api = "http://127.0.0.1:8000/api/v1/"
 
 app.use(store).use(router).use(ElementPlus, {locale})
 app.mount('#app')

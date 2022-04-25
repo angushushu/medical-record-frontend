@@ -4,7 +4,8 @@ import Main from '../views/Main.vue'
 import Homepage from '../views/Homepage.vue'
 import Success from '../views/Success.vue'
 import View from '../views/View.vue'
-import SubmitJsonSp from '../views/SubmitJsonSp.vue'
+import UploadJsonSp from '../views/UploadJsonSp.vue'
+import UploadXlsSp from '../views/UploadXlsSp.vue'
 import EditStandards from '../views/EditStandards.vue'
 import Specialties from '../views/Specialties.vue'
 
@@ -38,8 +39,12 @@ const routes = [
         component:Specialties,
       },
       {
-        path:'submit-specialties',
-        component:SubmitJsonSp,
+        path:'upload-json-sp',
+        component:UploadJsonSp,
+      },
+      {
+        path:'upload-xls-sp',
+        component:UploadXlsSp,
       }
     ]
   },

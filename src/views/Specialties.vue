@@ -154,7 +154,7 @@ const handleSpClick = (data)=>{
     editDialogVisible.value = true
 }
 const updateData = async ()=>{
-    if(router.path==='/edit-standards/submit-specialties') // 不知道为啥路由变了还会运行
+    if(router.path==='/edit-standards/upload-json-sp') // 不知道为啥路由变了还会运行
         return
     id.value = router.params.id
     console.log(router.path)

@@ -6,8 +6,8 @@
                 active-text-color="#84cece"
                 background-color="#008585"
                 text-color="#fff"
-                default-active='/edit-standards/submit-specialties'
-                :default-openeds="['1']"
+                default-active='/edit-standards/upload-json-sp'
+                :default-openeds="['1','1-2']"
                 @select="menuSelect"
             >
                 <el-sub-menu index="1" class="specialty">
@@ -25,9 +25,15 @@
                             </el-menu-item>
                             
                         </el-sub-menu>
-                        <el-menu-item index='/edit-standards/submit-specialties'>
-                            上传json
-                        </el-menu-item>
+                        <el-sub-menu index="1-2">
+                            <template #title>上传标准</template>
+                            <el-menu-item index='/edit-standards/upload-json-sp'>
+                                上传json
+                            </el-menu-item>
+                            <el-menu-item index='/edit-standards/upload-xls-sp'>
+                                上传xls
+                            </el-menu-item>
+                        </el-sub-menu>
                         <el-menu-item index='' @click="newSpStd">
                             新建标准
                         </el-menu-item>
@@ -130,13 +136,13 @@ const update = async (content)=>{
         .then(()=>{
             if(content!=='stay'){
                 console.log('updateList finished, replacing route')
-                router.replace({path: '/edit-standards/submit-specialties'})
+                router.replace({path: '/edit-standards/upload-json-sp'})
             }
             // if(content==='stay'){
             //     console.log('updateList finished, stay where you are')
             // }else{
             //     console.log('updateList finished, replacing route')
-            //     router.replace({path: '/edit-standards/submit-specialties'})
+            //     router.replace({path: '/edit-standards/upload-json-sp'})
             // }
             console.log(spstd_list)
         })
