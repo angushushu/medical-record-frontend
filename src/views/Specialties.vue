@@ -67,9 +67,16 @@
             </template>
         </el-dialog>
 
-        <el-row justify="end">
-            <el-button class="add-sp1" @click="append(data)">添加科别</el-button>
-            <el-button class="remove-spstd" @click="removeSpStd(name)">删除</el-button>
+        <el-row justify="space-between">
+            <span style="margin-top:1rem">
+                <el-button class="rename-spstd" @click="rename()">{{name}}</el-button>
+            </span>
+            <span>
+                <el-button class="add-sp1" @click="append(data)">添加科别</el-button>
+                <el-button class="add-sp1" @click="applySpStd(id)">应用</el-button>
+                <el-button class="remove-spstd" @click="removeSpStd(id)">删除</el-button>
+            </span>
+            
         </el-row>
         <el-tree
         :data="list"
@@ -128,7 +135,8 @@ let editingSpData = ref(null)
 let tempSpData = ref(null)
 let appendData = ref(null)
 
-let name = router.params.name
+let id = ref(router.params.id)
+let name = ref('')
 const emit = defineEmits(['list-change'])
 let editDialogVisible = ref(false)
 let addDialogVisible = ref(false)
@@ -148,13 +156,14 @@ const handleSpClick = (data)=>{
 const updateData = async ()=>{
     if(router.path==='/edit-standards/submit-specialties') // 不知道为啥路由变了还会运行
         return
-    name = router.params.name
+    id.value = router.params.id
     console.log(router.path)
-    console.log('这里是'+name)
+    console.log('这里是'+id.value)
     await axios
-        .get('/api/v1/get-spstd/',{params:{name:name}})
+        .get('/api/v1/get-spstd/',{params:{id:id.value}})
         .then(
             response=>{
+                name.value = response.data.spstd.name
                 list.value.length=0
                 response.data.spstd.specialty1.forEach(sp1=>{
                     // console.log(sp1)
@@ -185,29 +194,44 @@ const isNotSp3 = (node)=>{
     }
 }
 const append = (data) => {
-    // console.log('node:',node)
-    // console.log('node.parent:',node.parent)
-    // console.log('node.parent.data:',node.parent.data)
-    // console.log('list:',list)
-    // console.log('node.parent===list?',node.parent.data===list.value)
-    // if(!node)
-    //     console.log('sp1')
-    // else if(node.parent===list)
-    //     console.log('sp2')
-    // else if(node.parent.parent===list)
-    //     console.log('sp3')
     tempSpData.value = {value:'',label:'',description:''}
     addDialogVisible.value = true
     console.log('tempSpData:',tempSpData)
     appendData = data
     console.log('appendData:',appendData)
 }
+const rename = async ()=>{
+    await ElMessageBox.prompt('请输入标准新名称', '重命名', {
+        confirmButtonText: '修改',
+        cancelButtonText: '取消',
+        inputErrorMessage: '你有问题啊',
+        inputValue: name.value,
+    })
+    .then(({ value }) => {
+        ElMessage({
+            type: 'success',
+            message: `重命名为:${value}`,
+        })
+        // console.log('现在的名字：',name.value)
+        name.value = value
+        console.log('现在的名字：',name.value)
+        updateSps()
+    })
+    .catch(() => {
+        ElMessage({
+            type: 'info',
+            message: '动作已取消',
+        })
+    })
+}
 const updateSps = async () => {
+    console.log('when updating, name:',name.value)
     loading.value = true
-    await axios.post('api/v1/update-standard/specialty/',{'name':name,'specialty1':list.value})
+    await axios.post('api/v1/update-standard/specialty/',{'id':id.value,'name':name.value,'specialty1':list.value})
         .then(response=>{
             console.log('submitted and got response:')
             console.log(response)
+            emit('list-change','stay')
         })
         .catch(error=>{
             console.log(error)
@@ -222,14 +246,47 @@ const removeNode = async (node, data) => {
     console.log(list)
     await updateSps()
 }
-const removeSpStd = async (name) => {
-    console.log('removing '+name)
-    await axios.post('api/v1/remove-spstd',{name:name})
+const applySpStd = async(id) => {
+    console.log('applying '+id)
+    await ElMessageBox.confirm(
+        '这将改变病案首页的科别标准，你确定吗？',
+        '警告！',
+        {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning',
+        }
+    ).then(() => {
+        loading.value = true
+        axios.post('api/v1/set-standard/specialty/',{id:id})
+            .then(response=>{
+                console.log(response)
+                emit('list-change','stay')
+            })
+            .catch(error=>{
+                console.log(error)
+            })
+        loading.value = false
+        ElMessage({
+            type: 'success',
+            message: '标准更改成功',
+        })
+    }).catch(() => {
+        ElMessage({
+            type: 'info',
+            message: '动作已取消',
+        })
+    })
+    
+}
+const removeSpStd = async (id) => {
+    console.log('removing '+id)
+    await axios.post('api/v1/remove-spstd',{id:id})
         .then(response=>{
             console.log(response)
-            emit('list-change','111')
+            emit('list-change','stay')
         })
-        .catch((error)=>{
+        .catch(error=>{
             console.log(error)
         })
 }
@@ -380,6 +437,20 @@ onMounted(updateData)
 .remove-node:hover {
     color: rgb(201, 45, 45) !important;
 }
+.rename-spstd {
+    font-size: 150%;
+    font-weight: bold;
+    padding-left: 0%;
+    border: 0px !important;
+    background-color: transparent !important;
+}
+.rename-spstd:hover {
+    font-weight: bold;
+    color: rgb(0, 133, 133) !important;
+    padding-left: 0%;
+    border: 0px !important;
+    background-color: transparent !important;
+}
 .check-node {
     border: 0ch !important;
     background-color: transparent !important;
@@ -395,9 +466,5 @@ onMounted(updateData)
 }
 .el-textarea__inner {
     top:5px !important;
-}
-.el-tree-node__content {
-    /* border-radius: 1rem; */
-    /* padding-left: 5px !important; */
 }
 </style>

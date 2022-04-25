@@ -1858,32 +1858,6 @@ export default {
             ],
             // 待补充
             specialties: [
-                {
-                    value: '50',
-                    label: '中医科',
-                    children: [
-                        {
-                            value: '01',
-                            label: '内科专业',
-                            children: [
-                                {
-                                    value: '01',
-                                    label: '肺病科专业'
-                                },
-                                {
-                                    value: '02',
-                                    label: '脾胃病科专业'
-                                }
-                            ]
-                        },
-                        {
-                            value: '02',
-                            label: '测试用',
-                            children: []
-                        }
-                    ]
-                },
-                {}
             ],
             ad_conditions: [
                 {
@@ -2095,6 +2069,7 @@ export default {
     },
     mounted() {
         document.title = '住院病案首页'
+        this.loadStandard()
     },
     computed: {
         idNumVal: {
@@ -2117,6 +2092,17 @@ export default {
         }
     },
     methods: {
+        async loadStandard() {
+            await axios.get('/api/v1/get-standard/specialty')
+                    .then(response=>{
+                        console.log('appliedspstd:',response)
+                        this.specialties = response.data.specialties
+                        console.log('current specialties:',this.specialties)
+                    })
+                    .catch(error=>{
+                        console.log(error)
+                    })
+        },
         presentAddrOnChange(val) {
             console.log(val)
             // this.form.present_zip = val[val.length-1]

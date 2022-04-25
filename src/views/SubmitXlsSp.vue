@@ -3,13 +3,13 @@
         <div style="max-width:59rem !important; margin-left:10% !important; margin-right:auto !important;">
             <el-row justify="center">
                 <div class="title" style="margin: 3rem 0">
-                    <h1>JSON 标 准 上 传</h1>
+                    <h1>XLS 标 准 上 传</h1>
                 </div>
             </el-row>
             <el-row justify="center">
                 <el-upload
                 ref="upload"
-                action="http://127.0.0.1:8000/api/v1/upload-std/json-sp/"
+                action="http://127.0.0.1:8000/api/v1/upload-std/xls-sp/"
                 accept=".json"
                 :limit="1"
                 :on-exceed="handleExceed"

@@ -34,7 +34,7 @@ const routes = [
     component: EditStandards,
     children:[
       {
-        path:'specialties/:name',
+        path:'specialties/:id',
         component:Specialties,
       },
       {
