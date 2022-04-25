@@ -284,7 +284,7 @@ const removeSpStd = async (id) => {
     await axios.post('api/v1/remove-spstd',{id:id})
         .then(response=>{
             console.log(response)
-            emit('list-change','stay')
+            emit('list-change','111')
         })
         .catch(error=>{
             console.log(error)
