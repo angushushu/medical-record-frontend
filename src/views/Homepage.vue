@@ -1,5 +1,5 @@
 <template>
-    <div id="container">
+    <div class="container">
         <el-row justify="center">
             <!-- <el-col :span="5"></el-col> -->
             <!-- <el-col style="width:auto"></el-col> -->
@@ -1105,7 +1105,7 @@ export default {
                 parent_birthplace: [],
                 ethnicity: '',
                 id_type: '',
-                id_num: '',
+                // id_num: '',
 
                 id_card_num: '',
                 passport_num: '',
@@ -2509,7 +2509,7 @@ export default {
     height: 26px !important;
     padding-right: 2px !important;
 }
-#container {
+.container {
     // font-family: SimSun !important;
     color: black;
 }

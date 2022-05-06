@@ -8,6 +8,7 @@ import UploadJsonSp from '../views/UploadJsonSp.vue'
 import UploadXlsSp from '../views/UploadXlsSp.vue'
 import EditStandards from '../views/EditStandards.vue'
 import Specialties from '../views/Specialties.vue'
+import SettlementList from '../views/SettlementList.vue'
 
 const routes = [
   {
@@ -47,6 +48,11 @@ const routes = [
         component:UploadXlsSp,
       }
     ]
+  },
+  {
+    path: '/settlement-list',
+    name: 'SettlementList',
+    component: SettlementList,
   },
 ]
 
