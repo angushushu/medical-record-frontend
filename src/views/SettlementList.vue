@@ -86,7 +86,7 @@
                         </el-form-item>
                 </el-row>
                 <el-row class="label-emphasize">
-                    <el-form-item label="民族" class="w-16">
+                    <el-form-item label="民族" class="w-12 mr-3">
                         <el-select v-model="form.ethnicity" placeholder="民族" filterable style="width:100%">
                             <el-option
                                 v-for="eth in ethnicities"
@@ -96,7 +96,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="证件类型" class="w-12 mr-3">
+                    <el-form-item label="患者证件类型" class="w-12 mr-3">
                         <el-select v-model="form.id_type" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="type in id_types"
@@ -106,12 +106,172 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="证件号" class="w-13 mr-3">
+                    <el-form-item label="患者证件号" class="w-13 mr-3">
                         <el-input 
                         v-model="idNumVal"
                         :disabled="this.form.id_type===''"
                         ></el-input>
                     </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="职业" class="w-12 mr-3">
+                        <el-select v-model="form.profession" placeholder="请选择" style="width:100%">
+                            <el-option
+                                v-for="job in professions"
+                                :key="job.value"
+                                :label="job.label"
+                                :value="job.value"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="现住址" class="w-15">
+                        <!-- <elui-china-area-dht :leave="3" @change="presentAddrOnChange" style="width:100%"></elui-china-area-dht> -->
+                        <el-cascader
+                            size="large"
+                            :options="locations"
+                            v-model="form.present_addr1"
+                            style="width:100%"
+                            @change="presentAddrOnChange"
+                            >
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item class="w-18 mr-1">
+                        <el-input v-model="form.present_addr2"></el-input>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="工作单位及地址" class="w-15">
+                        <!-- <elui-china-area-dht :leave="3" @change="workAddrOnChange" style="width:100%"></elui-china-area-dht> -->
+                        <el-cascader
+                            size="large"
+                            :options="locations"
+                            v-model="form.work_addr1"
+                            style="width:100%"
+                            >
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item class="w-18 mr-1">
+                        <el-input v-model="form.work_addr2"></el-input>
+                    </el-form-item>
+                    <el-form-item label="电话" class="w-14 mr-1">
+                        <el-input v-model="form.work_phone"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮编" class="w-9">
+                        <el-input v-model="form.work_zip"></el-input>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="联系人姓名" class="label-emphasize w-12 mr-1">
+                        <el-input v-model="form.contact_name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="关系" class="w-8 mr-1">
+                        <el-select v-model="form.contact_relation" placeholder="请选择">
+                            <el-option
+                                v-for="rel in contact_relations"
+                                :key="rel.value"
+                                :label="rel.label"
+                                :value="rel.value"
+                                :disabled="rel.disabled"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="地址" class="w-14">
+                        <el-cascader
+                        size="large"
+                        :options="locations"
+                        v-model="form.contact_addr1"
+                        style="width:100%"
+                        >
+                        </el-cascader>
+                    </el-form-item>
+                    <el-form-item class="w-10 mr-1">
+                        <el-input v-model="form.contact_addr2"></el-input>
+                    </el-form-item>
+                    <el-form-item label="电话" class="w-8">
+                        <el-input v-model="form.contact_phone"></el-input>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="医保类型" class="w-12 mr-3">
+                        <el-select v-model="form.settlement_type" placeholder="请选择" style="width:100%">
+                            <el-option
+                                v-for="type in settlement_types"
+                                :key="type.value"
+                                :label="type.label"
+                                :value="type.value"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="特殊人员类型" class="w-12 mr-3">
+                        <el-select v-model="form.special_person_type" placeholder="请选择" style="width:100%">
+                            <el-option
+                                v-for="type in special_person_types"
+                                :key="type.value"
+                                :label="type.label"
+                                :value="type.value"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="参保地" class="w-12">
+                        <el-input v-model="form.settlement_loc"></el-input>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="新生儿入院类型" class="w-15 mr-3">
+                        <el-select
+                        v-model="form.newborn_admit_type"
+                        multiple
+                        collapse-tags
+                        collapse-tags-tooltip
+                        placeholder="请选择"
+                        style="width: 240px"
+                        >
+                        <el-option
+                            v-for="type in newborn_admit_types"
+                            :key="type.value"
+                            :label="type.label"
+                            :value="type.value"
+                        />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="新生儿出生体重（克）" :max="8000" class="w-16 mr-5">
+                        <el-input-number v-model="form.newborn_birth_weight" controls-position="right"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="新生儿入院体重（克）" :max="8000" class="w-15">
+                        <el-input-number v-model="form.newborn_admit_weight" controls-position="right"></el-input-number>
+                    </el-form-item>
+                </el-row>
+                <el-row v-show="form.contact_relation==='8'">
+                    <!-- 针对其他关系可进行说明 -->
+                    <el-form-item label="其他关系说明" class="w-18">
+                        <el-input v-model="form.contact_other_description"></el-input>
+                    </el-form-item>
+                </el-row>
+                <el-row class="subtitle">
+                    <p style="width: 100%; margin: .5rem 0 .5rem 0;">二、门诊慢特病诊疗信息</p>
+                </el-row>
+                <el-row>
+                    <el-form-item label="诊断科别" class="w-16 mr-2">
+                        <el-cascader
+                            v-model="form.diag_specialty"
+                            :options="specialties"
+                        ></el-cascader>
+                    </el-form-item>
+                    <el-form-item label="就诊日期" class="w-13">
+                        <el-date-picker 
+                        v-model="form.diag_date" 
+                        type="date" 
+                        format="YYYY/MM/DD"
+                        value-format="YYYY-MM-DD"
+                        placeholder="选择">
+                        </el-date-picker>
+                    </el-form-item>
+                </el-row>
+                <el-row class="subtitle">
+                    <p style="width: 100%; margin: .5rem 0 .5rem 0;">三、住院诊疗信息</p>
+                </el-row>
+                <el-row class="subtitle">
+                    <p style="width: 100%; margin: .5rem 0 .5rem 0;">四、医疗收费信息</p>
                 </el-row>
             </el-form>
         </div>
@@ -119,11 +279,20 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { computed, onMounted, reactive, ref } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
+import { regionData, CodeToText } from 'element-china-area-data'
+import axios from "axios";
+
+const getChinaData = ()=>{
+    if(regionData[regionData.length-1].label != '其他') {
+        regionData.push({value: '000000', label: '其他'})
+    }
+    return regionData
+}
 
 const formRef = ref<FormInstance>()
-const form = reactive({
+const form:any = reactive({
     list_sn: '',
     org_name: '',
     org_code: '',
@@ -141,6 +310,8 @@ const form = reactive({
     ethnicity: '',
     id_type: '',
     id_card_num: '',
+    passport_num: '',
+    officer_num: '',
     profession: '',
     present_addr1: '',
     present_addr2: '',
@@ -413,16 +584,27 @@ const form = reactive({
 })
 const formRules = reactive({
 })
+const loadStandard = onMounted(async ()=>{
+    await axios.get('/api/v1/get-standard/specialty')
+        .then(response=>{
+            console.log('appliedspstd:',response)
+            specialties.value = response.data.specialties
+            console.log('current specialties:',specialties)
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+})
 const genders = [
-        {
-            value: '1',
-            label: '男'
-        },
-        {
-            value: '2',
-            label: '女'
-        }
-    ]
+    {
+        value: '1',
+        label: '男'
+    },
+    {
+        value: '2',
+        label: '女'
+    }
+]
 const countries = [
     {
         label: '热门国家',
@@ -620,237 +802,415 @@ const countries = [
             {value:'Zaire',label:'扎伊尔'},
             {value:'Zambia',label:'赞比亚'}
         ]
-    }]
+}]
 const ethnicities = [
-                {
-                id: 1,
-                info: "汉族",
-                },
-                {
-                id: 2,
-                info: "壮族",
-                },
-                {
-                id: 3,
-                info: "满族",
-                },
-                {
-                id: 4,
-                info: "回族",
-                value: 4,
-                },
-                {
-                id: 5,
-                info: "苗族",
-                },
-                {
-                id: 6,
-                info: "维吾尔族",
-                },
-                {
-                id: 7,
-                info: "土家族",
-                },
-                {
-                id: 8,
-                info: "彝族",
-                },
-                {
-                id: 9,
-                info: "蒙古族",
-                },
-                {
-                id: 10,
-                info: "藏族",
-                },
-                {
-                id: 11,
-                info: "布依族",
-                },
-                {
-                id: 12,
-                info: "侗族",
-                },
-                {
-                id: 13,
-                info: "瑶族",
-                },
-                {
-                id: 14,
-                info: "朝鲜族",
-                },
-                {
-                id: 15,
-                info: "白族",
-                },
-                {
-                id: 16,
-                info: "哈尼族",
-                },
-                {
-                id: 17,
-                info: "哈萨克族",
-                },
-                {
-                id: 18,
-                info: "黎族",
-                },
-                {
-                id: 19,
-                info: "傣族",
-                },
-                {
-                id: 20,
-                info: "畲族",
-                },
-                {
-                id: 21,
-                info: "傈僳族",
-                },
-                {
-                id: 22,
-                info: "仡佬族",
-                },
-                {
-                id: 23,
-                info: "东乡族",
-                },
-                {
-                id: 24,
-                info: "高山族",
-                },
-                {
-                id: 25,
-                info: "拉祜族",
-                },
-                {
-                id: 26,
-                info: "水族",
-                },
-                {
-                id: 27,
-                info: "佤族",
-                },
-                {
-                id: 28,
-                info: "纳西族",
-                },
-                {
-                id: 29,
-                info: "羌族",
-                },
-                {
-                id: 30,
-                info: "土族",
-                },
-                {
-                id: 31,
-                info: "仫佬族",
-                },
-                {
-                id: 32,
-                info: "锡伯族",
-                },
-                {
-                id: 33,
-                info: "柯尔克孜族",
-                },
-                {
-                id: 34,
-                info: "达斡尔族",
-                },
-                {
-                id: 35,
-                info: "景颇族",
-                },
-                {
-                id: 36,
-                info: "毛南族",
-                },
-                {
-                id: 37,
-                info: "撒拉族",
-                },
-                {
-                id: 38,
-                info: "布朗族",
-                },
-                {
-                id: 39,
-                info: "塔吉克族",
-                },
-                {
-                id: 40,
-                info: "阿昌族",
-                },
-                {
-                id: 41,
-                info: "普米族",
-                },
-                {
-                id: 42,
-                info: "鄂温克族",
-                },
-                {
-                id: 43,
-                info: "怒族",
-                },
-                {
-                id: 44,
-                info: "京族",
-                },
-                {
-                id: 45,
-                info: "基诺族",
-                },
-                {
-                id: 46,
-                info: "德昂族",
-                },
-                {
-                id: 47,
-                info: "保安族",
-                },
-                {
-                id: 48,
-                info: "俄罗斯族",
-                },
-                {
-                id: 49,
-                info: "裕固族",
-                },
-                {
-                id: 50,
-                info: "乌孜别克族",
-                },
-                {
-                id: 51,
-                info: "门巴族",
-                },
-                {
-                id: 52,
-                info: "鄂伦春族",
-                },
-                {
-                id: 53,
-                info: "独龙族",
-                },
-                {
-                id: 54,
-                info: "塔塔尔族",
-                },
-                {
-                id: 55,
-                info: "赫哲族",
-                },
-                {
-                id: 56,
-                info: "珞巴族",
-                },
-                // 版权声明：本文为CSDN博主「码农陈冠希」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-                // 原文链接：https://blog.csdn.net/qq_48895397/article/details/121249251
-            ]
+    {
+    id: 1,
+    info: "汉族",
+    },
+    {
+    id: 2,
+    info: "壮族",
+    },
+    {
+    id: 3,
+    info: "满族",
+    },
+    {
+    id: 4,
+    info: "回族",
+    value: 4,
+    },
+    {
+    id: 5,
+    info: "苗族",
+    },
+    {
+    id: 6,
+    info: "维吾尔族",
+    },
+    {
+    id: 7,
+    info: "土家族",
+    },
+    {
+    id: 8,
+    info: "彝族",
+    },
+    {
+    id: 9,
+    info: "蒙古族",
+    },
+    {
+    id: 10,
+    info: "藏族",
+    },
+    {
+    id: 11,
+    info: "布依族",
+    },
+    {
+    id: 12,
+    info: "侗族",
+    },
+    {
+    id: 13,
+    info: "瑶族",
+    },
+    {
+    id: 14,
+    info: "朝鲜族",
+    },
+    {
+    id: 15,
+    info: "白族",
+    },
+    {
+    id: 16,
+    info: "哈尼族",
+    },
+    {
+    id: 17,
+    info: "哈萨克族",
+    },
+    {
+    id: 18,
+    info: "黎族",
+    },
+    {
+    id: 19,
+    info: "傣族",
+    },
+    {
+    id: 20,
+    info: "畲族",
+    },
+    {
+    id: 21,
+    info: "傈僳族",
+    },
+    {
+    id: 22,
+    info: "仡佬族",
+    },
+    {
+    id: 23,
+    info: "东乡族",
+    },
+    {
+    id: 24,
+    info: "高山族",
+    },
+    {
+    id: 25,
+    info: "拉祜族",
+    },
+    {
+    id: 26,
+    info: "水族",
+    },
+    {
+    id: 27,
+    info: "佤族",
+    },
+    {
+    id: 28,
+    info: "纳西族",
+    },
+    {
+    id: 29,
+    info: "羌族",
+    },
+    {
+    id: 30,
+    info: "土族",
+    },
+    {
+    id: 31,
+    info: "仫佬族",
+    },
+    {
+    id: 32,
+    info: "锡伯族",
+    },
+    {
+    id: 33,
+    info: "柯尔克孜族",
+    },
+    {
+    id: 34,
+    info: "达斡尔族",
+    },
+    {
+    id: 35,
+    info: "景颇族",
+    },
+    {
+    id: 36,
+    info: "毛南族",
+    },
+    {
+    id: 37,
+    info: "撒拉族",
+    },
+    {
+    id: 38,
+    info: "布朗族",
+    },
+    {
+    id: 39,
+    info: "塔吉克族",
+    },
+    {
+    id: 40,
+    info: "阿昌族",
+    },
+    {
+    id: 41,
+    info: "普米族",
+    },
+    {
+    id: 42,
+    info: "鄂温克族",
+    },
+    {
+    id: 43,
+    info: "怒族",
+    },
+    {
+    id: 44,
+    info: "京族",
+    },
+    {
+    id: 45,
+    info: "基诺族",
+    },
+    {
+    id: 46,
+    info: "德昂族",
+    },
+    {
+    id: 47,
+    info: "保安族",
+    },
+    {
+    id: 48,
+    info: "俄罗斯族",
+    },
+    {
+    id: 49,
+    info: "裕固族",
+    },
+    {
+    id: 50,
+    info: "乌孜别克族",
+    },
+    {
+    id: 51,
+    info: "门巴族",
+    },
+    {
+    id: 52,
+    info: "鄂伦春族",
+    },
+    {
+    id: 53,
+    info: "独龙族",
+    },
+    {
+    id: 54,
+    info: "塔塔尔族",
+    },
+    {
+    id: 55,
+    info: "赫哲族",
+    },
+    {
+    id: 56,
+    info: "珞巴族",
+    },
+    // 版权声明：本文为CSDN博主「码农陈冠希」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+    // 原文链接：https://blog.csdn.net/qq_48895397/article/details/121249251
+]
+const id_types = [
+    {
+        value: '1',
+        label: '身份证',
+    },
+    {
+        value: '2',
+        label: '护照',
+    },
+    {
+        value: '3',
+        label: '军官证',
+    },
+]
+const professions = [
+    {
+        value: '11',
+        label: '国家公务员'
+    },
+    {
+        value: '13',
+        label: '专业技术人员'
+    },
+    {
+        value: '17',
+        label: '职员'
+    },
+    {
+        value: '21',
+        label: '企业管理人员'
+    },
+    {
+        value: '24',
+        label: '工人'
+    },
+    {
+        value: '27',
+        label: '农民'
+    },
+    {
+        value: '31',
+        label: '学生'
+    },
+    {
+        value: '37',
+        label: '现役军人'
+    },
+    {
+        value: '51',
+        label: '自由职业者'
+    },
+    {
+        value: '54',
+        label: '个体经营者'
+    },
+    {
+        value: '70',
+        label: '无业人员'
+    },
+    {
+        value: '80',
+        label: '退（离）修人员'
+    },
+    {
+        value: '90',
+        label: '其他'
+    },
+]
+const locations = getChinaData()
+const contact_relations = [
+    {
+        value: '1',
+        label: '配偶',
+        disabled: true
+    },
+    {
+        value: '2',
+        label: '子'
+    },
+    {
+        value: '3',
+        label: '女'
+    },
+    {
+        value: '4',
+        label: '孙子，孙女或外孙子，外孙女'
+    },
+    {
+        value: '5',
+        label: '父母'
+    },
+    {
+        value: '6',
+        label: '祖父母或外祖父母'
+    },
+    {
+        value: '8',
+        label: '其他'
+    }
+]
+const settlement_types = [
+    {
+        value: '1',
+        label: '职工基本医疗保险',
+    },
+    {
+        value: '2',
+        label: '城乡居民基本医疗保险',
+    },
+    {
+        value: '3',
+        label: '其他医疗保障',
+    },
+]
+const special_person_types = [
+    {
+        value: '1',
+        label: '特困人员',
+    },
+    {
+        value: '2',
+        label: '低保对象',
+    },
+    {
+        value: '3',
+        label: '返贫致贫人口',
+    },
+    {
+        value: '4',
+        label: '其他困难群众',
+    },
+]
+const newborn_admit_types = [
+    {
+        value: '1',
+        label: '正常新生儿',
+    },
+    {
+        value: '2',
+        label: '早产儿',
+    },
+    {
+        value: '3',
+        label: '有疾病新生儿',
+    },
+    {
+        value: '4',
+        label: '非无菌分娩',
+    },
+    {
+        value: '9',
+        label: '其他',
+    },
+]
+let specialties = ref([])
 
+const idNumVal = computed({
+    get() {
+        if(form.id_type==='1')
+            return form.id_card_num
+        else if(form.id_type==='2')
+            return form.passport_num
+        else if(form.id_type==='3')
+            return form.officer_num
+    },
+    set(val) {
+        if(form.id_type==='1')
+            form.id_card_num = val
+        else if(form.id_type==='2')
+            form.passport_num = val
+        else if(form.id_type==='3')
+            form.officer_num = val
+    }
+})
+const presentAddrOnChange = (val)=>{
+    console.log(val)
+    // this.form.present_zip = val[val.length-1]
+    // console.log(this.form.present_zip)
+}
 const disabledDate0 = time=>{
             // let return_val = time.getTime() > Date.now()
             // if (form.admit_time) {
