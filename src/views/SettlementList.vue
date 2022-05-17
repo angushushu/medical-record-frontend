@@ -267,12 +267,364 @@
                         </el-date-picker>
                     </el-form-item>
                 </el-row>
+                
+                <el-form
+                :model="form.diag_info"
+                ref="form.diag_info"
+                label-with="100px"
+                class="demo-dynamic label-emphasize-light"
+                >
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="病种名称" class="w-12 mr-1">
+                        </el-form-item>
+                        <el-form-item label="病种代码" class="w-12 mr-1">
+                        </el-form-item>
+                        <el-form-item label="手术及操作名称" class="w-12 mr-1">
+                        </el-form-item>
+                        <el-form-item label="手术及操作代码">
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem">
+                        <el-form-item
+                        v-for="info in form.diag_info"
+                        :key="info.key"
+                        style="height: auto !important;"
+                        >
+                            <el-row style="width:100%; padding-left:0rem !important; margin:.2rem 0 .5rem 0;">
+                                <el-col :span="23.8">
+                                    <el-row>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="info.disease_name"></el-input>
+                                        </el-form-item>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="info.disease_code"></el-input>
+                                        </el-form-item>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="info.op_name"></el-input>
+                                        </el-form-item>
+                                        <el-form-item class="w-12">
+                                            <el-input v-model="info.op_code"></el-input>
+                                        </el-form-item>
+                                        
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="0.2">
+                                    <el-button class="remove-op" @click.prevent="removeDiagInfo(info)">-</el-button>
+                                </el-col>
+                            </el-row>   
+                        </el-form-item>
+                        <el-row justify="end">
+                            <el-button class="add-op" style="margin-right:.9rem" @click="addDiagInfo">+ 信息</el-button>
+                        </el-row>  
+                    </el-row>
+                    
+                </el-form>
                 <el-row class="subtitle">
                     <p style="width: 100%; margin: .5rem 0 .5rem 0;">三、住院诊疗信息</p>
                 </el-row>
+                <el-row>
+                    <el-form-item label="住院医疗类型" class="w-12 mr-3">
+                        <el-select v-model="form.hosp_reason" placeholder="请选择" style="width:100%">
+                            <el-option
+                                v-for="reason in hosp_reasons"
+                                :key="reason.value"
+                                :label="reason.label"
+                                :value="reason.value"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="入院途径" class="w-12 mr-3">
+                        <el-select v-model="form.admit_path" placeholder="请选择" style="width: 17rem;">
+                            <el-option
+                                v-for="path in admit_paths"
+                                :key="path.value"
+                                :label="path.label"
+                                :value="path.value"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="治疗类别" class="w-18 mr-2">
+                        <el-cascader
+                            v-model="form.heal_type"
+                            :options="heal_types"
+                            @change="test"
+                        ></el-cascader>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="入院时间" class="w-12 mr-2">
+                        <el-date-picker
+                        popper-class="datehr"
+                        v-model="form.admit_time" 
+                        type="datetime" 
+                        format="YYYY/MM/DD hh:mm"
+                        value-format="YYYY-MM-DD hh:MM"
+                        :disabledDate="disabledDate1"
+                        @change="birthOrAdmitdayOnChange();admitOrReleasedayOnChange()"
+                        placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="入院科别" class="w-16 mr-2">
+                        <el-cascader
+                            v-model="form.admit_specialty"
+                            :options="specialties"
+                        ></el-cascader>
+                    </el-form-item>
+                    <el-form-item label="科转科别" class="w-17">
+                        <el-cascader
+                            v-model="form.trans_specialty"
+                            :options="specialties"
+                        ></el-cascader>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="出院时间" class="w-12 mr-2">
+                        <el-date-picker
+                        popper-class="datehr"
+                        v-model="form.release_time" 
+                        type="datetime" 
+                        format="YYYY/MM/DD hh:mm"
+                        value-format="YYYY-MM-DD hh:MM"
+                        :disabledDate="disabledDate2"
+                        @change="admitOrReleasedayOnChange()"
+                        placeholder="选择日期时间">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item label="出院科别" class="w-16 mr-2">
+                        <el-cascader
+                            v-model="form.release_specialty"
+                            :options="specialties"
+                        ></el-cascader>
+                    </el-form-item>
+                    <el-form-item label="实际入院天数:" class="w-6"></el-form-item>
+                    <span class="el-form-item__label w-12">{{getHospDuration()}}</span>
+                    <el-row>
+                        <el-form-item label="门（急）诊诊断（西医诊断）" style="width:39rem; margin-right:2rem !important; height: auto !important">
+                            <el-input v-model="form.w_emergency_diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                        </el-form-item>
+                        <el-form-item label="疾病代码" class="w-10">
+                            <el-input v-model="form.w_disease_code"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="门（急）诊诊断（中医诊断）" style="width:39rem; margin-right:2rem !important; height: auto !important">
+                            <el-input v-model="form.t_emergency_diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                        </el-form-item>
+                        <el-form-item label="疾病代码" class="w-10">
+                            <el-input v-model="form.t_disease_code"></el-input>
+                        </el-form-item>
+                    </el-row>
+                </el-row>
+                <el-row v-show="form.heal_type == 3">
+                    <el-form-item label="出院诊断类别" class="w-10">
+                        <el-select v-model="release_heal_type" placeholder="请选择" style="width:100%">
+                            <el-option
+                                v-for="type in release_heal_types"
+                                :key="type.value"
+                                :label="type.label"
+                                :value="type.value"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>                    
+                </el-row>
+                <!-- 针对西医 -->
+                <el-form
+                v-show="form.heal_type[0] == 1||(form.heal_type[0]==3&&release_heal_type==1)"
+                :model="form.western_release"
+                ref="form.western_release"
+                label-with="100px"
+                class="demo-dynamic label-emphasize-light"
+                style="height:auto"
+                >
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="出院西医诊断" class="w-12 mr-1">
+                        </el-form-item>
+                        <el-form-item label="疾病代码" class="w-12 mr-1">
+                        </el-form-item>
+                        <el-form-item label="入院病情" class="w-12 mr-1">
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem;">
+                        <el-row>
+                            <el-form-item class="w-12 mr-1 diag">
+                                <el-input v-model="form.western_release.main_diag.diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                            </el-form-item>
+                            <el-form-item class="w-12 mr-1">
+                                <el-input v-model="form.western_release.main_diag.disease_code"></el-input>
+                            </el-form-item>
+                            <el-form-item class="w-12 mr-1">
+                                <el-input v-model="form.western_release.main_diag.admit_condition"></el-input>
+                            </el-form-item>
+                        </el-row>
+                        <el-form-item
+                        v-for="diag in form.western_release.other_diags"
+                        :key="diag.key"
+                        style="height: auto !important;"
+                        >
+                            <el-row style="width:100%; padding-left:0rem !important; margin:.2rem 0 .5rem 0;">
+                                <el-col :span="23.8">
+                                    <el-row>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="diag.diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                                        </el-form-item>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="diag.disease_code"></el-input>
+                                        </el-form-item>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="diag.admit_condition"></el-input>
+                                        </el-form-item>
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="0.2">
+                                    <el-button class="remove-op" @click.prevent="removeWRDiag(diag)">-</el-button>
+                                </el-col>
+                            </el-row>   
+                        </el-form-item>
+                        <el-row justify="end">
+                            <el-button class="add-op" style="margin-right:.9rem" @click="addWRDiag">+ 信息</el-button>
+                        </el-row>  
+                    </el-row>
+                </el-form>
+                <el-form
+                v-show="form.heal_type[0] == 2||(form.heal_type[0]==3&&release_heal_type==2)"
+                :model="form.traditional_release"
+                ref="form.traditional_release"
+                label-with="100px"
+                class="demo-dynamic label-emphasize-light"
+                style="height:auto"
+                >
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="出院中医诊断" class="w-12 mr-1">
+                        </el-form-item>
+                        <el-form-item label="疾病代码" class="w-12 mr-1">
+                        </el-form-item>
+                        <el-form-item label="入院病情" class="w-12 mr-1">
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem;">
+                        <el-row>
+                            <el-form-item class="w-12 mr-1 diag">
+                                <el-input v-model="form.traditional_release.main_disease.diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                            </el-form-item>
+                            <el-form-item class="w-12 mr-1">
+                                <el-input v-model="form.traditional_release.main_disease.disease_code"></el-input>
+                            </el-form-item>
+                            <el-form-item class="w-12 mr-1">
+                                <el-input v-model="form.traditional_release.main_disease.admit_condition"></el-input>
+                            </el-form-item>
+                        </el-row>
+                        <el-form-item
+                        v-for="symp in form.traditional_release.main_symps"
+                        :key="symp.key"
+                        style="height: auto !important;"
+                        >
+                            <el-row style="width:100%; padding-left:0rem !important; margin:.2rem 0 .5rem 0;">
+                                <el-col :span="23.8">
+                                    <el-row>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="symp.diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                                        </el-form-item>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="symp.disease_code"></el-input>
+                                        </el-form-item>
+                                        <el-form-item class="w-12 mr-1">
+                                            <el-input v-model="symp.admit_condition"></el-input>
+                                        </el-form-item>
+                                    </el-row>
+                                </el-col>
+                                <el-col :span="0.2">
+                                    <el-button class="remove-op" @click.prevent="removeTRDiag(symp)">-</el-button>
+                                </el-col>
+                            </el-row>   
+                        </el-form-item>
+                        <el-row justify="end">
+                            <el-button class="add-op" style="margin-right:.9rem" @click="addTRDiag">+ 信息</el-button>
+                        </el-row>  
+                    </el-row>
+                </el-form>
+                <el-row v-show="form.heal_type[0]==1|form.heal_type[0]==2|form.heal_type[0]==3">
+                    <el-form-item label="诊断代码计数" :max="8000" class="w-12">
+                        <el-input-number v-model="form.diag_cnt" controls-position="right"></el-input-number>
+                    </el-form-item>
+                </el-row>
+
+                <el-form
+                :model="form.other_ops"
+                ref="form.other_ops"
+                label-with="100px"
+                class="demo-dynamic label-emphasize-light"
+                >
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="名称" class="w-7 mr-1">
+                        </el-form-item>
+                        <el-form-item label="代码" class="w-7 mr-1">
+                        </el-form-item>
+                        <el-form-item label="麻醉方式" class="w-8 mr-1"></el-form-item>
+                        <el-form-item label="术者姓名" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="术者代码" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="麻醉姓名" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="麻醉代码" class="w-7"></el-form-item>
+                    </el-row>
+                    <el-form-item
+                    v-for="(op) in form.other_ops"
+                    :key="op.key"
+                    style="height: auto !important;"
+                    >
+                        <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
+                            <el-col :span="23.8">
+                                <el-row>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-8 mr-1">
+                                        <el-select v-model="op.anaesthesia_type" placeholder="请选择">
+                                            <el-option
+                                                v-for="type in anaesthesia_types"
+                                                :key="type.value"
+                                                :label="type.label"
+                                                :value="type.value"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.operator_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.operator_code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.anaesthetist_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7">
+                                        <el-input v-model="op.anaesthetist_code"></el-input>
+                                    </el-form-item>
+                                </el-row>
+                                <el-row>
+                                    <el-form-item label="手术起止时间" class="w-7">
+                                        <el-input v-model="op.anaesthetist_code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item label="麻醉起止时间" class="w-7">
+                                        <el-input v-model="op.anaesthetist_code"></el-input>
+                                    </el-form-item>
+                                    
+                                </el-row>
+                            </el-col>
+                            <el-col :span="0.2">
+                                <el-button class="remove-op" @click.prevent="removeOp(op)">-</el-button>
+                            </el-col>
+                        </el-row>                            
+                    </el-form-item>
+                    <el-row justify="end">
+                        <el-button class="add-op" style="margin-right:.9rem" @click="addOp">+ 手术</el-button>
+                    </el-row>
+                </el-form>
                 <el-row class="subtitle">
                     <p style="width: 100%; margin: .5rem 0 .5rem 0;">四、医疗收费信息</p>
                 </el-row>
+                
             </el-form>
         </div>
     </div>
@@ -290,7 +642,52 @@ const getChinaData = ()=>{
     }
     return regionData
 }
-
+const addDiagInfo = (info)=>{
+    form.diag_info.push({
+        disease_name: '',
+        disease_code: '',
+        op_name: '',
+        op_code: '',
+        key: Date.now(),
+    })
+}
+const removeDiagInfo = (info)=>{
+    let index = form.diag_info.indexOf(info)
+    if(index != -1) {
+        form.diag_info.splice(index, 1)
+    }
+}
+const addWRDiag = (info)=>{
+    form.western_release.other_diags.push({
+        diag: '',
+        disease_code: '',
+        admit_condition: '',
+    })
+}
+const removeWRDiag = (info)=>{
+    let index = form.western_release.other_diags.indexOf(info)
+    if(index != -1) {
+        form.western_release.other_diags.splice(index, 1)
+    }
+}
+const addTRDiag = (info)=>{
+    form.traditional_release.main_symps.push({
+        diag: '',
+        disease_code: '',
+        admit_condition: '',
+    })
+}
+const removeTRDiag = (info)=>{
+    console.log(info)
+    let index = form.traditional_release.other_diags.indexOf(info)
+    if(index != -1) {
+        form.traditional_release.main_symps.splice(index, 1)
+    }
+}
+const test = ()=>{
+    console.log(form.heal_type)
+    console.log(form.heal_type[0])
+}
 const formRef = ref<FormInstance>()
 const form:any = reactive({
     list_sn: '',
@@ -354,13 +751,15 @@ const form:any = reactive({
     hosp_duration: 0,
     w_emergency_diag: '',
     w_disease_code: '',
-    western_rellease: {
+    western_release: {
         main_diag: {
+            diag: '',
             disease_code: '',
             admit_condition: '',
         },
         other_diags: [
             {
+                diag: '',
                 disease_code: '',
                 admit_condition: '',
             },
@@ -584,6 +983,17 @@ const form:any = reactive({
 })
 const formRules = reactive({
 })
+const release_heal_type = ref('1')
+const release_heal_types = [
+    {
+        value: '1',
+        label: '西医',
+    },
+    {
+        value: '2',
+        label: '中医',
+    },
+]
 const loadStandard = onMounted(async ()=>{
     await axios.get('/api/v1/get-standard/specialty')
         .then(response=>{
@@ -1186,6 +1596,72 @@ const newborn_admit_types = [
         label: '其他',
     },
 ]
+const hosp_reasons = [
+    {
+        value: '1',
+        label: '住院',
+    },
+    {
+        value: '2',
+        label: '日间手术',
+    }
+]
+const admit_paths = [
+    {
+        value: '1',
+        label: '急诊'
+    },
+    {
+        value: '2',
+        label: '门诊'
+    },
+    {
+        value: '3',
+        label: '其他医疗机构转入'
+    },
+    {
+        value: '9',
+        label: '其他'
+    }
+]
+const heal_types = [
+    {
+        value: '1',
+        label: '西医'
+    },
+    {
+        value: '2',
+        label: '中医',
+        children: [
+            {
+                value: '1',
+                label: '中医',
+            },
+            {
+                value: '2',
+                label: '民族医',
+            }
+        ]
+    },
+    {
+        value: '3',
+        label: '中西医'
+    },
+]
+const anaesthesia_types = [
+    {
+        value: '1',
+        label: '全麻'
+    },
+    {
+        value: '2',
+        label: '局麻'
+    },
+    {
+        value: '3',
+        label: '硬膜外麻'
+    },
+]
 let specialties = ref([])
 
 const idNumVal = computed({
@@ -1211,58 +1687,126 @@ const presentAddrOnChange = (val)=>{
     // this.form.present_zip = val[val.length-1]
     // console.log(this.form.present_zip)
 }
+const getHospDuration = ()=>{
+    if(form.hosp_duration<0)
+        return '请输入入院和出院时间'
+    else
+        return form.hosp_duration
+}
 const disabledDate0 = time=>{
-            // let return_val = time.getTime() > Date.now()
-            // if (form.admit_time) {
-            //     let admit_nums = form.admit_time.split(' ')[0].split('-')
-            //     // console.log(admit_nums)
-            //     let admitday=new Date()
-            //     admitday.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2]))
-            //     return_val = return_val || time.getTime() > admitday
-            // }
-            // if (form.release_time) {
-            //     let release_nums = form.release_time.split(' ')[0].split('-')
-            //     // console.log(admit_nums)
-            //     let releaseday=new Date()
-            //     releaseday.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
-            //     return_val = return_val || time.getTime() > releaseday
-            // }
-            // console.log('disableDate0 finish')
-            // return return_val
-        }
+    // let return_val = time.getTime() > Date.now()
+    // if (form.admit_time) {
+    //     let admit_nums = form.admit_time.split(' ')[0].split('-')
+    //     // console.log(admit_nums)
+    //     let admitday=new Date()
+    //     admitday.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2]))
+    //     return_val = return_val || time.getTime() > admitday
+    // }
+    // if (form.release_time) {
+    //     let release_nums = form.release_time.split(' ')[0].split('-')
+    //     // console.log(admit_nums)
+    //     let releaseday=new Date()
+    //     releaseday.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
+    //     return_val = return_val || time.getTime() > releaseday
+    // }
+    // console.log('disableDate0 finish')
+    // return return_val
+}
+const disabledDate1 = (time)=>{
+    let return_val = time.getTime() > Date.now()
+    if (form.birthday) {
+        let birth_nums = form.birthday.split('-')
+        // console.log(birth_nums)
+        let birthday=new Date()
+        birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
+        return_val = return_val || time.getTime() < birthday //birthday?
+    }
+    if (form.release_time) {
+        let release_nums = form.release_time.split(' ')[0].split('-')
+        // console.log(admit_nums)
+        let releaseday=new Date()
+        releaseday.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
+        return_val = return_val || time.getTime() > releaseday
+    }
+    return return_val
+}
+const disabledDate2 = (time)=>{
+    // let return_val = time.getTime() > Date.now()
+    // if (form.birthday) {
+    //     let birth_nums = form.birthday.split('-')
+    //     // console.log(birth_nums)
+    //     let birthday=new Date()
+    //     birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
+    //     return_val = return_val || time.getTime() < birthday //birthday?
+    // }
+    // if (form.admit_time) {
+    //     let admit_nums = form.admit_time.split(' ')[0].split('-')
+    //     // console.log(birth_nums)
+    //     let admitday=new Date()
+    //     admitday.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2])-1)
+    //     return_val = return_val || time.getTime() < admitday
+    // }
+    // return return_val
+}
 const birthOrAdmitdayOnChange = ()=>{
-            // if(!form.birthday)
-            //     form.birthday = ''
-            // if(!form.admit_time)
-            //     form.admit_time = ''
-            // if(form.birthday!=='' && form.admit_time!=='') {
-            //     console.log('入院：'+form.admit_time)
-            //     console.log('生日：'+form.birthday)
-            //     let birthday = form.birthday
-            //     let admitday = form.admit_time.split(' ')[0]
-            //     if(birthday===admitday) {
-            //         form.age = '第0天'
-            //     } else {
-            //         console.log(birthday, admitday)
-            //         // 计算年龄
-            //         let age = new calculateAge(birthday, admitday)
-            //         console.log(age.getString())
-            //         age = age.getObject()
-            //         form.newborn_check = false
-            //         if(age.years < 1) {
-            //             if(age.days <= 28 && age.months<1) {
-            //                 form.newborn_check = true
-            //             }
-            //             form.age = age.months.toString()+' '+age.days.toString()+'/30月'
-            //         } else {
-            //             form.age = age.years.toString()
-            //         }
-            //     }
-            // } else {
-            //     form.age = '请先输入其他信息'
-            // }
-            // console.log('age - this.form.age')
-        }
+    // if(!form.birthday)
+    //     form.birthday = ''
+    // if(!form.admit_time)
+    //     form.admit_time = ''
+    // if(form.birthday!=='' && form.admit_time!=='') {
+    //     console.log('入院：'+form.admit_time)
+    //     console.log('生日：'+form.birthday)
+    //     let birthday = form.birthday
+    //     let admitday = form.admit_time.split(' ')[0]
+    //     if(birthday===admitday) {
+    //         form.age = '第0天'
+    //     } else {
+    //         console.log(birthday, admitday)
+    //         // 计算年龄
+    //         let age = new calculateAge(birthday, admitday)
+    //         console.log(age.getString())
+    //         age = age.getObject()
+    //         form.newborn_check = false
+    //         if(age.years < 1) {
+    //             if(age.days <= 28 && age.months<1) {
+    //                 form.newborn_check = true
+    //             }
+    //             form.age = age.months.toString()+' '+age.days.toString()+'/30月'
+    //         } else {
+    //             form.age = age.years.toString()
+    //         }
+    //     }
+    // } else {
+    //     form.age = '请先输入其他信息'
+    // }
+    // console.log('age - this.form.age')
+}
+const admitOrReleasedayOnChange = ()=>{
+    // if(!form.admit_time)
+    //     form.admit_time = ''
+    // if(!form.release_time)
+    //     form.release_time = ''
+    // if(form.admit_time!=='' && form.release_time!=='') {
+    //     console.log('入院：'+form.admit_time)
+    //     console.log('出院：'+form.release_time)
+    //     let admitday = form.admit_time.split(' ')[0]
+    //     let releaseday = form.release_time.split(' ')[0]
+    //     console.log(admitday, releaseday)
+    //     // 计算住院时间
+    //     if(admitday===releaseday) {
+    //         form.hosp_duration=1
+    //     } else {
+    //         let ad = new Date(admitday)
+    //         let rd = new Date(releaseday)
+    //         let duration = rd.getTime() - ad.getTime()
+    //         duration = parseInt(duration/(1000*60*60*24))
+    //         console.log(duration)
+    //         form.hosp_duration = duration
+    //     }                
+    // } else {
+    //     form.hosp_duration = -1
+    // }
+}
 const nationalityOnChange = val => {
     console.log(val)
     // if(form.nationality!=='中国') {
@@ -1282,5 +1826,13 @@ const nationalityOnChange = val => {
     margin-top: 1rem;
     margin-bottom: 1rem;
     text-align: center;
+}
+.el-form--inline .el-form-item.diag{
+    height:auto !important;
+    background: red !important;
+    /* for test */
+}
+.diag /deep/ .el-textarea__inner{
+    top: 0px !important;
 }
 </style>
