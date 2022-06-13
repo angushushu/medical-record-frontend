@@ -565,13 +565,66 @@
                         <el-form-item label="麻醉姓名" class="w-7 mr-1"></el-form-item>
                         <el-form-item label="麻醉代码" class="w-7"></el-form-item>
                     </el-row>
+                    <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
+                            <el-row>
+                                <el-form-item class="w-7 mr-1">
+                                    <el-input v-model="form.main_op.code"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-7 mr-1">
+                                    <el-input v-model="form.main_op.code"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-8 mr-1">
+                                    <el-select v-model="form.main_op.anaesthesia_type" placeholder="请选择">
+                                        <el-option
+                                            v-for="type in anaesthesia_types"
+                                            :key="type.value"
+                                            :label="type.label"
+                                            :value="type.value"
+                                        ></el-option>
+                                    </el-select>
+                                </el-form-item>
+                                <el-form-item class="w-7 mr-1">
+                                    <el-input v-model="form.main_op.operator_name"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-7 mr-1">
+                                    <el-input v-model="form.main_op.operator_code"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-7 mr-1">
+                                    <el-input v-model="form.main_op.anaesthetist_name"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-7">
+                                    <el-input v-model="form.main_op.anaesthetist_code"></el-input>
+                                </el-form-item>
+                            </el-row>
+                            <el-row>
+                                <el-form-item label="手术起止时间" class="w-25 mr-2">
+                                    <el-date-picker
+                                    popper-class="datehr"
+                                    v-model="form.main_op.op_time"
+                                    type="datetimerange"
+                                    start-placeholder="Start Date"
+                                    end-placeholder="End Date"
+                                    :default-time="defaultTime1"
+                                    />
+                                </el-form-item>
+                                <el-form-item label="麻醉起止时间" class="w-25">
+                                    <el-date-picker
+                                    popper-class="datehr"
+                                    v-model="form.main_op.anaesthesia_time"
+                                    type="datetimerange"
+                                    start-placeholder="Start Date"
+                                    end-placeholder="End Date"
+                                    :default-time="defaultTime1"
+                                    />
+                                </el-form-item>
+                            </el-row>
+                    </el-row>    
                     <el-form-item
                     v-for="(op) in form.other_ops"
                     :key="op.key"
                     style="height: auto !important;"
                     >
                         <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
-                            <el-col :span="23.8">
                                 <el-row>
                                     <el-form-item class="w-7 mr-1">
                                         <el-input v-model="op.code"></el-input>
@@ -603,28 +656,265 @@
                                     </el-form-item>
                                 </el-row>
                                 <el-row>
-                                    <el-form-item label="手术起止时间" class="w-7">
-                                        <el-input v-model="op.anaesthetist_code"></el-input>
+                                    <el-form-item label="手术起止时间" class="w-25 mr-2">
+                                        <el-date-picker
+                                        popper-class="datehr"
+                                        v-model="op.op_time"
+                                        type="datetimerange"
+                                        start-placeholder="Start Date"
+                                        end-placeholder="End Date"
+                                        :default-time="defaultTime1"
+                                        />
                                     </el-form-item>
-                                    <el-form-item label="麻醉起止时间" class="w-7">
-                                        <el-input v-model="op.anaesthetist_code"></el-input>
+                                    <el-form-item label="麻醉起止时间" class="w-25">
+                                        <el-date-picker
+                                        popper-class="datehr"
+                                        v-model="op.anaesthesia_time"
+                                        type="datetimerange"
+                                        start-placeholder="Start Date"
+                                        end-placeholder="End Date"
+                                        :default-time="defaultTime1"
+                                        />
                                     </el-form-item>
-                                    
+                                    <el-button @click.prevent="removeOtherOp(op)">-</el-button>
                                 </el-row>
-                            </el-col>
-                            <el-col :span="0.2">
-                                <el-button class="remove-op" @click.prevent="removeOp(op)">-</el-button>
-                            </el-col>
                         </el-row>                            
                     </el-form-item>
-                    <el-row justify="end">
-                        <el-button class="add-op" style="margin-right:.9rem" @click="addOp">+ 手术</el-button>
+                    <el-row justify="space-between">
+                        <el-form-item label="手术及操作代码计数" :max="8000" class="w-12">
+                            <el-input-number v-model="form.op_cnt" controls-position="right"></el-input-number>
+                        </el-form-item>
+                        <el-button class="add-op" style="margin-right:.9rem" @click="addOtherOp">+ 手术</el-button>
                     </el-row>
                 </el-form>
+                <el-row>
+                    <el-form-item label="呼吸机使用时间" class="w-25">
+                        <span>
+                            <el-input-number
+                                v-model="form.ventilator_duration.days"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                天
+                            </label>
+                            <el-input-number
+                                v-model="form.ventilator_duration.hrs"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                小时
+                            </label>
+                            <el-input-number
+                                v-model="form.ventilator_duration.mins"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                分钟
+                            </label>
+                        </span>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="颅脑损伤患者昏迷时间： 入院前">
+                        <span>
+                            <el-input-number
+                                v-model="form.pre_admit_coma.days"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                天
+                            </label>
+                            <el-input-number
+                                v-model="form.pre_admit_coma.hrs"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                小时
+                            </label>
+                            <el-input-number
+                                v-model="form.pre_admit_coma.mins"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                分钟
+                            </label>
+                        </span>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="入院后" class="ml-10">
+                        <span>
+                            <el-input-number
+                                v-model="form.post_admit_coma.days"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                天
+                            </label>
+                            <el-input-number
+                                v-model="form.post_admit_coma.hrs"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                小时
+                            </label>
+                            <el-input-number
+                                v-model="form.post_admit_coma.mins"
+                                :controls="false"
+                                :min="0"
+                                style="width:3rem"
+                            ></el-input-number>
+                            <label class="el-form-item__label" style="line-height:28px !important">
+                                分钟
+                            </label>
+                        </span>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item
+                    v-for="(cu) in form.CU_usage"
+                    :key="cu.key"
+                    >
+                        <el-row>
+                            <el-form-item label="重症监护病房类型">
+                                <el-select v-model="cu.CU_type" placeholder="请选择">
+                                    <el-option
+                                        v-for="type in CU_types"
+                                        :key="type.value"
+                                        :label="type.label"
+                                        :value="type.value"
+                                    >
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item class="w-10">
+                                <el-date-picker
+                                v-model="cu.time"
+                                type="datetimerange"
+                                range-separator="至"
+                                start-placeholder="起始时间"
+                                end-placeholder="结束时间"
+                                @change="cuTimeOnChange(cu)"
+                                />
+                            </el-form-item>
+                            <el-form-item label="合计:" class="w-5">
+                            </el-form-item>
+                            <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{cu.total_hr}}时{{cu.total_min}}分</span>
+                            <el-button class="remove-diag" @click.prevent="removeCU(cu)">-</el-button>
+                        </el-row>
+                        
+                    </el-form-item>
+                    <el-row justify="end">
+                        <el-button class="add-op" style="margin-right:.9rem" @click="addCU">+</el-button>
+                    </el-row>  
+                </el-row>
+                <el-row>
+                    <el-form-item
+                    v-for="(blood) in form.transfusion"
+                    :key="blood.key"
+                    >
+                        <el-row>
+                            <el-form-item label="输血品种">
+                                <el-cascader
+                                v-model="blood.blood_type"
+                                :options="blood_types"
+                                @change="bloodTypeOnChange(blood)"
+                                ></el-cascader>
+                                
+                            </el-form-item>
+                            <el-form-item label="输血量" class="w-12 mr-2">
+                                <el-input-number v-model="blood.blood_volume" controls-position="right"></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="输血计量单位" class="label-emphasize w-5">
+                            </el-form-item>
+                            <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{blood.volume_unit}}</span>
+                            <el-button class="remove-diag" @click.prevent="removeTransfusion(blood)">-</el-button>
+                        </el-row>
+                        
+                    </el-form-item>
+                    <el-row justify="end">
+                        <el-button class="add-op" style="margin-right:.9rem" @click="addTransfusion">+</el-button>
+                    </el-row>  
+                </el-row>
+                <el-row>
+                    <el-form-item label="特级护理天数" class="w-11 mr-2">
+                        <el-input-number v-model="form.special_care_days" controls-position="right"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="一级护理天数" class="w-11 mr-2">
+                        <el-input-number v-model="form.lvl1_care_days" controls-position="right"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="二级护理天数" class="w-11 mr-2">
+                        <el-input-number v-model="form.lvl2_care_days" controls-position="right"></el-input-number>
+                    </el-form-item>
+                    <el-form-item label="三级护理天数" class="w-11">
+                        <el-input-number v-model="form.lvl3_care_days" controls-position="right"></el-input-number>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="离院方式" class="label-emphasize">
+                        <el-select v-model="form.release_type" placeholder="请选择">
+                            <el-option
+                                v-for="type in release_types"
+                                :key="type.value"
+                                :label="type.label"
+                                :value="type.value"
+                            ></el-option>
+                        </el-select>
+                    </el-form-item>
+                    <span>
+                        <el-form-item v-if="form.release_type===release_types[1].value" label="拟接收医疗机构名称">
+                            <el-input v-model="form.accept_hosp_2"></el-input>
+                        </el-form-item>
+                    </span>
+                    <span>
+                        <el-form-item v-if="form.release_type===release_types[2].value" label="拟接收医疗机构名称">
+                            <el-input v-model="form.accept_hosp_3"></el-input>
+                        </el-form-item>
+                    </span>
+
+                    <!-- 需根据选项添加内容 -->
+                </el-row>
+                <el-row>
+                    <el-form-item label="有出院31天内再住院计划">
+                        <el-checkbox class="mr-1" v-model="form.cont_hosp_check" true-label=true false-label=false ></el-checkbox>
+                        <span>
+                            <el-input v-if="form.cont_hosp_check=='true'" v-model="form.cont_hosp_plan" placeholder="目的"></el-input>
+                        </span>
+                    </el-form-item>
+                </el-row>
+                <el-row>
+                    <el-form-item label="主诊医师姓名" class="w-12 mr-1">
+                        <el-input v-model="form.physician_name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="主诊医师代码" class="w-12 mr-1">
+                        <el-input v-model="form.physician_code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="责任护士姓名" class="w-12 mr-2">
+                        <el-input v-model="form.nurse_ic_name"></el-input>
+                    </el-form-item>
+                    <el-form-item label="责任护士代码" class="w-12">
+                        <el-input v-model="form.nurse_ic_code"></el-input>
+                    </el-form-item>
+                </el-row>
                 <el-row class="subtitle">
                     <p style="width: 100%; margin: .5rem 0 .5rem 0;">四、医疗收费信息</p>
                 </el-row>
-                
             </el-form>
         </div>
     </div>
@@ -636,11 +926,39 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { regionData, CodeToText } from 'element-china-area-data'
 import axios from "axios";
 
+const defaultTime1 = [new Date(2000, 1, 1, 12, 0, 0)]
 const getChinaData = ()=>{
     if(regionData[regionData.length-1].label != '其他') {
         regionData.push({value: '000000', label: '其他'})
     }
     return regionData
+}
+const addTransfusion = ()=>{
+    form.transfusion.push({
+        blood_type: '',
+        blood_volume: 0,
+        volume_unit: '',
+    })
+}
+const removeTransfusion = (blood)=>{
+    let index = form.transfusion.indexOf(blood)
+    if(index != -1) {
+        form.transfusion.splice(index, 1)
+    }
+}
+const addCU = ()=>{
+    form.CU_usage.push({
+        CU_type: '',
+        time: '',
+        total_hr: 0,
+        total_min: 0,
+    })
+}
+const removeCU = (cu)=>{
+    let index = form.CU_usage.indexOf(cu)
+    if(index != -1) {
+        form.CU_usage.splice(index, 1)
+    }
 }
 const addDiagInfo = (info)=>{
     form.diag_info.push({
@@ -682,6 +1000,25 @@ const removeTRDiag = (info)=>{
     let index = form.traditional_release.other_diags.indexOf(info)
     if(index != -1) {
         form.traditional_release.main_symps.splice(index, 1)
+    }
+}
+const addOtherOp = (op)=>{
+    form.other_ops.push({
+        name: '',
+        code: '',
+        anaesthesia_type: '',
+        operator_name: '',
+        operator_code: '',
+        anaesthetist_name: '',
+        anaesthetist_code: '',
+        op_time: '',
+        anaesthesia_time: '',
+    })
+}
+const removeOtherOp = (op)=>{
+    let index = form.other_ops.indexOf(op)
+    if(index != -1) {
+        form.other_ops.splice(index, 1)
     }
 }
 const test = ()=>{
@@ -786,10 +1123,8 @@ const form:any = reactive({
         operator_code: '',
         anaesthetist_name: '',
         anaesthetist_code: '',
-        op_init_time: '',
-        op_end_time: '',
-        anaesthesia_init_time: '',
-        anaesthesia_end_time: ''
+        op_time: '',
+        anaesthesia_time: '',
     },
     other_ops: [
         {
@@ -800,14 +1135,16 @@ const form:any = reactive({
             operator_code: '',
             anaesthetist_name: '',
             anaesthetist_code: '',
-            op_init_time: '',
-            op_end_time: '',
-            anaesthesia_init_time: '',
-            anaesthesia_end_time: ''
+            op_time: '',
+            anaesthesia_time: '',
         }
     ],
     op_cnt: 0,
-    ventilator_duration: '', //
+    ventilator_duration: {
+        days: 0,
+        hrs: 0,
+        mins: 0,
+    }, //
     head_injury_check: false,
     pre_admit_coma: {
         days: 0,
@@ -822,15 +1159,15 @@ const form:any = reactive({
     CU_usage: [
         {
             CU_type: '',
-            enter_time: '',
-            leaving_time: '',
-            duration: ''
+            time: '',
+            total_hr: 0,
+            total_min: 0,
         },
     ],
     transfusion: [
         {
             blood_type: '',
-            blood_volume: '',
+            blood_volume: 0,
             volume_unit: '',
         },
     ],
@@ -1662,8 +1999,215 @@ const anaesthesia_types = [
         label: '硬膜外麻'
     },
 ]
+const CU_types = [
+    {
+        value: '1',
+        label: '心脏重症监护病房（CCU）'
+    },
+    {
+        value: '2',
+        label: '新生儿重症监护病房（NICU）'
+    },
+    {
+        value: '3',
+        label: '急诊重症监护病房（ECU）'
+    },
+    {
+        value: '4',
+        label: '外科重症监护病房（SICU）'
+    },
+    {
+        value: '5',
+        label: '儿科重症监护病房（PICU）'
+    },
+    {
+        value: '6',
+        label: '呼吸重症监护病房（RICU）'
+    },
+    {
+        value: '7',
+        label: 'ICU（综合）'
+    },
+    {
+        value: '9',
+        label: '其他'
+    },
+]
+const blood_types = [
+    {
+        value: '1',
+        label: '红细胞',
+        children: [
+            {
+                value: '11',
+                label: '浓缩红细胞',
+            },
+            {
+                value: '12',
+                label: '滤白红细胞',
+            },
+            {
+                value: '13',
+                label: '红细胞悬液',
+            },
+            {
+                value: '14',
+                label: '洗涤红细胞',
+            },
+            {
+                value: '15',
+                label: '冰冻红细胞',
+            },
+            {
+                value: '16',
+                label: '冰冻解冻去甘油红细胞',
+            },
+            {
+                value: '17',
+                label: 'Rh 阴性悬浮红细胞',
+            },
+        ]
+    },
+    {
+        value: '2',
+        label: '全血',
+        children: [
+            {
+                value: '21',
+                label: '滤白全血',
+            },
+            {
+                value: '22',
+                label: '重组全血',
+            },
+            {
+                value: '23',
+                label: 'Rh 阴性全血',
+            },
+        ]
+    },
+    {
+        value: '3',
+        label: '血小板',
+        children: [
+            {
+                value: '31',
+                label: '手工分离浓缩血小板',
+            },
+            {
+                value: '32',
+                label: '机采血小板',
+            },
+            {
+                value: '33',
+                label: '滤白机采血小板',
+            },
+            {
+                value: '34',
+                label: '冷冻机采血小板',
+            },
+        ]
+    },
+    {
+        value: '4',
+        label: '血浆',
+        children: [
+            {
+                value: '41',
+                label: '新鲜液体血浆',
+            },
+            {
+                value: '42',
+                label: '新鲜冰冻血浆',
+            },
+            {
+                value: '43',
+                label: '普通冰冻血浆',
+            },
+            {
+                value: '44',
+                label: '滤白病毒灭活冰冻血浆',
+            },
+            {
+                value: '45',
+                label: '滤白新鲜冰冻血浆',
+            },
+            {
+                value: '46',
+                label: '滤白普通冰冻血浆',
+            },
+        ]
+    },
+    {
+        value: '5',
+        label: '冷沉淀',
+        children: [
+            {
+                value: '51',
+                label: '滤白冷沉淀',
+            },
+        ]
+    },
+    {
+        value: '6',
+        label: '机采浓缩白细胞悬液',
+    },
+    {
+        value: '9',
+        label: '其他',
+    },
+]
+const release_types = [
+    {
+        value: '1',
+        label: '医嘱离院'
+    },
+    {
+        value: '2',
+        label: '医嘱转院'
+    },
+    {
+        value: '3',
+        label: '医嘱转社区卫生服务机构/乡镇卫生院'
+    },
+    {
+        value: '4',
+        label: '非医嘱离院'
+    },
+    {
+        value: '5',
+        label: '死亡'
+    },
+    {
+        value: '6',
+        label: '其他'
+    },
+]
 let specialties = ref([])
 
+const bloodTypeOnChange = blood => {
+    const unit_U = ['11','12','13','14','15','16','17','31','51']
+    const unit_Ml = ['21','22','23','41','42','43','44','45','46','9']
+    const unit_ZLL = ['32','33','34','6']
+    let blood_type = blood.blood_type[blood.blood_type.length-1]
+    console.log(blood_type)
+    if(unit_U.includes(blood_type)) {
+        blood.volume_unit = 'U'
+    } else if(unit_Ml.includes(blood_type)) {
+        blood.volume_unit = 'Ml'
+    } else if(unit_ZLL.includes(blood_type)) {
+        blood.volume_unit = '治疗量'
+    }
+}
+const cuTimeOnChange = cu=>{
+    console.log(cu)
+    const duration = (cu.time[1]-cu.time[0])/(60*1000)
+    cu.total_hr = Math.floor(duration/60)
+    cu.total_min = duration%60
+    console.log('total hr:'+cu.total_hr)
+    console.log('total min:'+cu.total_min)
+    console.log(form.CU_usage)
+}
 const idNumVal = computed({
     get() {
         if(form.id_type==='1')
@@ -1834,5 +2378,41 @@ const nationalityOnChange = val => {
 }
 .diag /deep/ .el-textarea__inner{
     top: 0px !important;
+}
+.el-range-editor .el-range-input:hover {
+    background-color: rgb(209, 209, 209) !important;
+}
+.el-date-editor .el-range-input:hover {
+    background-color: rgb(209, 209, 209) !important;
+}
+.ml-1 {
+    margin-left: 1rem !important;
+}
+.ml-2 {
+    margin-left: 2rem !important;
+}
+.ml-3 {
+    margin-left: 3rem !important;
+}
+.ml-4 {
+    margin-left: 4rem !important;
+}
+.ml-5 {
+    margin-left: 5rem !important;
+}
+.ml-6 {
+    margin-left: 6rem !important;
+}
+.ml-7 {
+    margin-left: 7rem !important;
+}
+.ml-8 {
+    margin-left: 8rem !important;
+}
+.ml-9 {
+    margin-left: 9rem !important;
+}
+.ml-10 {
+    margin-left: 10rem !important;
 }
 </style>
