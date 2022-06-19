@@ -46,44 +46,44 @@
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
                     <el-form-item label="性别" class="label-emphasize w-7 mr-2">
-                            <el-select v-model="form.gender" placeholder="请选择">
-                                <el-option
-                                    v-for="gender in genders"
-                                    :key="gender.value"
-                                    :label="gender.label"
-                                    :value="gender.value"
-                                >
+                        <el-select v-model="form.gender" placeholder="请选择">
+                            <el-option
+                                v-for="gender in genders"
+                                :key="gender.value"
+                                :label="gender.label"
+                                :value="gender.value"
+                            >
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="出生日期" class="label-emphasize w-14 mr-2">
+                        <el-date-picker 
+                        v-model="form.birthday" 
+                        type="date" 
+                        format="YYYY/MM/DD"
+                        value-format="YYYY-MM-DD"
+                        :disabledDate="disabledDate0"
+                        @change="birthOrAdmitdayOnChange"
+                        placeholder="选择">
+                        </el-date-picker>
+                    </el-form-item>
+                    <!-- 待修改 -->
+                    <el-form-item label="年龄:" class="label-emphasize w-5">
+                    </el-form-item>
+                    <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{this.form.age}}</span>
+                    <!--默认使用-->
+                    <el-form-item label="国籍" class="w-11">
+                        <el-select placeholder="请选择国籍" @change="nationalityOnChange" v-model="form.nationality" filterable>
+                            <el-option-group v-for="group in countries" :key="group.label" :label="group.label">
+                                <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.label">
+                                    <span style="float: left">{{ item.label }}</span>
+                                    <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
                                 </el-option>
-                            </el-select>
-                        </el-form-item>
-                        <el-form-item label="出生日期" class="label-emphasize w-14 mr-2">
-                            <el-date-picker 
-                            v-model="form.birthday" 
-                            type="date" 
-                            format="YYYY/MM/DD"
-                            value-format="YYYY-MM-DD"
-                            :disabledDate="disabledDate0"
-                            @change="birthOrAdmitdayOnChange"
-                            placeholder="选择">
-                            </el-date-picker>
-                        </el-form-item>
-                        <!-- 待修改 -->
-                        <el-form-item label="年龄:" class="label-emphasize w-5">
-                        </el-form-item>
-                        <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{this.form.age}}</span>
-                        <!--默认使用-->
-                        <el-form-item label="国籍" class="w-11">
-                            <el-select placeholder="请选择国籍" @change="nationalityOnChange" v-model="form.nationality" filterable>
-                                <el-option-group v-for="group in countries" :key="group.label" :label="group.label">
-                                    <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.label">
-                                        <span style="float: left">{{ item.label }}</span>
-                                        <span style="float: right; color: #8492a6; font-size: 13px">{{ item.value }}</span>
-                                    </el-option>
-                                </el-option-group>
-                                <!-- 版权声明：本文为CSDN博主「ryaaaaaaaa」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
-                                原文链接：https://blog.csdn.net/weixin_42345894/article/details/85158130 -->
-                            </el-select>
-                        </el-form-item>
+                            </el-option-group>
+                            <!-- 版权声明：本文为CSDN博主「ryaaaaaaaa」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+                            原文链接：https://blog.csdn.net/weixin_42345894/article/details/85158130 -->
+                        </el-select>
+                    </el-form-item>
                 </el-row>
                 <el-row class="label-emphasize">
                     <el-form-item label="民族" class="w-12 mr-3">
@@ -915,7 +915,956 @@
                 <el-row class="subtitle">
                     <p style="width: 100%; margin: .5rem 0 .5rem 0;">四、医疗收费信息</p>
                 </el-row>
+                <el-row>
+                    <el-col :span="10">
+                        <el-row>
+                            <el-form-item label="业务流水号" class="w-10 mr-1">
+                                <el-input v-model="form.biz_sn"></el-input>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="票据代码" class="w-10 mr-1">
+                                <el-input v-model="form.bill_code"></el-input>
+                            </el-form-item>
+                        </el-row>
+                        <el-row>
+                            <el-form-item label="票据号码" class="w-10 mr-1">
+                                <el-input v-model="form.bill_num"></el-input>
+                            </el-form-item>
+                        </el-row>
+                    </el-col>
+                    <el-col :span="14">
+                        <el-row>
+                            <el-date-picker
+                            v-model="form.settle_duration"
+                            type="daterange"
+                            range-separator="至"
+                            start-placeholder="起始日"
+                            end-placeholder="结束日"
+                            />
+                        </el-row>
+                    </el-col>
+                </el-row>
+                <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-form-item label="项目名称" class="label-emphasize w-5 mr-5">
+                    </el-form-item>
+                    <el-form-item label="金额" class="w-3 mr-7">
+                    </el-form-item>
+                    <el-form-item label="甲类" class="w-3 mr-7">
+                    </el-form-item>
+                    <el-form-item label="乙类" class="w-3 mr-7">
+                    </el-form-item>
+                    <el-form-item label="自费" class="w-3 mr-7">
+                    </el-form-item>
+                    <el-form-item label="其他" class="w-5">
+                    </el-form-item>
+                </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="床位费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.bed_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.bed_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.bed_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.bed_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.bed_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="诊察费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item  class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.diag_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.diag_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.diag_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.diag_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.diag_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="检查费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.exam_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.exam_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.exam_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.exam_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.exam_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="化验费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.lab_test_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.lab_test_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.lab_test_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.lab_test_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.lab_test_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="治疗费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.treat_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.treat_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.treat_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.treat_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.treat_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="手术费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.op_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.op_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.op_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.op_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.op_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="护理费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.nursing_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.nursing_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.nursing_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.nursing_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.nursing_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="卫生材料费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.med_material_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.med_material_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.med_material_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.med_material_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.med_material_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="西药费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.western_med_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.western_med_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.western_med_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.western_med_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.western_med_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="中药饮片费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_tablet_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_tablet_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_tablet_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_tablet_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.traditional_tablet_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="中成药费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_patent_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_patent_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_patent_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.traditional_patent_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.traditional_patent_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="一般诊疗费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.general_diag_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.general_diag_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.general_diag_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.general_diag_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.general_diag_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="挂号费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.registration_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.registration_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.registration_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.registration_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.registration_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="其他费" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.other_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.other_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.other_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.other_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.other_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item :label="form.special_fee.title" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.special_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="amountOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.special_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="AOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.special_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="BOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.special_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="selfPayOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.special_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                @change="otherOnChange"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                        <el-form-item label="金额合计" class="w-5 mr-5">
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.total_fee.amount"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.total_fee.A"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.total_fee.B"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7 mr-3">
+                            <el-input-number
+                                v-model="form.total_fee.self_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                            ></el-input-number>
+                        </el-form-item>
+                        <el-form-item class="w-7">
+                            <el-input-number
+                                v-model="form.total_fee.other"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="医保统筹基金支付" class="w-15">
+                            <el-input-number
+                                v-model="form.insurance_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <span>
+                            <el-form-item label="补充医疗保险支付" class="label-emphasize w-10"></el-form-item>
+                            <el-form-item label="职工大额补助">
+                                <el-input-number
+                                v-model="form.staff_subsidy"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="居民大病保险">
+                                <el-input-number
+                                v-model="form.residence_insurance"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="公务员医疗补助">
+                                <el-input-number
+                                v-model="form.public_servant_subsidy"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                        </span>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="医疗救助支付" class="w-15">
+                            <el-input-number
+                                v-model="form.health_aid_pay"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                            ></el-input-number>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <span>
+                            <el-form-item label="其他支付" class="label-emphasize w-10"></el-form-item>
+                            <el-form-item label="企业补充">
+                                <el-input-number
+                                v-model="form.enterprise_supp"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="商业保险">
+                                <el-input-number
+                                v-model="form.biz_insurance"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                        </span>
+                    </el-row>
+                    <el-row>
+                        <span>
+                            <el-form-item label="个人负担" class="label-emphasize w-10"></el-form-item>
+                            <el-form-item label="个人自付">
+                                <el-input-number
+                                v-model="form.partial_self_purchase"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="个人自费">
+                                <el-input-number
+                                v-model="form.self_purchase"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                        </span>
+                    </el-row>
+                    <el-row>
+                        <span>
+                            <el-form-item label="个人支付" class="label-emphasize w-10"></el-form-item>
+                            <el-form-item label="个人账户支付">
+                                <el-input-number
+                                v-model="form.account"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                            <el-form-item label="个人现金支付">
+                                <el-input-number
+                                v-model="form.cash"
+                                :precision="2"
+                                :controls="false"
+                                :min="0"
+                                ></el-input-number>
+                            </el-form-item>
+                        </span>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="医疗支付方式" class="label-emphasize w-15">
+                        <el-select v-model="form.payment_type" placeholder="请选择">
+                            <el-option
+                                v-for="type in payment_types"
+                                :key="type.value"
+                                :label="type.label"
+                                :value="type.value"
+                            >
+                            </el-option>
+                        </el-select>
+                    </el-form-item>
+                    </el-row>
             </el-form>
+            
         </div>
     </div>
 </template>
@@ -932,6 +1881,91 @@ const getChinaData = ()=>{
         regionData.push({value: '000000', label: '其他'})
     }
     return regionData
+}
+const amountOnChange = ()=>{
+    form.total_fee.amount = form.bed_fee.amount
+    +form.diag_fee.amount
+    +form.exam_fee.amount
+    +form.lab_test_fee.amount
+    +form.treat_fee.amount
+    +form.op_fee.amount
+    +form.nursing_fee.amount
+    +form.med_material_fee.amount
+    +form.western_med_fee.amount
+    +form.traditional_tablet_fee.amount
+    +form.traditional_patent_fee.amount
+    +form.general_diag_fee.amount
+    +form.registration_fee.amount
+    +form.other_fee.amount
+    +form.special_fee.amount
+}
+const AOnChange = ()=>{
+    form.total_fee.A = form.bed_fee.A
+    +form.diag_fee.A
+    +form.exam_fee.A
+    +form.lab_test_fee.A
+    +form.treat_fee.A
+    +form.op_fee.A
+    +form.nursing_fee.A
+    +form.med_material_fee.A
+    +form.western_med_fee.A
+    +form.traditional_tablet_fee.A
+    +form.traditional_patent_fee.A
+    +form.general_diag_fee.A
+    +form.registration_fee.A
+    +form.other_fee.A
+    +form.special_fee.A
+}
+const BOnChange = ()=>{
+    form.total_fee.B = form.bed_fee.B
+    +form.diag_fee.B
+    +form.exam_fee.B
+    +form.lab_test_fee.B
+    +form.treat_fee.B
+    +form.op_fee.B
+    +form.nursing_fee.B
+    +form.med_material_fee.B
+    +form.western_med_fee.B
+    +form.traditional_tablet_fee.B
+    +form.traditional_patent_fee.B
+    +form.general_diag_fee.B
+    +form.registration_fee.B
+    +form.other_fee.B
+    +form.special_fee.B
+}
+const selfPayOnChange = ()=>{
+    form.total_fee.self_pay = form.bed_fee.self_pay
+    +form.diag_fee.self_pay
+    +form.exam_fee.self_pay
+    +form.lab_test_fee.self_pay
+    +form.treat_fee.self_pay
+    +form.op_fee.self_pay
+    +form.nursing_fee.self_pay
+    +form.med_material_fee.self_pay
+    +form.western_med_fee.self_pay
+    +form.traditional_tablet_fee.self_pay
+    +form.traditional_patent_fee.self_pay
+    +form.general_diag_fee.self_pay
+    +form.registration_fee.self_pay
+    +form.other_fee.self_pay
+    +form.special_fee.self_pay
+}
+const otherOnChange = ()=>{
+    form.total_fee.other = form.bed_fee.other
+    +form.diag_fee.other
+    +form.exam_fee.other
+    +form.lab_test_fee.other
+    +form.treat_fee.other
+    +form.op_fee.other
+    +form.nursing_fee.other
+    +form.med_material_fee.other
+    +form.western_med_fee.other
+    +form.traditional_tablet_fee.other
+    +form.traditional_patent_fee.other
+    +form.general_diag_fee.other
+    +form.registration_fee.other
+    +form.other_fee.other
+    +form.special_fee.other
 }
 const addTransfusion = ()=>{
     form.transfusion.push({
@@ -1186,8 +2220,7 @@ const form:any = reactive({
     biz_sn: '',
     bill_code: '',
     bill_num: '',
-    settle_since: '',
-    settle_to: '',
+    settle_duration: '',
     bed_fee: {
         amount: 0.0,
         A: 0.0,
@@ -1286,16 +2319,14 @@ const form:any = reactive({
         self_pay: 0.0,
         other: 0.0,
     },
-    special_fee: [
-        {
+    special_fee: {
             title: '',
             amount: 0.0,
             A: 0.0,
             B: 0.0,
             self_pay: 0.0,
             other: 0.0,
-        }
-    ],
+    },
     total_fee: {
         amount: 0.0,
         A: 0.0,
@@ -1303,9 +2334,11 @@ const form:any = reactive({
         self_pay: 0.0,
         other: 0.0,
     },
+    insurance_pay: 0.0,
     staff_subsidy: 0.0,
     residence_insurance: 0.0,
     public_servant_subsidy: 0.0,
+    health_aid_pay: 0.0,
     enterprise_supp: 0.0,
     self_purchase: 0.0,
     account_pay: 0.0,
@@ -2181,6 +3214,36 @@ const release_types = [
     {
         value: '6',
         label: '其他'
+    },
+]
+const payment_types = [
+    {
+        value: '1',
+        label: '按项目付费'
+    },
+    {
+        value: '2',
+        label: '按单病种付费'
+    },
+    {
+        value: '3',
+        label: '按病种分值付费'
+    },
+    {
+        value: '4',
+        label: '按疾病诊断相关分组（DRG）付费'
+    },
+    {
+        value: '5',
+        label: '按床日付费'
+    },
+    {
+        value: '6',
+        label: '按人头付费'
+    },
+    {
+        value: '7',
+        label: '按定额'
     },
 ]
 let specialties = ref([])

@@ -2610,6 +2610,21 @@ export default {
     font-weight: normal !important;
     height: 23px !important;
 }
+.w-1 {
+    width: 1rem !important;
+}
+.w-2 {
+    width: 2rem !important;
+}
+.w-3 {
+    width: 3rem !important;
+}
+.w-4 {
+    width: 4rem !important;
+}
+.w-5 {
+    width: 5rem !important;
+}
 .w-6 {
     width: 6rem !important;
 }
