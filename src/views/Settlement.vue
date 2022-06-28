@@ -11,24 +11,24 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="定点医疗机构名称" class="w-16 mr-2">
+                    <el-form-item label="定点医疗机构名称" class="w-17 mr-4">
                         <el-input v-model="form.org_name"></el-input>
                     </el-form-item>
-                    <el-form-item label="定点医疗机构代码" class="w-16 mr-2">
+                    <el-form-item label="定点医疗机构代码" class="w-17 mr-4">
                         <el-input v-model="form.org_code"></el-input>
                     </el-form-item>
-                    <el-form-item label="医保结算等级" class="w-16">
+                    <el-form-item label="医保结算等级" class="w-17">
                         <el-input v-model="form.settlement_lvl"></el-input>
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="医保编号" class="w-16 mr-2">
+                    <el-form-item label="医保编号" class="w-17 mr-4">
                         <el-input v-model="form.settlement_num"></el-input>
                     </el-form-item>
-                    <el-form-item label="病案号" class="w-16 mr-2">
+                    <el-form-item label="病案号" class="w-17 mr-4">
                         <el-input v-model="form.case_num"></el-input>
                     </el-form-item>
-                    <el-form-item label="申报时间" class="w-16">
+                    <el-form-item label="申报时间" class="w-17">
                         <el-date-picker 
                             v-model="form.report_time" 
                             type="date" 
@@ -42,10 +42,10 @@
                     <p style="width: 100%; margin: .5rem 0 .5rem 0;">一、基本信息</p>
                 </el-row>
                 <el-row>
-                    <el-form-item label="姓名" class="w-10 mr-2">
+                    <el-form-item label="姓名" class="w-13 mr-2">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
-                    <el-form-item label="性别" class="label-emphasize w-7 mr-2">
+                    <el-form-item label="性别" class="label-emphasize w-13 mr-2">
                         <el-select v-model="form.gender" placeholder="请选择">
                             <el-option
                                 v-for="gender in genders"
@@ -56,7 +56,7 @@
                             </el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="出生日期" class="label-emphasize w-14 mr-2">
+                    <el-form-item label="出生日期" class="label-emphasize w-13 mr-2">
                         <el-date-picker 
                         v-model="form.birthday" 
                         type="date" 
@@ -68,11 +68,12 @@
                         </el-date-picker>
                     </el-form-item>
                     <!-- 待修改 -->
-                    <el-form-item label="年龄:" class="label-emphasize w-5">
+                    <el-form-item label="年龄:" class="label-emphasize w-3">
                     </el-form-item>
-                    <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{this.form.age}}</span>
-                    <!--默认使用-->
-                    <el-form-item label="国籍" class="w-11">
+                    <span class="el-form-item__label w-7" style="padding-right:0px !important">{{this.form.age}}</span>
+                </el-row>
+                <el-row class="label-emphasize">
+                    <el-form-item label="国籍" class="w-13 mr-2">
                         <el-select placeholder="请选择国籍" @change="nationalityOnChange" v-model="form.nationality" filterable>
                             <el-option-group v-for="group in countries" :key="group.label" :label="group.label">
                                 <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.label">
@@ -84,9 +85,7 @@
                             原文链接：https://blog.csdn.net/weixin_42345894/article/details/85158130 -->
                         </el-select>
                     </el-form-item>
-                </el-row>
-                <el-row class="label-emphasize">
-                    <el-form-item label="民族" class="w-12 mr-3">
+                    <el-form-item label="民族" class="w-13 mr-2">
                         <el-select v-model="form.ethnicity" placeholder="民族" filterable style="width:100%">
                             <el-option
                                 v-for="eth in ethnicities"
@@ -96,7 +95,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="患者证件类型" class="w-12 mr-3">
+                    <el-form-item label="患者证件类型" class="w-13 mr-2">
                         <el-select v-model="form.id_type" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="type in id_types"
@@ -106,7 +105,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="患者证件号" class="w-13 mr-3">
+                    <el-form-item label="患者证件号" class="w-14">
                         <el-input 
                         v-model="idNumVal"
                         :disabled="this.form.id_type===''"
@@ -114,7 +113,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="职业" class="w-12 mr-3">
+                    <el-form-item label="职业" class="w-13 mr-2">
                         <el-select v-model="form.profession" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="job in professions"
@@ -124,7 +123,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="现住址" class="w-15">
+                    <el-form-item label="现住址" class="w-13">
                         <!-- <elui-china-area-dht :leave="3" @change="presentAddrOnChange" style="width:100%"></elui-china-area-dht> -->
                         <el-cascader
                             size="large"
@@ -150,10 +149,10 @@
                             >
                         </el-cascader>
                     </el-form-item>
-                    <el-form-item class="w-18 mr-1">
+                    <el-form-item class="w-17 mr-2">
                         <el-input v-model="form.work_addr2"></el-input>
                     </el-form-item>
-                    <el-form-item label="电话" class="w-14 mr-1">
+                    <el-form-item label="电话" class="w-14 mr-2">
                         <el-input v-model="form.work_phone"></el-input>
                     </el-form-item>
                     <el-form-item label="邮编" class="w-9">
@@ -161,10 +160,10 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="联系人姓名" class="label-emphasize w-12 mr-1">
+                    <el-form-item label="联系人姓名" class="label-emphasize w-12 mr-2">
                         <el-input v-model="form.contact_name"></el-input>
                     </el-form-item>
-                    <el-form-item label="关系" class="w-8 mr-1">
+                    <el-form-item label="关系" class="w-10 mr-2">
                         <el-select v-model="form.contact_relation" placeholder="请选择">
                             <el-option
                                 v-for="rel in contact_relations"
@@ -175,7 +174,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="地址" class="w-14">
+                    <el-form-item label="地址" class="w-12">
                         <el-cascader
                         size="large"
                         :options="locations"
@@ -1852,16 +1851,53 @@
                     </el-row>
                     <el-row>
                         <el-form-item label="医疗支付方式" class="label-emphasize w-15">
-                        <el-select v-model="form.payment_type" placeholder="请选择">
-                            <el-option
-                                v-for="type in payment_types"
-                                :key="type.value"
-                                :label="type.label"
-                                :value="type.value"
-                            >
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
+                            <el-select v-model="form.payment_type" placeholder="请选择">
+                                <el-option
+                                    v-for="type in payment_types"
+                                    :key="type.value"
+                                    :label="type.label"
+                                    :value="type.value"
+                                >
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="定点医疗机构填报部门" class="w-10 mr-2">
+                            <el-input v-model="form.designated_med_report_unit"></el-input>
+                        </el-form-item>
+                        <el-form-item label="医保经办机构" class="w-10 mr-2">
+                            <el-input v-model="form.health_insurance_org"></el-input>
+                        </el-form-item>
+                        <el-form-item label="代码" class="w-10">
+                            <el-input v-model="form.health_insurance_org_code"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="定点医疗机构填报人" class="w-10 mr-2">
+                            <el-input v-model="form.designated_med_report_person"></el-input>
+                        </el-form-item>
+                        <el-form-item label="医保机构经办人" class="w-10 mr-2">
+                            <el-input v-model="form.health_insurance_person"></el-input>
+                        </el-form-item>
+                        <el-form-item label="代码" class="w-10">
+                            <el-input v-model="form.health_insurance_person_code"></el-input>
+                        </el-form-item>
+                    </el-row>
+                    <el-row>
+                        <el-form-item style="float:right !important">
+                            <el-button 
+                            class="cancel"
+                            @click="cancelForm"
+                            style="margin:1rem 1rem 5rem 0;"
+                            >取消</el-button>
+                        </el-form-item>
+                        <el-form-item style="float:right !important">
+                            <el-button
+                            @click="updateForm"
+                            style="margin:1rem 1rem 5rem 0;"
+                            >保存</el-button>
+                        </el-form-item>
                     </el-row>
             </el-form>
             
@@ -1874,8 +1910,67 @@ import { computed, onMounted, reactive, ref } from "vue";
 import type { FormInstance, FormRules } from 'element-plus'
 import { regionData, CodeToText } from 'element-china-area-data'
 import axios from "axios";
+import { useRoute, useRouter } from "vue-router";
 
+const route = useRoute()
+const router = useRouter()
 const defaultTime1 = [new Date(2000, 1, 1, 12, 0, 0)]
+const getData = onMounted(async()=>{
+    const homepage_id = route.params.homepage_id
+    console.log('homepage_id:',homepage_id)
+    await axios
+        .get('/api/v1/view-settlement/',{params:{homepage_id:homepage_id, new: true}})
+        .then(response=>{
+            console.log(response)
+            console.log('settlement:',response.data.settlement)
+            // reactive 要对value逐个修改
+            form.list_sn = response.data.settlement.list_sn
+            form.org_code = response.data.settlement.org_code
+            form.org_name = response.data.settlement.org_name
+
+            form.case_num = response.data.settlement.case_num
+            form.name = response.data.settlement.name
+            form.gender = response.data.settlement.birthday
+            form.age = response.data.settlement.age
+            form.nationality = response.data.settlement.nationality
+            form.ethnicity = response.data.settlement.ethnicity
+            form.id_type = response.data.settlement.id_type
+            form.id_card_num = response.data.settlement.id_card_num
+            form.profession = response.data.settlement.profession
+            form.present_addr1 = response.data.settlement.present_addr1
+            form.present_addr2 = response.data.settlement.present_addr2
+            form.work_addr1 = response.data.settlement.work_addr1
+            form.work_addr2 = response.data.settlement.work_addr2
+            form.work_phone = response.data.settlement.work_phone
+            form.work_zip = response.data.settlement.work_zip
+            form.contact_name = response.data.settlement.contact_name
+            form.contact_relation = response.data.settlement.contact_relation
+            form.contact_addr1 = response.data.settlement.contact_addr1
+            form.contact_addr2 = response.data.settlement.contact_addr2
+            form.contact_phone = response.data.settlement.contact_phone
+            form.newborn_birth_weight = response.data.settlement.newborn_birth_weight
+            form.newborn_admit_weight = response.data.settlement.newborn_admit_weight
+            form.admit_path = response.data.settlement.admit_path
+            form.admit_specialty = response.data.settlement.admit_specialty
+            form.trans_specialty = response.data.settlement.trans_specialty
+            form.release_time = response.data.settlement.release_time
+            form.release_specialty = response.data.settlement.release_specialty
+            form.hosp_duration = response.data.settlement.hosp_duration
+            form.head_injury_check = response.data.settlemeent.head_injury_check
+            form.pre_admit_coma = response.data.settlement.pre_admit_coma
+            form.post_admit_coma = response.data.settlement.post_admit_coma
+            form.release_type = response.data.settlement.release_type
+            form.cont_hosp_check = response.data.settlement.cont_hosp_check
+            form.cont_hosp_plan = response.data.settlement.cont_hosp_plan
+            // pink
+            form.physician_name = response.data.settlement.physician_ic
+            form.nurse_ic_name = response.data.settlement.nurse_ic
+
+            console.log('updated form:',form)
+        }).catch(error=>{
+            console.log(error)
+        })
+})
 const getChinaData = ()=>{
     if(regionData[regionData.length-1].label != '其他') {
         regionData.push({value: '000000', label: '其他'})
@@ -2060,7 +2155,7 @@ const test = ()=>{
     console.log(form.heal_type[0])
 }
 const formRef = ref<FormInstance>()
-const form:any = reactive({
+let form:any = reactive({
     list_sn: '',
     org_name: '',
     org_code: '',
@@ -2081,15 +2176,15 @@ const form:any = reactive({
     passport_num: '',
     officer_num: '',
     profession: '',
-    present_addr1: '',
+    present_addr1: [],
     present_addr2: '',
-    work_addr1: '',
+    work_addr1: [],
     work_addr2: '',
     work_phone: '',
     work_zip: '',
     contact_name: '',
     contact_relation: '',
-    contact_addr1: '',
+    contact_addr1: [],
     contact_addr2: '',
     contact_phone: '',
     settlement_type: '',
@@ -2100,7 +2195,7 @@ const form:any = reactive({
     newborn_birth_weight: 0.0,
     newborn_admit_weight: 0.0,
     // 门诊慢特病诊疗信息
-    diag_specialty: '',
+    diag_specialty: [],
     diag_date: '',
     diag_info: [
         {
@@ -2115,10 +2210,10 @@ const form:any = reactive({
     admit_path: '',
     heal_type: '',
     admit_time: '',
-    admit_specialty: '',
-    trans_specialty: '',
+    admit_specialty: [],
+    trans_specialty: [],
     release_time: '',
-    release_specialty: '',
+    release_specialty: [],
     hosp_duration: 0,
     w_emergency_diag: '',
     w_disease_code: '',
@@ -3422,60 +3517,38 @@ const nationalityOnChange = val => {
     //     form.parent_birthplace = ['000000']
     // }
 }
+const cancelForm = ()=>{
+    router.push('/settle-main')
+}
+const updateForm = async()=>{
+    console.log('updating...')
+    const homepage_id = route.params.homepage_id
+    const formData = form
+    formData['homepage_id'] = homepage_id
+    console.log(formData)
+    console.log('这里开始')
+    // 检验
+    if(false) {
+    } else {
+        // 上传
+        await axios
+            .post('/api/v1/update-settlement/',{'form':formData})
+            .then(response=>{
+                console.log('submitted and got response:')
+                console.log(response)
+            })
+            .catch(error=>{
+                console.log(error)
+            })
+        console.log('应该跳转了')
+        // this.$router.replace('/success')
+        router.push('/settle-main')
+    }
+}
 </script>
-
 <style scoped>
 .subtitle {
-    width: 100%;
-    height: auto;
-    background-color: #eee;
-    font-weight: bold;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    text-align: center;
-}
-.el-form--inline .el-form-item.diag{
-    height:auto !important;
-    background: red !important;
-    /* for test */
-}
-.diag /deep/ .el-textarea__inner{
-    top: 0px !important;
-}
-.el-range-editor .el-range-input:hover {
-    background-color: rgb(209, 209, 209) !important;
-}
-.el-date-editor .el-range-input:hover {
-    background-color: rgb(209, 209, 209) !important;
-}
-.ml-1 {
-    margin-left: 1rem !important;
-}
-.ml-2 {
-    margin-left: 2rem !important;
-}
-.ml-3 {
-    margin-left: 3rem !important;
-}
-.ml-4 {
-    margin-left: 4rem !important;
-}
-.ml-5 {
-    margin-left: 5rem !important;
-}
-.ml-6 {
-    margin-left: 6rem !important;
-}
-.ml-7 {
-    margin-left: 7rem !important;
-}
-.ml-8 {
-    margin-left: 8rem !important;
-}
-.ml-9 {
-    margin-left: 9rem !important;
-}
-.ml-10 {
-    margin-left: 10rem !important;
+    margin: 1rem 0;
+    background-color: rgb(239, 239, 239);
 }
 </style>

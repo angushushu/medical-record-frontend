@@ -8,7 +8,9 @@ import UploadJsonSp from '../views/UploadJsonSp.vue'
 import UploadXlsSp from '../views/UploadXlsSp.vue'
 import EditStandards from '../views/EditStandards.vue'
 import Specialties from '../views/Specialties.vue'
-import SettlementList from '../views/SettlementList.vue'
+import Settlement from '../views/Settlement.vue'
+import SettleMain from '../views/SettleMain.vue'
+import SettleView from '../views/SettleView.vue'
 
 const routes = [
   {
@@ -50,9 +52,19 @@ const routes = [
     ]
   },
   {
-    path: '/settlement-list',
-    name: 'SettlementList',
-    component: SettlementList,
+    path: '/settle-main',
+    name: 'SettleMain',
+    component: SettleMain,
+  },
+  {
+    path: '/new-settle/:homepage_id',
+    name: 'Settlement',
+    component: Settlement,
+  },
+  {
+    path: '/settlement/:homepage_id',
+    name: 'SettleView',
+    component: SettleView,
   },
 ]
 
