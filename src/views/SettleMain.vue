@@ -85,7 +85,7 @@ const filterTableData = computed(() => {
             data.name.toLowerCase().includes(query.value.toLowerCase())
         )
     })
-onMounted(()=>{document.title = '病案管理页'})
+onMounted(()=>{document.title = '结算清单管理页'})
 const updateData = onMounted(async ()=>{
     console.log('current_page', current_page.value)
     await axios

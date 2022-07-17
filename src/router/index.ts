@@ -6,8 +6,14 @@ import Success from '../views/Success.vue'
 import View from '../views/View.vue'
 import UploadJsonSp from '../views/UploadJsonSp.vue'
 import UploadXlsSp from '../views/UploadXlsSp.vue'
+import UploadJsonDg from '../views/UploadJsonDg.vue'
+import UploadXlsDg from '../views/UploadXlsDg.vue'
+import UploadJsonG from '../views/UploadJsonG.vue'
+import UploadXlsG from '../views/UploadXlsG.vue'
 import EditStandards from '../views/EditStandards.vue'
 import Specialties from '../views/Specialties.vue'
+import Diagnoses from '../views/Diagnoses.vue'
+import General from '../views/General.vue'
 import Settlement from '../views/Settlement.vue'
 import SettleMain from '../views/SettleMain.vue'
 import SettleView from '../views/SettleView.vue'
@@ -48,7 +54,31 @@ const routes = [
       {
         path:'upload-xls-sp',
         component:UploadXlsSp,
-      }
+      },
+      {
+        path:'diagnoses/:id',
+        component:Diagnoses,
+      },
+      {
+        path:'upload-json-dg',
+        component:UploadJsonDg,
+      },
+      {
+        path:'upload-xls-dg',
+        component:UploadXlsDg,
+      },
+      {
+        path:'general/:id',
+        component:General,
+      },
+      {
+        path:'upload-json-g/:type',
+        component:UploadJsonG,
+      },
+      {
+        path:'upload-xls-g/:type',
+        component:UploadXlsG,
+      },
     ]
   },
   {

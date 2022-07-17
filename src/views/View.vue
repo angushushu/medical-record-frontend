@@ -648,7 +648,7 @@
                         <el-form-item label="有出院31天内再住院计划">
                             <el-checkbox :disabled="this.non_editable" class="mr-1" v-model="form.cont_hosp_check" true-label=true false-label=false ></el-checkbox>
                             <span>
-                                <el-input :disabled="this.non_editable" v-if="form.cont_hosp_check=='true'" v-model="form.cont_hosp_plan" placeholder="目的"></el-input>
+                                <el-input :disabled="this.non_editable" v-show="form.cont_hosp_check=='true'" v-model="form.cont_hosp_plan" placeholder="目的"></el-input>
                             </span>
                         </el-form-item>
                     </el-row>
@@ -657,7 +657,7 @@
                             <el-checkbox :disabled="this.non_editable" v-model="form.head_injury_check" true-label=true false-label=false ></el-checkbox>
                         </el-form-item>
                         <!-- <span> -->
-                        <el-form-item v-if="form.head_injury_check=='true'">
+                        <el-form-item v-show="form.head_injury_check=='true'">
                             <span>
                                 <label class="el-form-item__label" style="line-height:28px !important">
                                     入院前
@@ -2119,6 +2119,7 @@ export default {
     },
     mounted() {
         document.title = '住院病案首页'
+        this.loadStandard()
         this.getPage()
     },
     computed: {
@@ -2142,6 +2143,17 @@ export default {
         }
     },
     methods: {
+        async loadStandard() {
+            await axios.get('/api/v1/get-standard/specialty')
+                .then(response=>{
+                    console.log('appliedspstd:',response)
+                    this.specialties = response.data.specialties
+                    console.log('current specialties:',this.specialties)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+        },
         async getPage() {
             // const route = useRoute()
             // const id = route.params.id
@@ -2368,7 +2380,7 @@ export default {
         removeDiag(diag) {
             let index = this.form.other_diags.indexOf(diag)
             if(index != -1) {
-                this.form.other_diagns.splice(index, 1)
+                this.form.other_diags.splice(index, 1)
             }
         },
         addOp(op) {
@@ -2380,7 +2392,7 @@ export default {
                 operator: '',
                 assis1: '',
                 assis2: '',
-                wound_healing_lvl: '',
+                wound_healing_lvl: [],
                 anaesthesia_type: '',
                 anaesthetist: '',
                 key: Date.now(),

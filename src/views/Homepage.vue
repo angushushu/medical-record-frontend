@@ -2094,14 +2094,14 @@ export default {
     methods: {
         async loadStandard() {
             await axios.get('/api/v1/get-standard/specialty')
-                    .then(response=>{
-                        console.log('appliedspstd:',response)
-                        this.specialties = response.data.specialties
-                        console.log('current specialties:',this.specialties)
-                    })
-                    .catch(error=>{
-                        console.log(error)
-                    })
+                .then(response=>{
+                    console.log('appliedspstd:',response)
+                    this.specialties = response.data.specialties
+                    console.log('current specialties:',this.specialties)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
         },
         presentAddrOnChange(val) {
             console.log(val)
@@ -2322,7 +2322,7 @@ export default {
                 operator: '',
                 assis1: '',
                 assis2: '',
-                wound_healing_lvl: '',
+                wound_healing_lvl: [],
                 anaesthesia_type: '',
                 anaesthetist: '',
                 key: Date.now(),
@@ -2522,6 +2522,10 @@ export default {
 .el-cascader {
     line-height: 0px;
     width: 100%;
+}
+.label-emphasize-black .el-form-item__label {
+    color: black;
+    // font-weight: bold;
 }
 .label-emphasize .el-form-item__label {
     color: black;

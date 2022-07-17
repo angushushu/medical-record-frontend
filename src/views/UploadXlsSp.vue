@@ -3,7 +3,7 @@
         <div style="max-width:59rem !important; margin-left:10% !important; margin-right:auto !important;">
             <el-row justify="center">
                 <div class="title" style="margin: 3rem 0">
-                    <h1>XLS 标 准 上 传</h1>
+                    <h1>XLS 科 别 标 准 上 传</h1>
                 </div>
             </el-row>
             <el-row justify="center">

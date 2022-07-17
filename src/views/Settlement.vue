@@ -6,7 +6,7 @@
             </div>
             <el-form ref="formRef" :model="form" :rules="formRules" :inline="true">
                 <el-row>
-                    <el-form-item label="清单流水号" class="w-16 mr-5">
+                    <el-form-item label="清单流水号" class="w-17 mr-5">
                         <el-input v-model="form.list_sn"></el-input>
                     </el-form-item>
                 </el-row>
@@ -34,15 +34,16 @@
                             type="date" 
                             format="YYYY/MM/DD"
                             value-format="YYYY-MM-DD"
-                            placeholder="选择">
+                            placeholder="选择"
+                            :disabledDate="disabledDateReport">
                         </el-date-picker>
                     </el-form-item>
                 </el-row>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .5rem 0 .5rem 0;">一、基本信息</p>
+                    <p class="subtitle-line">一、基本信息</p>
                 </el-row>
                 <el-row>
-                    <el-form-item label="姓名" class="w-13 mr-2">
+                    <el-form-item label="姓名" class="w-12 mr-2">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
                     <el-form-item label="性别" class="label-emphasize w-13 mr-2">
@@ -62,7 +63,7 @@
                         type="date" 
                         format="YYYY/MM/DD"
                         value-format="YYYY-MM-DD"
-                        :disabledDate="disabledDate0"
+                        :disabledDate="disabledDateBirth"
                         @change="birthOrAdmitdayOnChange"
                         placeholder="选择">
                         </el-date-picker>
@@ -70,10 +71,10 @@
                     <!-- 待修改 -->
                     <el-form-item label="年龄:" class="label-emphasize w-3">
                     </el-form-item>
-                    <span class="el-form-item__label w-7" style="padding-right:0px !important">{{this.form.age}}</span>
+                    <span class="el-form-item__label w-8" style="padding-right:0px !important">{{this.form.age}}</span>
                 </el-row>
                 <el-row class="label-emphasize">
-                    <el-form-item label="国籍" class="w-13 mr-2">
+                    <el-form-item label="国籍" class="w-12 mr-2">
                         <el-select placeholder="请选择国籍" @change="nationalityOnChange" v-model="form.nationality" filterable>
                             <el-option-group v-for="group in countries" :key="group.label" :label="group.label">
                                 <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.label">
@@ -105,7 +106,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="患者证件号" class="w-14">
+                    <el-form-item label="患者证件号" class="w-15">
                         <el-input 
                         v-model="idNumVal"
                         :disabled="this.form.id_type===''"
@@ -113,7 +114,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="职业" class="w-13 mr-2">
+                    <el-form-item label="职业" class="w-12 mr-2">
                         <el-select v-model="form.profession" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="job in professions"
@@ -134,7 +135,7 @@
                             >
                         </el-cascader>
                     </el-form-item>
-                    <el-form-item class="w-18 mr-1">
+                    <el-form-item class="w-21">
                         <el-input v-model="form.present_addr2"></el-input>
                     </el-form-item>
                 </el-row>
@@ -183,15 +184,15 @@
                         >
                         </el-cascader>
                     </el-form-item>
-                    <el-form-item class="w-10 mr-1">
+                    <el-form-item class="w-10 mr-2">
                         <el-input v-model="form.contact_addr2"></el-input>
                     </el-form-item>
-                    <el-form-item label="电话" class="w-8">
+                    <el-form-item label="电话" class="w-9">
                         <el-input v-model="form.contact_phone"></el-input>
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="医保类型" class="w-12 mr-3">
+                    <el-form-item label="医保类型" class="w-12 mr-2">
                         <el-select v-model="form.settlement_type" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="type in settlement_types"
@@ -201,7 +202,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="特殊人员类型" class="w-12 mr-3">
+                    <el-form-item label="特殊人员类型" class="w-13 mr-2">
                         <el-select v-model="form.special_person_type" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="type in special_person_types"
@@ -211,19 +212,19 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="参保地" class="w-12">
+                    <el-form-item label="参保地" class="w-13">
                         <el-input v-model="form.settlement_loc"></el-input>
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="新生儿入院类型" class="w-15 mr-3">
+                    <el-form-item label="新生儿入院类型" class="w-20 mr-3">
                         <el-select
                         v-model="form.newborn_admit_type"
                         multiple
                         collapse-tags
                         collapse-tags-tooltip
                         placeholder="请选择"
-                        style="width: 240px"
+                        style="width: 100%"
                         >
                         <el-option
                             v-for="type in newborn_admit_types"
@@ -247,22 +248,23 @@
                     </el-form-item>
                 </el-row>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .5rem 0 .5rem 0;">二、门诊慢特病诊疗信息</p>
+                    <p class="subtitle-line">二、门诊慢特病诊疗信息</p>
                 </el-row>
                 <el-row>
-                    <el-form-item label="诊断科别" class="w-16 mr-2">
+                    <el-form-item label="诊断科别" class="w-17 mr-2">
                         <el-cascader
                             v-model="form.diag_specialty"
                             :options="specialties"
                         ></el-cascader>
                     </el-form-item>
-                    <el-form-item label="就诊日期" class="w-13">
+                    <el-form-item label="就诊日期" class="w-17">
                         <el-date-picker 
                         v-model="form.diag_date" 
                         type="date" 
                         format="YYYY/MM/DD"
                         value-format="YYYY-MM-DD"
-                        placeholder="选择">
+                        placeholder="选择"
+                        :disabledDate="disabledDateDiag">
                         </el-date-picker>
                     </el-form-item>
                 </el-row>
@@ -273,7 +275,7 @@
                 label-with="100px"
                 class="demo-dynamic label-emphasize-light"
                 >
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row class="first-row">
                         <el-form-item label="病种名称" class="w-12 mr-1">
                         </el-form-item>
                         <el-form-item label="病种代码" class="w-12 mr-1">
@@ -283,46 +285,39 @@
                         <el-form-item label="手术及操作代码">
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem">
+                    <el-row style="margin-left:1rem; margin-right:1rem">
                         <el-form-item
                         v-for="info in form.diag_info"
                         :key="info.key"
                         style="height: auto !important;"
                         >
-                            <el-row style="width:100%; padding-left:0rem !important; margin:.2rem 0 .5rem 0;">
-                                <el-col :span="23.8">
-                                    <el-row>
-                                        <el-form-item class="w-12 mr-1">
-                                            <el-input v-model="info.disease_name"></el-input>
-                                        </el-form-item>
-                                        <el-form-item class="w-12 mr-1">
-                                            <el-input v-model="info.disease_code"></el-input>
-                                        </el-form-item>
-                                        <el-form-item class="w-12 mr-1">
-                                            <el-input v-model="info.op_name"></el-input>
-                                        </el-form-item>
-                                        <el-form-item class="w-12">
-                                            <el-input v-model="info.op_code"></el-input>
-                                        </el-form-item>
-                                        
-                                    </el-row>
-                                </el-col>
-                                <el-col :span="0.2">
-                                    <el-button class="remove-op" @click.prevent="removeDiagInfo(info)">-</el-button>
-                                </el-col>
+                            <el-row class="repeat-row">
+                                <el-form-item class="w-12 mr-1">
+                                    <el-input v-model="info.disease_name"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-12 mr-1">
+                                    <el-input v-model="info.disease_code"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-12 mr-1">
+                                    <el-input v-model="info.op_name"></el-input>
+                                </el-form-item>
+                                <el-form-item class="w-12">
+                                    <el-input v-model="info.op_code"></el-input>
+                                </el-form-item>
+                                <el-button class="remove-spdiag" @click.prevent="removeDiagInfo(info)">-</el-button>
                             </el-row>   
                         </el-form-item>
-                        <el-row justify="end">
-                            <el-button class="add-op" style="margin-right:.9rem" @click="addDiagInfo">+ 信息</el-button>
+                        <el-row justify="end" style="width:100%">
+                            <el-button class="add-op" style="margin-top:1rem; line-height:20px !important" @click="addDiagInfo">+ 信息</el-button>
                         </el-row>  
                     </el-row>
                     
                 </el-form>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .5rem 0 .5rem 0;">三、住院诊疗信息</p>
+                    <p class="subtitle-line">三、住院诊疗信息</p>
                 </el-row>
                 <el-row>
-                    <el-form-item label="住院医疗类型" class="w-12 mr-3">
+                    <el-form-item label="住院医疗类型" class="w-17 mr-4">
                         <el-select v-model="form.hosp_reason" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="reason in hosp_reasons"
@@ -332,7 +327,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="入院途径" class="w-12 mr-3">
+                    <el-form-item label="入院途径" class="w-17 mr-4">
                         <el-select v-model="form.admit_path" placeholder="请选择" style="width: 17rem;">
                             <el-option
                                 v-for="path in admit_paths"
@@ -342,7 +337,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="治疗类别" class="w-18 mr-2">
+                    <el-form-item label="治疗类别" class="w-17">
                         <el-cascader
                             v-model="form.heal_type"
                             :options="heal_types"
@@ -351,19 +346,19 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="入院时间" class="w-12 mr-2">
+                    <el-form-item label="入院时间" class="w-17 mr-4">
                         <el-date-picker
                         popper-class="datehr"
                         v-model="form.admit_time" 
                         type="datetime" 
                         format="YYYY/MM/DD hh:mm"
                         value-format="YYYY-MM-DD hh:MM"
-                        :disabledDate="disabledDate1"
+                        :disabledDate="disabledDateAdmit"
                         @change="birthOrAdmitdayOnChange();admitOrReleasedayOnChange()"
                         placeholder="选择日期时间">
                         </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="入院科别" class="w-16 mr-2">
+                    <el-form-item label="入院科别" class="w-17 mr-4">
                         <el-cascader
                             v-model="form.admit_specialty"
                             :options="specialties"
@@ -377,39 +372,77 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="出院时间" class="w-12 mr-2">
+                    <el-form-item label="出院时间" class="w-17 mr-4">
                         <el-date-picker
                         popper-class="datehr"
                         v-model="form.release_time" 
                         type="datetime" 
                         format="YYYY/MM/DD hh:mm"
                         value-format="YYYY-MM-DD hh:MM"
-                        :disabledDate="disabledDate2"
+                        :disabledDate="disabledDateRelease"
                         @change="admitOrReleasedayOnChange()"
                         placeholder="选择日期时间">
                         </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="出院科别" class="w-16 mr-2">
+                    <el-form-item label="出院科别" class="w-17 mr-4">
                         <el-cascader
                             v-model="form.release_specialty"
                             :options="specialties"
                         ></el-cascader>
                     </el-form-item>
                     <el-form-item label="实际入院天数:" class="w-6"></el-form-item>
-                    <span class="el-form-item__label w-12">{{getHospDuration()}}</span>
+                    <span class="el-form-item__label w-11">{{getHospDuration()}}</span>
                     <el-row>
-                        <el-form-item label="门（急）诊诊断（西医诊断）" style="width:39rem; margin-right:2rem !important; height: auto !important">
-                            <el-input v-model="form.w_emergency_diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                        <el-form-item label="门（急）诊诊断（西医诊断）" style="width:38rem; margin-right:4rem !important; height: auto !important">
+                            <el-select
+                            v-model="form.w_emergency_diag"
+                            multiple
+                            filterable
+                            remote
+                            placeholder="添加诊断"
+                            :remote-method="queryDiag"
+                            :loading="diags_loading"
+                            collapse-tags
+                            :collapse-tags-tooltip="true"
+                            default-first-option
+                            class="diag-box"
+                            >
+                                <el-option
+                                v-for="diag in temp_diags"
+                                :key="diag.code"
+                                :label="diag.label"
+                                :value="diag.code"
+                                />
+                            </el-select>
                         </el-form-item>
-                        <el-form-item label="疾病代码" class="w-10">
+                        <el-form-item label="疾病代码" class="w-17">
                             <el-input v-model="form.w_disease_code"></el-input>
                         </el-form-item>
                     </el-row>
-                    <el-row>
-                        <el-form-item label="门（急）诊诊断（中医诊断）" style="width:39rem; margin-right:2rem !important; height: auto !important">
-                            <el-input v-model="form.t_emergency_diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                    <el-row style="height: auto !imoprtant">
+                        <el-form-item label="门（急）诊诊断（中医诊断）" style="width:38rem; margin-right:4rem !important; height: auto !important">
+                            <el-select
+                            v-model="form.t_emergency_diag"
+                            multiple
+                            filterable
+                            remote
+                            placeholder="添加诊断"
+                            :remote-method="queryDiag"
+                            :loading="diags_loading"
+                            collapse-tags
+                            :collapse-tags-tooltip="true"
+                            default-first-option
+                            class="diag-box"
+                            >
+                                <el-option
+                                v-for="diag in temp_diags"
+                                :key="diag.code"
+                                :label="diag.label"
+                                :value="diag.code"
+                                />
+                            </el-select>
                         </el-form-item>
-                        <el-form-item label="疾病代码" class="w-10">
+                        <el-form-item label="疾病代码" class="w-17">
                             <el-input v-model="form.t_disease_code"></el-input>
                         </el-form-item>
                     </el-row>
@@ -546,15 +579,18 @@
                         <el-input-number v-model="form.diag_cnt" controls-position="right"></el-input-number>
                     </el-form-item>
                 </el-row>
-
+                <el-row>
+                    <p class="sub-subtitle"
+                    style="width: 100%; margin: 1.5rem 1rem 0 1rem; padding:0.2rem;">主要手术</p>
+                </el-row>
                 <el-form
                 :model="form.other_ops"
                 ref="form.other_ops"
                 label-with="100px"
-                class="demo-dynamic label-emphasize-light"
+                class="demo-dynamic label-emphasize-black"
                 >
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
-                        <el-form-item label="名称" class="w-7 mr-1">
+                    <el-row style="margin:0rem 1rem 0rem 1rem;">
+                        <el-form-item label="名称" class="w-8 mr-1">
                         </el-form-item>
                         <el-form-item label="代码" class="w-7 mr-1">
                         </el-form-item>
@@ -564,69 +600,15 @@
                         <el-form-item label="麻醉姓名" class="w-7 mr-1"></el-form-item>
                         <el-form-item label="麻醉代码" class="w-7"></el-form-item>
                     </el-row>
-                    <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
-                            <el-row>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.code"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.code"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-8 mr-1">
-                                    <el-select v-model="form.main_op.anaesthesia_type" placeholder="请选择">
-                                        <el-option
-                                            v-for="type in anaesthesia_types"
-                                            :key="type.value"
-                                            :label="type.label"
-                                            :value="type.value"
-                                        ></el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.operator_name"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.operator_code"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.anaesthetist_name"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7">
-                                    <el-input v-model="form.main_op.anaesthetist_code"></el-input>
-                                </el-form-item>
-                            </el-row>
-                            <el-row>
-                                <el-form-item label="手术起止时间" class="w-25 mr-2">
-                                    <el-date-picker
-                                    popper-class="datehr"
-                                    v-model="form.main_op.op_time"
-                                    type="datetimerange"
-                                    start-placeholder="Start Date"
-                                    end-placeholder="End Date"
-                                    :default-time="defaultTime1"
-                                    />
-                                </el-form-item>
-                                <el-form-item label="麻醉起止时间" class="w-25">
-                                    <el-date-picker
-                                    popper-class="datehr"
-                                    v-model="form.main_op.anaesthesia_time"
-                                    type="datetimerange"
-                                    start-placeholder="Start Date"
-                                    end-placeholder="End Date"
-                                    :default-time="defaultTime1"
-                                    />
-                                </el-form-item>
-                            </el-row>
-                    </el-row>    
                     <el-form-item
-                    v-for="(op) in form.other_ops"
+                    v-for="(op) in form.main_ops"
                     :key="op.key"
                     style="height: auto !important;"
                     >
-                        <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
+                        <el-row class="operations" style="padding-left:1rem !important; margin:0rem 0 .5rem 0;">
                                 <el-row>
-                                    <el-form-item class="w-7 mr-1">
-                                        <el-input v-model="op.code"></el-input>
+                                    <el-form-item class="w-8 mr-1">
+                                        <el-input v-model="op.name"></el-input>
                                     </el-form-item>
                                     <el-form-item class="w-7 mr-1">
                                         <el-input v-model="op.code"></el-input>
@@ -655,7 +637,7 @@
                                     </el-form-item>
                                 </el-row>
                                 <el-row>
-                                    <el-form-item label="手术起止时间" class="w-25 mr-2">
+                                    <el-form-item label="手术起止时间" class="w-25 mr-1">
                                         <el-date-picker
                                         popper-class="datehr"
                                         v-model="op.op_time"
@@ -663,6 +645,9 @@
                                         start-placeholder="Start Date"
                                         end-placeholder="End Date"
                                         :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
+
+                                        @change="opTimeOnChange"
                                         />
                                     </el-form-item>
                                     <el-form-item label="麻醉起止时间" class="w-25">
@@ -673,13 +658,110 @@
                                         start-placeholder="Start Date"
                                         end-placeholder="End Date"
                                         :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
                                         />
                                     </el-form-item>
-                                    <el-button @click.prevent="removeOtherOp(op)">-</el-button>
+                                    <el-button class="starBtn" @click.prevent="moveToOtherOp(op)">
+                                        <el-icon><StarFilled/></el-icon>
+                                    </el-button>
+                                    <el-button class="delOpBtn" @click.prevent="removeMainOp(op)">
+                                        <el-icon><Close/></el-icon>
+                                    </el-button>
                                 </el-row>
                         </el-row>                            
                     </el-form-item>
-                    <el-row justify="space-between">
+                    <el-row>
+                        <p class="sub-subtitle"
+                        style="width: 100%; margin: .5rem 1rem 0 1rem; padding:0.2rem;">其他手术</p>
+                    </el-row>
+                </el-form>
+                <el-form
+                :model="form.other_ops"
+                ref="form.other_ops"
+                label-with="100px"
+                class="demo-dynamic label-emphasize-black"
+                >
+                    <el-row style="margin:0rem 1rem 0rem 1rem;">
+                        <el-form-item label="名称" class="w-8 mr-1">
+                        </el-form-item>
+                        <el-form-item label="代码" class="w-7 mr-1">
+                        </el-form-item>
+                        <el-form-item label="麻醉方式" class="w-8 mr-1"></el-form-item>
+                        <el-form-item label="术者姓名" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="术者代码" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="麻醉姓名" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="麻醉代码" class="w-7"></el-form-item>
+                    </el-row>
+                    <el-form-item
+                    v-for="(op) in form.other_ops"
+                    :key="op.key"
+                    style="height: auto !important;"
+                    >
+                        <el-row class="operations" style="padding-left:1rem !important; margin:0rem 0 .5rem 0;">
+                                <el-row>
+                                    <el-form-item class="w-8 mr-1">
+                                        <el-input v-model="op.name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-8 mr-1">
+                                        <el-select v-model="op.anaesthesia_type" placeholder="请选择">
+                                            <el-option
+                                                v-for="type in anaesthesia_types"
+                                                :key="type.value"
+                                                :label="type.label"
+                                                :value="type.value"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.operator_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.operator_code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.anaesthetist_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7">
+                                        <el-input v-model="op.anaesthetist_code"></el-input>
+                                    </el-form-item>
+                                </el-row>
+                                <el-row>
+                                    <el-form-item label="手术起止时间" class="w-25 mr-1">
+                                        <el-date-picker
+                                        popper-class="datehr"
+                                        v-model="op.op_time"
+                                        type="datetimerange"
+                                        start-placeholder="Start Date"
+                                        end-placeholder="End Date"
+                                        :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
+                                        />
+                                    </el-form-item>
+                                    <el-form-item label="麻醉起止时间" class="w-25">
+                                        <el-date-picker
+                                        popper-class="datehr"
+                                        v-model="op.anaesthesia_time"
+                                        type="datetimerange"
+                                        start-placeholder="Start Date"
+                                        end-placeholder="End Date"
+                                        :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
+                                        />
+                                    </el-form-item>
+                                    
+                                    <el-button class="starBtn" @click.prevent="moveToMainOp(op)">
+                                        <el-icon><Star/></el-icon>
+                                    </el-button>
+                                    <el-button class="delOpBtn" @click.prevent="removeOtherOp(op)">
+                                        <el-icon><Close/></el-icon>
+                                    </el-button>
+                                </el-row>
+                        </el-row>                            
+                    </el-form-item>
+                    <el-row justify="space-between" style="margin-top:.2rem;margin-bottom:.5rem;padding-left:1rem;">
                         <el-form-item label="手术及操作代码计数" :max="8000" class="w-12">
                             <el-input-number v-model="form.op_cnt" controls-position="right"></el-input-number>
                         </el-form-item>
@@ -718,9 +800,7 @@
                             </label>
                         </span>
                     </el-form-item>
-                </el-row>
-                <el-row>
-                    <el-form-item label="颅脑损伤患者昏迷时间： 入院前">
+                    <el-form-item label="颅脑损伤患者昏迷时间： 入院前" class="ml-6">
                         <span>
                             <el-input-number
                                 v-model="form.pre_admit_coma.days"
@@ -753,7 +833,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="入院后" class="ml-10">
+                    <el-form-item label="入院后" style="margin-left:40.9rem">
                         <span>
                             <el-input-number
                                 v-model="form.post_admit_coma.days"
@@ -785,14 +865,27 @@
                         </span>
                     </el-form-item>
                 </el-row>
-                <el-row>
+                <el-row style="margin:0rem 1rem">
+                    <el-row style="width:100%">
+                        <p class="sub-subtitle"
+                        style="width: 100%; padding:0.2rem; margin:1rem 0 0 0">重症监护病房</p>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="重症监护病房类型" class="w-18">
+                        </el-form-item>
+                        <el-form-item label="进重症监护室时间" class="w-13">
+                        </el-form-item>
+                        <el-form-item label="出重症监护室时间" class="w-15"></el-form-item>
+                        <el-form-item label="合计" class="w-8"></el-form-item>
+                    </el-row>
                     <el-form-item
                     v-for="(cu) in form.CU_usage"
                     :key="cu.key"
                     >
+                        
                         <el-row>
-                            <el-form-item label="重症监护病房类型">
-                                <el-select v-model="cu.CU_type" placeholder="请选择">
+                            <el-form-item class="w-15 mr-3">
+                                <el-select v-model="cu.CU_type" placeholder="请选择" style="width:100%">
                                     <el-option
                                         v-for="type in CU_types"
                                         :key="type.value"
@@ -802,7 +895,7 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
-                            <el-form-item class="w-10">
+                            <el-form-item class="w-25 mr-3">
                                 <el-date-picker
                                 v-model="cu.time"
                                 type="datetimerange"
@@ -812,24 +905,33 @@
                                 @change="cuTimeOnChange(cu)"
                                 />
                             </el-form-item>
-                            <el-form-item label="合计:" class="w-5">
-                            </el-form-item>
-                            <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{cu.total_hr}}时{{cu.total_min}}分</span>
+                            <span class="el-form-item__label w-8 mr-1" style="padding-right:0px !important">{{cu.total_hr}}时{{cu.total_min}}分</span>
                             <el-button class="remove-diag" @click.prevent="removeCU(cu)">-</el-button>
                         </el-row>
                         
                     </el-form-item>
-                    <el-row justify="end">
-                        <el-button class="add-op" style="margin-right:.9rem" @click="addCU">+</el-button>
+                    <el-row justify="end" style="width:100%">
+                        <el-button class="add-op" style="margin-right:0rem !important" @click="addCU">+ CU</el-button>
                     </el-row>  
                 </el-row>
-                <el-row>
+                <el-row style="margin:0rem 1rem 0rem 1rem">
+                    <el-row style="width:100%">
+                        <p class="sub-subtitle"
+                        style="width: 100%; padding:0.2rem; margin:1rem 0 0 0">输血</p>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="输血品种" class="w-20">
+                        </el-form-item>
+                        <el-form-item label="输血量" class="w-20">
+                        </el-form-item>
+                        <el-form-item label="输血计量单位" class="w-15"></el-form-item>
+                    </el-row>
                     <el-form-item
                     v-for="(blood) in form.transfusion"
                     :key="blood.key"
                     >
                         <el-row>
-                            <el-form-item label="输血品种">
+                            <el-form-item class="w-15 mr-5">
                                 <el-cascader
                                 v-model="blood.blood_type"
                                 :options="blood_types"
@@ -837,36 +939,37 @@
                                 ></el-cascader>
                                 
                             </el-form-item>
-                            <el-form-item label="输血量" class="w-12 mr-2">
-                                <el-input-number v-model="blood.blood_volume" controls-position="right"></el-input-number>
+                            <el-form-item class="w-15 mr-5">
+                                <el-input-number 
+                                style="width:100%"
+                                v-model="blood.blood_volume" 
+                                controls-position="right"></el-input-number>
                             </el-form-item>
-                            <el-form-item label="输血计量单位" class="label-emphasize w-5">
-                            </el-form-item>
-                            <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{blood.volume_unit}}</span>
+                            <span class="el-form-item__label w-15" style="padding-right:0px !important">{{blood.volume_unit}}</span>
                             <el-button class="remove-diag" @click.prevent="removeTransfusion(blood)">-</el-button>
                         </el-row>
                         
                     </el-form-item>
-                    <el-row justify="end">
-                        <el-button class="add-op" style="margin-right:.9rem" @click="addTransfusion">+</el-button>
+                    <el-row justify="end" style="width:100%">
+                        <el-button class="add-op" style="margin-right:0rem;" @click="addTransfusion">+ 输血</el-button>
                     </el-row>  
                 </el-row>
-                <el-row>
-                    <el-form-item label="特级护理天数" class="w-11 mr-2">
+                <el-row style="margin-top:1rem">
+                    <el-form-item label="特级护理天数" class="w-14 mr-1">
                         <el-input-number v-model="form.special_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="一级护理天数" class="w-11 mr-2">
+                    <el-form-item label="一级护理天数" class="w-14 mr-1">
                         <el-input-number v-model="form.lvl1_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="二级护理天数" class="w-11 mr-2">
+                    <el-form-item label="二级护理天数" class="w-14 mr-1">
                         <el-input-number v-model="form.lvl2_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="三级护理天数" class="w-11">
+                    <el-form-item label="三级护理天数" class="w-14">
                         <el-input-number v-model="form.lvl3_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="离院方式" class="label-emphasize">
+                    <el-form-item label="离院方式" class="label-emphasize w-14">
                         <el-select v-model="form.release_type" placeholder="请选择">
                             <el-option
                                 v-for="type in release_types"
@@ -876,7 +979,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <span>
+                    <span class="ml-1">
                         <el-form-item v-if="form.release_type===release_types[1].value" label="拟接收医疗机构名称">
                             <el-input v-model="form.accept_hosp_2"></el-input>
                         </el-form-item>
@@ -898,51 +1001,43 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="主诊医师姓名" class="w-12 mr-1">
+                    <el-form-item label="主诊医师姓名" class="w-14 mr-1">
                         <el-input v-model="form.physician_name"></el-input>
                     </el-form-item>
-                    <el-form-item label="主诊医师代码" class="w-12 mr-1">
+                    <el-form-item label="主诊医师代码" class="w-14 mr-1">
                         <el-input v-model="form.physician_code"></el-input>
                     </el-form-item>
-                    <el-form-item label="责任护士姓名" class="w-12 mr-2">
+                    <el-form-item label="责任护士姓名" class="w-14 mr-1">
                         <el-input v-model="form.nurse_ic_name"></el-input>
                     </el-form-item>
-                    <el-form-item label="责任护士代码" class="w-12">
+                    <el-form-item label="责任护士代码" class="w-14">
                         <el-input v-model="form.nurse_ic_code"></el-input>
                     </el-form-item>
                 </el-row>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .5rem 0 .5rem 0;">四、医疗收费信息</p>
+                    <p class="subtitle-line">四、医疗收费信息</p>
                 </el-row>
                 <el-row>
-                    <el-col :span="10">
-                        <el-row>
-                            <el-form-item label="业务流水号" class="w-10 mr-1">
-                                <el-input v-model="form.biz_sn"></el-input>
-                            </el-form-item>
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="票据代码" class="w-10 mr-1">
-                                <el-input v-model="form.bill_code"></el-input>
-                            </el-form-item>
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="票据号码" class="w-10 mr-1">
-                                <el-input v-model="form.bill_num"></el-input>
-                            </el-form-item>
-                        </el-row>
-                    </el-col>
-                    <el-col :span="14">
-                        <el-row>
-                            <el-date-picker
-                            v-model="form.settle_duration"
-                            type="daterange"
-                            range-separator="至"
-                            start-placeholder="起始日"
-                            end-placeholder="结束日"
-                            />
-                        </el-row>
-                    </el-col>
+                    <el-form-item label="业务流水号" class="w-10 mr-3">
+                        <el-input v-model="form.biz_sn"></el-input>
+                    </el-form-item>
+                    <el-form-item label="票据代码" class="w-10 mr-3">
+                        <el-input v-model="form.bill_code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="票据号码" class="w-10 mr-3">
+                        <el-input v-model="form.bill_num"></el-input>
+                    </el-form-item>
+                    <el-form-item label="结算期间" class="w-20">
+                        <el-date-picker
+                        v-model="form.settle_duration"
+                        type="daterange"
+                        format="YYYY/MM/DD"
+                        value-format="YYYY-MM-DD"
+                        range-separator="至"
+                        start-placeholder="起始日"
+                        end-placeholder="结束日"
+                        />
+                    </el-form-item>
                 </el-row>
                 <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
                     <el-form-item label="项目名称" class="label-emphasize w-5 mr-5">
@@ -958,7 +1053,7 @@
                     <el-form-item label="其他" class="w-5">
                     </el-form-item>
                 </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="床位费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1007,7 +1102,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="诊察费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item  class="w-7 mr-3">
@@ -1056,7 +1151,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="检查费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1105,7 +1200,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="化验费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1154,7 +1249,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="治疗费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1203,7 +1298,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="手术费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1252,7 +1347,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="护理费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1301,7 +1396,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="卫生材料费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1350,7 +1445,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="西药费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1399,7 +1494,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="中药饮片费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1448,7 +1543,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="中成药费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1497,7 +1592,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="一般诊疗费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1546,7 +1641,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="挂号费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1595,7 +1690,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="其他费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1644,7 +1739,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item :label="form.special_fee.title" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1693,7 +1788,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="金额合计" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1738,71 +1833,79 @@
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="医保统筹基金支付" class="w-15">
+                        <el-form-item label="医保统筹基金支付" class="w-18" style="margin-top:.5rem">
                             <el-input-number
                                 v-model="form.insurance_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
+                                class="ml-3"
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
                     <el-row>
                         <span>
                             <el-form-item label="补充医疗保险支付" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="职工大额补助">
+                            <el-form-item label="职工大额补助" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.staff_subsidy"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="居民大病保险">
+                            <el-form-item label="居民大病保险" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.residence_insurance"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="公务员医疗补助">
+                            <el-form-item label="公务员医疗补助" class="w-15">
                                 <el-input-number
                                 v-model="form.public_servant_subsidy"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
                     </el-row>
                     <el-row>
-                        <el-form-item label="医疗救助支付" class="w-15">
+                        <el-form-item label="医疗救助支付" class="w-18">
                             <el-input-number
                                 v-model="form.health_aid_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%; margin-left:4.5rem"
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
                     <el-row>
                         <span>
                             <el-form-item label="其他支付" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="企业补充">
+                            <el-form-item label="企业补充" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.enterprise_supp"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="商业保险">
+                            <el-form-item label="商业保险" class="w-15">
                                 <el-input-number
                                 v-model="form.biz_insurance"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
@@ -1810,20 +1913,22 @@
                     <el-row>
                         <span>
                             <el-form-item label="个人负担" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="个人自付">
+                            <el-form-item label="个人自付" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.partial_self_purchase"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="个人自费">
+                            <el-form-item label="个人自费" class="w-15">
                                 <el-input-number
                                 v-model="form.self_purchase"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
@@ -1831,27 +1936,29 @@
                     <el-row>
                         <span>
                             <el-form-item label="个人支付" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="个人账户支付">
+                            <el-form-item label="个人账户支付" class="w-15 mr-2">
                                 <el-input-number
-                                v-model="form.account"
+                                v-model="form.account_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="个人现金支付">
+                            <el-form-item label="个人现金支付" class="w-15 mr-2">
                                 <el-input-number
-                                v-model="form.cash"
+                                v-model="form.cash_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
                     </el-row>
                     <el-row>
-                        <el-form-item label="医疗支付方式" class="label-emphasize w-15">
-                            <el-select v-model="form.payment_type" placeholder="请选择">
+                        <el-form-item label="医疗支付方式" class="label-emphasize w-25">
+                            <el-select v-model="form.payment_type" placeholder="请选择" style="width:100%;margin-left:4.5rem">
                                 <el-option
                                     v-for="type in payment_types"
                                     :key="type.value"
@@ -1863,39 +1970,38 @@
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="定点医疗机构填报部门" class="w-10 mr-2">
+                        <el-form-item label="定点医疗机构填报部门" class="w-17 mr-5">
                             <el-input v-model="form.designated_med_report_unit"></el-input>
                         </el-form-item>
-                        <el-form-item label="医保经办机构" class="w-10 mr-2">
+                        <el-form-item label="医保经办机构" class="w-17 mr-5">
                             <el-input v-model="form.health_insurance_org"></el-input>
                         </el-form-item>
-                        <el-form-item label="代码" class="w-10">
+                        <el-form-item label="代码" class="w-15">
                             <el-input v-model="form.health_insurance_org_code"></el-input>
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="定点医疗机构填报人" class="w-10 mr-2">
+                        <el-form-item label="定点医疗机构填报人" class="w-17 mr-5">
                             <el-input v-model="form.designated_med_report_person"></el-input>
                         </el-form-item>
-                        <el-form-item label="医保机构经办人" class="w-10 mr-2">
+                        <el-form-item label="医保机构经办人" class="w-17 mr-5">
                             <el-input v-model="form.health_insurance_person"></el-input>
                         </el-form-item>
-                        <el-form-item label="代码" class="w-10">
+                        <el-form-item label="代码" class="w-15">
                             <el-input v-model="form.health_insurance_person_code"></el-input>
                         </el-form-item>
                     </el-row>
-                    <el-row>
+                    <el-row justify="end" style="margin-top:2rem;margin-right:0;width:100%;padding-bottom:5rem;">
                         <el-form-item style="float:right !important">
                             <el-button 
                             class="cancel"
                             @click="cancelForm"
-                            style="margin:1rem 1rem 5rem 0;"
                             >取消</el-button>
                         </el-form-item>
                         <el-form-item style="float:right !important">
                             <el-button
                             @click="updateForm"
-                            style="margin:1rem 1rem 5rem 0;"
+                            class="ml-1"
                             >保存</el-button>
                         </el-form-item>
                     </el-row>
@@ -1911,10 +2017,15 @@ import type { FormInstance, FormRules } from 'element-plus'
 import { regionData, CodeToText } from 'element-china-area-data'
 import axios from "axios";
 import { useRoute, useRouter } from "vue-router";
+import { Star, StarFilled, Close } from '@element-plus/icons-vue';
+import calculateAge from 'calculate-age'
 
 const route = useRoute()
 const router = useRouter()
 const defaultTime1 = [new Date(2000, 1, 1, 12, 0, 0)]
+const setTitle = onMounted(()=>{
+    document.title = '结算清单'
+})
 const getData = onMounted(async()=>{
     const homepage_id = route.params.homepage_id
     console.log('homepage_id:',homepage_id)
@@ -1923,54 +2034,105 @@ const getData = onMounted(async()=>{
         .then(response=>{
             console.log(response)
             console.log('settlement:',response.data.settlement)
+            let data = response.data.settlement
             // reactive 要对value逐个修改
-            form.list_sn = response.data.settlement.list_sn
-            form.org_code = response.data.settlement.org_code
-            form.org_name = response.data.settlement.org_name
+            form.list_sn = data.list_sn
+            form.org_code = data.org_code
+            form.org_name = data.org_name
 
-            form.case_num = response.data.settlement.case_num
-            form.name = response.data.settlement.name
-            form.gender = response.data.settlement.birthday
-            form.age = response.data.settlement.age
-            form.nationality = response.data.settlement.nationality
-            form.ethnicity = response.data.settlement.ethnicity
-            form.id_type = response.data.settlement.id_type
-            form.id_card_num = response.data.settlement.id_card_num
-            form.profession = response.data.settlement.profession
-            form.present_addr1 = response.data.settlement.present_addr1
-            form.present_addr2 = response.data.settlement.present_addr2
-            form.work_addr1 = response.data.settlement.work_addr1
-            form.work_addr2 = response.data.settlement.work_addr2
-            form.work_phone = response.data.settlement.work_phone
-            form.work_zip = response.data.settlement.work_zip
-            form.contact_name = response.data.settlement.contact_name
-            form.contact_relation = response.data.settlement.contact_relation
-            form.contact_addr1 = response.data.settlement.contact_addr1
-            form.contact_addr2 = response.data.settlement.contact_addr2
-            form.contact_phone = response.data.settlement.contact_phone
-            form.newborn_birth_weight = response.data.settlement.newborn_birth_weight
-            form.newborn_admit_weight = response.data.settlement.newborn_admit_weight
-            form.admit_path = response.data.settlement.admit_path
-            form.admit_specialty = response.data.settlement.admit_specialty
-            form.trans_specialty = response.data.settlement.trans_specialty
-            form.release_time = response.data.settlement.release_time
-            form.release_specialty = response.data.settlement.release_specialty
-            form.hosp_duration = response.data.settlement.hosp_duration
-            form.head_injury_check = response.data.settlemeent.head_injury_check
-            form.pre_admit_coma = response.data.settlement.pre_admit_coma
-            form.post_admit_coma = response.data.settlement.post_admit_coma
-            form.release_type = response.data.settlement.release_type
-            form.cont_hosp_check = response.data.settlement.cont_hosp_check
-            form.cont_hosp_plan = response.data.settlement.cont_hosp_plan
+            form.case_num = data.case_num
+            form.name = data.name
+            form.birthday = data.birthday
+            form.gender = data.gender
+            form.age = data.age
+            form.nationality = data.nationality
+            form.ethnicity = data.ethnicity
+            form.id_type = data.id_type
+            form.id_card_num = data.id_card_num
+            form.profession = data.profession
+            form.present_addr1 = data.present_addr1
+            form.present_addr2 = data.present_addr2
+            form.work_addr1 = data.work_addr1
+            form.work_addr2 = data.work_addr2
+            form.work_phone = data.work_phone
+            form.work_zip = data.work_zip
+            form.contact_name = data.contact_name
+            form.contact_relation = data.contact_relation
+            form.contact_addr1 = data.contact_addr1
+            form.contact_addr2 = data.contact_addr2
+            form.contact_phone = data.contact_phone
+            form.newborn_birth_weight = data.newborn_birth_weight
+            form.newborn_admit_weight = data.newborn_admit_weight
+            form.admit_path = data.admit_path
+            form.admit_specialty = data.admit_specialty
+            form.trans_specialty = data.trans_specialty
+            form.admit_time = data.admit_time
+            form.release_time = data.release_time
+            form.release_specialty = data.release_specialty
+            form.hosp_duration = data.hosp_duration
+            form.head_injury_check = data.head_injury_check
+            form.pre_admit_coma = data.pre_admit_coma
+            form.post_admit_coma = data.post_admit_coma
+            form.release_type = data.release_type
+            form.cont_hosp_check = data.cont_hosp_check
+            form.cont_hosp_plan = data.cont_hosp_plan
             // pink
-            form.physician_name = response.data.settlement.physician_ic
-            form.nurse_ic_name = response.data.settlement.nurse_ic
+            form.physician_name = data.physician_ic
+            form.nurse_ic_name = data.nurse_ic
+            data.ops.forEach(op => {
+                form.other_ops.push({
+                    name: op.name,
+                    code: op.code,
+                    anaesthesia_type: op.anaesthesia_type,
+                    operator_name: op.operator,
+                    operator_code: '',
+                    anaesthetist_name: op.anaesthetist,
+                    anaesthetist_code: '',
+                    op_time: [],
+                    anaesthesia_time: [],
+                })
+            });
 
             console.log('updated form:',form)
         }).catch(error=>{
             console.log(error)
         })
 })
+// diag
+interface Diag {
+    code: string
+    label: string
+    pinyin: string
+    pinyin_cap: string
+    description: string
+}
+const diag_list = ref<Diag[]>([])
+const temp_diags = ref<Diag[]>([])
+const diags_loading = ref(false)
+const queryDiag = async(query: string)=>{
+    if(query) {
+        diags_loading.value = true
+        await axios
+            .get('/api/v1/query-diag/',{params:{query: query}})
+            .then(response=>{
+                console.log(response)
+                console.log(response.data.result)
+                // temp_diags.value = []
+                // temp_diags.value = response.data.result
+                temp_diags.value.length = 0
+                response.data.result.forEach(d => {
+                    temp_diags.value.push(d)
+                });
+                diags_loading.value = false
+            })
+            .catch(error=>{
+                console.log(error)
+                // diags_loading.value = true
+            })
+    } else {
+        temp_diags.value = []
+    }
+}
 const getChinaData = ()=>{
     if(regionData[regionData.length-1].label != '其他') {
         regionData.push({value: '000000', label: '其他'})
@@ -2131,6 +2293,33 @@ const removeTRDiag = (info)=>{
         form.traditional_release.main_symps.splice(index, 1)
     }
 }
+const addMainOp = (op)=>{
+    form.main_ops.push({
+        name: '',
+        code: '',
+        anaesthesia_type: '',
+        operator_name: '',
+        operator_code: '',
+        anaesthetist_name: '',
+        anaesthetist_code: '',
+        op_time: [],
+        anaesthesia_time: [],
+    })
+}
+const removeMainOp = (op)=>{
+    let index = form.main_ops.indexOf(op)
+    if(index != -1) {
+        form.main_ops.splice(index, 1)
+    }
+}
+const moveToOtherOp = (op)=>{
+    addOtherOp(op)
+    removeMainOp(op)
+}
+const moveToMainOp = (op)=>{
+    addMainOp(op)
+    removeOtherOp(op)
+}
 const addOtherOp = (op)=>{
     form.other_ops.push({
         name: '',
@@ -2140,8 +2329,8 @@ const addOtherOp = (op)=>{
         operator_code: '',
         anaesthetist_name: '',
         anaesthetist_code: '',
-        op_time: '',
-        anaesthesia_time: '',
+        op_time: [],
+        anaesthesia_time: [],
     })
 }
 const removeOtherOp = (op)=>{
@@ -2149,6 +2338,9 @@ const removeOtherOp = (op)=>{
     if(index != -1) {
         form.other_ops.splice(index, 1)
     }
+}
+const opTimeOnChange = ()=>{
+    console.log(form.main_ops)
 }
 const test = ()=>{
     console.log(form.heal_type)
@@ -2215,8 +2407,10 @@ let form:any = reactive({
     release_time: '',
     release_specialty: [],
     hosp_duration: 0,
-    w_emergency_diag: '',
+    w_emergency_diag: [], //
+    t_emergency_diag: [], // 好像之前漏掉了
     w_disease_code: '',
+    t_disease_code: '',
     western_release: {
         main_diag: {
             diag: '',
@@ -2233,28 +2427,32 @@ let form:any = reactive({
     },
     traditional_release: {
         main_disease: {
+            diag: '',
             disease_code: '',
             admit_condition: '',
         },
         main_symps: [
             {
+                diag: '',
                 disease_code: '',
                 admit_condition: '',
             },
         ],
     },
     diag_cnt: 0,
-    main_op: {
-        name: '',
-        code: '',
-        anaesthesia_type: '',
-        operator_name: '',
-        operator_code: '',
-        anaesthetist_name: '',
-        anaesthetist_code: '',
-        op_time: '',
-        anaesthesia_time: '',
-    },
+    main_ops: [
+        {
+            name: '',
+            code: '',
+            anaesthesia_type: '',
+            operator_name: '',
+            operator_code: '',
+            anaesthetist_name: '',
+            anaesthetist_code: '',
+            op_time: [],
+            anaesthesia_time: [],
+        }
+    ],
     other_ops: [
         {
             name: '',
@@ -2264,8 +2462,8 @@ let form:any = reactive({
             operator_code: '',
             anaesthetist_name: '',
             anaesthetist_code: '',
-            op_time: '',
-            anaesthesia_time: '',
+            op_time: [],
+            anaesthesia_time: [],
         }
     ],
     op_cnt: 0,
@@ -2292,7 +2490,7 @@ let form:any = reactive({
             total_hr: 0,
             total_min: 0,
         },
-    ],
+    ],// 07.15
     transfusion: [
         {
             blood_type: '',
@@ -2435,6 +2633,8 @@ let form:any = reactive({
     public_servant_subsidy: 0.0,
     health_aid_pay: 0.0,
     enterprise_supp: 0.0,
+    biz_insurance: 0.0,
+    partial_self_purchase: 0.0,
     self_purchase: 0.0,
     account_pay: 0.0,
     cash_pay: 0.0,
@@ -3395,119 +3595,269 @@ const getHospDuration = ()=>{
     else
         return form.hosp_duration
 }
-const disabledDate0 = time=>{
-    // let return_val = time.getTime() > Date.now()
-    // if (form.admit_time) {
-    //     let admit_nums = form.admit_time.split(' ')[0].split('-')
-    //     // console.log(admit_nums)
-    //     let admitday=new Date()
-    //     admitday.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2]))
-    //     return_val = return_val || time.getTime() > admitday
-    // }
-    // if (form.release_time) {
-    //     let release_nums = form.release_time.split(' ')[0].split('-')
-    //     // console.log(admit_nums)
-    //     let releaseday=new Date()
-    //     releaseday.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
-    //     return_val = return_val || time.getTime() > releaseday
-    // }
-    // console.log('disableDate0 finish')
-    // return return_val
-}
-const disabledDate1 = (time)=>{
+const disabledDateReport = time=>{
     let return_val = time.getTime() > Date.now()
-    if (form.birthday) {
+    if(form.birthday){
         let birth_nums = form.birthday.split('-')
         // console.log(birth_nums)
         let birthday=new Date()
         birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
-        return_val = return_val || time.getTime() < birthday //birthday?
+        return_val = return_val || time.getTime() < birthday
     }
-    if (form.release_time) {
+    if(form.diag_date){
+        let diag_nums = form.diag_date.split('-')
+        console.log('diag_nums:', diag_nums)
+        let diag_date=new Date()
+        diag_date.setFullYear(parseInt(diag_nums[0]), parseInt(diag_nums[1])-1, parseInt(diag_nums[2])-1)
+        return_val = return_val || time.getTime() < diag_date
+    }
+    if(form.admit_time){
+        let admit_nums = form.admit_time.split(' ')[0].split('-')
+        console.log('admit_nums:', admit_nums)
+        let admit_time=new Date()
+        admit_time.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2])-1)
+        return_val = return_val || time.getTime() < admit_time
+    }
+    if(form.release_time){
         let release_nums = form.release_time.split(' ')[0].split('-')
-        // console.log(admit_nums)
-        let releaseday=new Date()
-        releaseday.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
-        return_val = return_val || time.getTime() > releaseday
+        console.log('release_nums:', release_nums)
+        let release_time=new Date()
+        release_time.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2])-1)
+        return_val = return_val || time.getTime() < release_time
+    }
+    if(form.settle_duration){
+        console.log('1',form.settle_duration[1])
+        let settle_nums = form.settle_duration[1].split('-')
+        console.log('settle_nums:', settle_nums)
+        let settle_date=new Date()
+        settle_date.setFullYear(parseInt(settle_nums[0]), parseInt(settle_nums[1])-1, parseInt(settle_nums[2])-1)
+        return_val = return_val || time.getTime() < settle_date
     }
     return return_val
 }
-const disabledDate2 = (time)=>{
-    // let return_val = time.getTime() > Date.now()
-    // if (form.birthday) {
-    //     let birth_nums = form.birthday.split('-')
-    //     // console.log(birth_nums)
-    //     let birthday=new Date()
-    //     birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
-    //     return_val = return_val || time.getTime() < birthday //birthday?
-    // }
-    // if (form.admit_time) {
-    //     let admit_nums = form.admit_time.split(' ')[0].split('-')
-    //     // console.log(birth_nums)
-    //     let admitday=new Date()
-    //     admitday.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2])-1)
-    //     return_val = return_val || time.getTime() < admitday
-    // }
-    // return return_val
+const disabledDateBirth = time=>{
+    let return_val = time.getTime() > Date.now()
+    if(form.report_time){
+        let report_nums = form.report_time.split('-')
+        // console.log(birth_nums)
+        let report_date=new Date()
+        report_date.setFullYear(parseInt(report_nums[0]), parseInt(report_nums[1])-1, parseInt(report_nums[2]))
+        console.log('report time:', report_date)
+        return_val = return_val || time.getTime() > report_date
+    }
+    if(form.diag_date){
+        let diag_nums = form.diag_date.split('-')
+        console.log('diag_nums:', diag_nums)
+        let diag_date=new Date()
+        diag_date.setFullYear(parseInt(diag_nums[0]), parseInt(diag_nums[1])-1, parseInt(diag_nums[2]))
+        return_val = return_val || time.getTime() > diag_date
+    }
+    if(form.admit_time){
+        let admit_nums = form.admit_time.split(' ')[0].split('-')
+        console.log('admit_nums:', admit_nums)
+        let admit_time=new Date()
+        admit_time.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2]))
+        return_val = return_val || time.getTime() > admit_time
+    }
+    if(form.release_time){
+        let release_nums = form.release_time.split(' ')[0].split('-')
+        console.log('release_nums:', release_nums)
+        let release_time=new Date()
+        release_time.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
+        return_val = return_val || time.getTime() > release_time
+    }
+    if(form.settle_duration){
+        console.log('1',form.settle_duration[0])
+        let settle_nums = form.settle_duration[0].split('-')
+        console.log('settle_nums:', settle_nums)
+        let settle_date=new Date()
+        settle_date.setFullYear(parseInt(settle_nums[0]), parseInt(settle_nums[1])-1, parseInt(settle_nums[2]))
+        return_val = return_val || time.getTime() > settle_date
+    }
+    return return_val
+}
+const disabledDateDiag = (time)=>{
+    let return_val = time.getTime() > Date.now()
+    if(form.report_time){
+        let report_nums = form.report_time.split('-')
+        // console.log(birth_nums)
+        let report_date=new Date()
+        report_date.setFullYear(parseInt(report_nums[0]), parseInt(report_nums[1])-1, parseInt(report_nums[2]))
+        console.log('report time:', report_date)
+        return_val = return_val || time.getTime() > report_date
+    }
+    if(form.birthday){
+        let birth_nums = form.birthday.split('-')
+        console.log('diag_nums:', birth_nums)
+        let birthday=new Date()
+        birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
+        return_val = return_val || time.getTime() < birthday
+    }
+    if(form.admit_time){
+        let admit_nums = form.admit_time.split(' ')[0].split('-')
+        console.log('admit_nums:', admit_nums)
+        let admit_time=new Date()
+        admit_time.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2]))
+        return_val = return_val || time.getTime() > admit_time
+    }
+    if(form.release_time){
+        let release_nums = form.release_time.split(' ')[0].split('-')
+        console.log('release_nums:', release_nums)
+        let release_time=new Date()
+        release_time.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
+        return_val = return_val || time.getTime() > release_time
+    }
+    if(form.settle_duration){
+        console.log('1',form.settle_duration[0])
+        let settle_nums = form.settle_duration[0].split('-')
+        console.log('settle_nums:', settle_nums)
+        let settle_date=new Date()
+        settle_date.setFullYear(parseInt(settle_nums[0]), parseInt(settle_nums[1])-1, parseInt(settle_nums[2]))
+        return_val = return_val || time.getTime() > settle_date
+    }
+    return return_val
+}
+const disabledDateAdmit = (time)=>{
+    let return_val = time.getTime() > Date.now()
+    if(form.report_time){
+        let report_nums = form.report_time.split('-')
+        // console.log(birth_nums)
+        let report_date=new Date()
+        report_date.setFullYear(parseInt(report_nums[0]), parseInt(report_nums[1])-1, parseInt(report_nums[2]))
+        console.log('report time:', report_date)
+        return_val = return_val || time.getTime() > report_date
+    }
+    if(form.birthday){
+        let birth_nums = form.birthday.split('-')
+        console.log('diag_nums:', birth_nums)
+        let birthday=new Date()
+        birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
+        return_val = return_val || time.getTime() < birthday
+    }
+    if(form.diag_date){
+        let diag_nums = form.diag_date.split('-')
+        console.log('diag_nums:', diag_nums)
+        let diag_date=new Date()
+        diag_date.setFullYear(parseInt(diag_nums[0]), parseInt(diag_nums[1])-1, parseInt(diag_nums[2])-1)
+        return_val = return_val || time.getTime() < diag_date
+    }
+    if(form.release_time){
+        let release_nums = form.release_time.split(' ')[0].split('-')
+        console.log('release_nums:', release_nums)
+        let release_time=new Date()
+        release_time.setFullYear(parseInt(release_nums[0]), parseInt(release_nums[1])-1, parseInt(release_nums[2]))
+        return_val = return_val || time.getTime() > release_time
+    }
+    if(form.settle_duration){
+        console.log('1',form.settle_duration[0])
+        let settle_nums = form.settle_duration[0].split('-')
+        console.log('settle_nums:', settle_nums)
+        let settle_date=new Date()
+        settle_date.setFullYear(parseInt(settle_nums[0]), parseInt(settle_nums[1])-1, parseInt(settle_nums[2]))
+        return_val = return_val || time.getTime() > settle_date
+    }
+    return return_val
+}
+const disabledDateRelease = (time)=>{
+    let return_val = time.getTime() > Date.now()
+    if(form.report_time){
+        let report_nums = form.report_time.split('-')
+        // console.log(birth_nums)
+        let report_date=new Date()
+        report_date.setFullYear(parseInt(report_nums[0]), parseInt(report_nums[1])-1, parseInt(report_nums[2]))
+        console.log('report time:', report_date)
+        return_val = return_val || time.getTime() > report_date
+    }
+    if(form.birthday){
+        let birth_nums = form.birthday.split('-')
+        console.log('diag_nums:', birth_nums)
+        let birthday=new Date()
+        birthday.setFullYear(parseInt(birth_nums[0]), parseInt(birth_nums[1])-1, parseInt(birth_nums[2])-1)
+        return_val = return_val || time.getTime() < birthday
+    }
+    if(form.diag_date){
+        let diag_nums = form.diag_date.split('-')
+        console.log('diag_nums:', diag_nums)
+        let diag_date=new Date()
+        diag_date.setFullYear(parseInt(diag_nums[0]), parseInt(diag_nums[1])-1, parseInt(diag_nums[2])-1)
+        return_val = return_val || time.getTime() < diag_date
+    }
+    if(form.admit_time){
+        let admit_nums = form.admit_time.split(' ')[0].split('-')
+        console.log('admit_nums:', admit_nums)
+        let admit_time=new Date()
+        admit_time.setFullYear(parseInt(admit_nums[0]), parseInt(admit_nums[1])-1, parseInt(admit_nums[2])-1)
+        return_val = return_val || time.getTime() < admit_time
+    }
+    if(form.settle_duration){
+        console.log('1',form.settle_duration[0])
+        let settle_nums = form.settle_duration[0].split('-')
+        console.log('settle_nums:', settle_nums)
+        let settle_date=new Date()
+        settle_date.setFullYear(parseInt(settle_nums[0]), parseInt(settle_nums[1])-1, parseInt(settle_nums[2]))
+        return_val = return_val || time.getTime() > settle_date
+    }
+    return return_val
 }
 const birthOrAdmitdayOnChange = ()=>{
-    // if(!form.birthday)
-    //     form.birthday = ''
-    // if(!form.admit_time)
-    //     form.admit_time = ''
-    // if(form.birthday!=='' && form.admit_time!=='') {
-    //     console.log('入院：'+form.admit_time)
-    //     console.log('生日：'+form.birthday)
-    //     let birthday = form.birthday
-    //     let admitday = form.admit_time.split(' ')[0]
-    //     if(birthday===admitday) {
-    //         form.age = '第0天'
-    //     } else {
-    //         console.log(birthday, admitday)
-    //         // 计算年龄
-    //         let age = new calculateAge(birthday, admitday)
-    //         console.log(age.getString())
-    //         age = age.getObject()
-    //         form.newborn_check = false
-    //         if(age.years < 1) {
-    //             if(age.days <= 28 && age.months<1) {
-    //                 form.newborn_check = true
-    //             }
-    //             form.age = age.months.toString()+' '+age.days.toString()+'/30月'
-    //         } else {
-    //             form.age = age.years.toString()
-    //         }
-    //     }
-    // } else {
-    //     form.age = '请先输入其他信息'
-    // }
-    // console.log('age - this.form.age')
+    console.log('birthOrAdmitdayOnChange()')
+    if(!form.birthday)
+        form.birthday = ''
+    if(!form.admit_time)
+        form.admit_time = ''
+    if(form.birthday!=='' && form.admit_time!=='') {
+        console.log('入院：'+form.admit_time)
+        console.log('生日：'+form.birthday)
+        let birthday = form.birthday
+        let admitday = form.admit_time.split(' ')[0]
+        if(birthday===admitday) {
+            form.age = '第0天'
+        } else {
+            console.log(birthday, admitday)
+            // 计算年龄
+            let age = new calculateAge(birthday, admitday)
+            console.log(age.getString())
+            age = age.getObject()
+            form.newborn_check = false
+            if(age.years < 1) {
+                if(age.days <= 28 && age.months<1) {
+                    form.newborn_check = true
+                }
+                form.age = age.months.toString()+' '+age.days.toString()+'/30月'
+            } else {
+                form.age = age.years.toString()
+            }
+        }
+    } else {
+        form.age = '请先输入其他信息'
+    }
+    console.log('age - this.form.age')
 }
 const admitOrReleasedayOnChange = ()=>{
-    // if(!form.admit_time)
-    //     form.admit_time = ''
-    // if(!form.release_time)
-    //     form.release_time = ''
-    // if(form.admit_time!=='' && form.release_time!=='') {
-    //     console.log('入院：'+form.admit_time)
-    //     console.log('出院：'+form.release_time)
-    //     let admitday = form.admit_time.split(' ')[0]
-    //     let releaseday = form.release_time.split(' ')[0]
-    //     console.log(admitday, releaseday)
-    //     // 计算住院时间
-    //     if(admitday===releaseday) {
-    //         form.hosp_duration=1
-    //     } else {
-    //         let ad = new Date(admitday)
-    //         let rd = new Date(releaseday)
-    //         let duration = rd.getTime() - ad.getTime()
-    //         duration = parseInt(duration/(1000*60*60*24))
-    //         console.log(duration)
-    //         form.hosp_duration = duration
-    //     }                
-    // } else {
-    //     form.hosp_duration = -1
-    // }
+    if(!form.admit_time)
+        form.admit_time = ''
+    if(!form.release_time)
+        form.release_time = ''
+    if(form.admit_time!=='' && form.release_time!=='') {
+        console.log('入院：'+form.admit_time)
+        console.log('出院：'+form.release_time)
+        let admitday = form.admit_time.split(' ')[0]
+        let releaseday = form.release_time.split(' ')[0]
+        console.log(admitday, releaseday)
+        // 计算住院时间
+        if(admitday===releaseday) {
+            form.hosp_duration=1
+        } else {
+            let ad = new Date(admitday)
+            let rd = new Date(releaseday)
+            let duration = rd.getTime() - ad.getTime()
+            duration = parseInt(duration/(1000*60*60*24))
+            console.log(duration)
+            form.hosp_duration = duration
+        }                
+    } else {
+        form.hosp_duration = -1
+    }
 }
 const nationalityOnChange = val => {
     console.log(val)
@@ -3546,9 +3896,122 @@ const updateForm = async()=>{
     }
 }
 </script>
-<style scoped>
+<style>
+.container {
+    font-family: auto;
+}
 .subtitle {
     margin: 1rem 0;
     background-color: rgb(239, 239, 239);
+}
+.subtitle-line {
+    width: 100%;
+    margin: .4rem 0;
+}
+.sub-subtitle {
+    background-color: rgb(245, 245, 245);
+    color: black;
+    /* border-bottom: 1px solid rgb(120, 120, 120) !important; */
+}
+.first-row {
+    padding-left:1rem !important;
+    margin:.2rem 0rem 0rem 0rem;
+}
+.repeat-row {
+    height: 20px;
+    width:100%;
+    padding-left:0rem !important;
+    margin: 0;
+}
+.remove-spdiag {
+    height: 1.3rem;
+    /* width: 1rem; */
+    margin-top:3px;
+    margin-left: 3.6rem;
+    background-color: rgb(219, 219, 219) !important;
+}
+.remove-spdiag:hover {
+    color: rgb(255, 255, 255) !important;
+    border: 1px solid rgb(201, 45, 45) !important;
+    background-color: rgb(201, 45, 45) !important;
+}
+.el-row.is-justify-end {
+    width: 97%;
+}
+/* .el-range-input {
+    background-color: red !important;
+} */
+/* .datehr .el-range-input {
+    background-color: red !important;
+} */
+.starBtn {
+    width: 3rem !important;
+    height: 1.2rem;
+    margin-top: .15rem;
+    margin-right: 0;
+    margin-left: .5rem;
+}
+.delOpBtn {
+    width: 1rem !important;
+    height: 1.2rem;
+    margin-top: .15rem;
+    margin-right: 0;
+    margin-left: .5rem;
+}
+.delOpBtn:hover {
+    color: rgb(255, 255, 255) !important;
+    border: 1px solid rgb(201, 45, 45) !important;
+    background-color: rgb(201, 45, 45) !important;
+}
+.ml-1 {
+    margin-left: 1rem !important;
+}
+.ml-2 {
+    margin-left: 2rem !important;
+}
+.ml-3 {
+    margin-left: 3rem !important;
+}
+.ml-4 {
+    margin-left: 4rem !important;
+}
+.ml-5 {
+    margin-left: 5rem !important;
+}
+.ml-6 {
+    margin-left: 6rem !important;
+}
+.ml-7 {
+    margin-left: 7rem !important;
+}
+.ml-8 {
+    margin-left: 8rem !important;
+}
+.ml-9 {
+    margin-left: 9rem !important;
+}
+.ml-10 {
+    margin-left: 10rem !important;
+}
+div.el-select.el-select--default.diag-box {
+    background-color: red !important;
+    width: 100% !important;  
+}
+div.el-select:hover:not(.el-select--disabled).diag-box .el-input__inner {
+    background-color: whitesmoke !important;
+}
+input.el-select__input.is-default {
+    height: auto !important;
+    margin-left: 0 !important;
+}
+div.el-select__tags {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+.diag-box .el-input__inner {
+    padding: 0 !important;
+}
+.el-select__popper.el-popper[role=tooltip] {
+    border: 1px solid var(--el-border-color-light) !important;
 }
 </style>

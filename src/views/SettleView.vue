@@ -6,7 +6,7 @@
             </div>
             <el-form ref="formRef" :model="form" :rules="formRules" :inline="true">
                 <el-row>
-                    <el-form-item label="清单流水号" class="w-16 mr-5">
+                    <el-form-item label="清单流水号" class="w-17 mr-5">
                         <el-input v-model="form.list_sn"></el-input>
                     </el-form-item>
                 </el-row>
@@ -39,10 +39,10 @@
                     </el-form-item>
                 </el-row>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .4rem 0;">一、基本信息</p>
+                    <p class="subtitle-line">一、基本信息</p>
                 </el-row>
                 <el-row>
-                    <el-form-item label="姓名" class="w-13 mr-2">
+                    <el-form-item label="姓名" class="w-12 mr-2">
                         <el-input v-model="form.name"></el-input>
                     </el-form-item>
                     <el-form-item label="性别" class="label-emphasize w-13 mr-2">
@@ -70,10 +70,10 @@
                     <!-- 待修改 -->
                     <el-form-item label="年龄:" class="label-emphasize w-3">
                     </el-form-item>
-                    <span class="el-form-item__label w-7" style="padding-right:0px !important">{{this.form.age}}</span>
+                    <span class="el-form-item__label w-8" style="padding-right:0px !important">{{this.form.age}}</span>
                 </el-row>
                 <el-row class="label-emphasize">
-                    <el-form-item label="国籍" class="w-13 mr-2">
+                    <el-form-item label="国籍" class="w-12 mr-2">
                         <el-select placeholder="请选择国籍" @change="nationalityOnChange" v-model="form.nationality" filterable>
                             <el-option-group v-for="group in countries" :key="group.label" :label="group.label">
                                 <el-option v-for="item in group.options" :key="item.value" :label="item.label" :value="item.label">
@@ -105,7 +105,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="患者证件号" class="w-14">
+                    <el-form-item label="患者证件号" class="w-15">
                         <el-input 
                         v-model="idNumVal"
                         :disabled="this.form.id_type===''"
@@ -113,7 +113,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="职业" class="w-13 mr-2">
+                    <el-form-item label="职业" class="w-12 mr-2">
                         <el-select v-model="form.profession" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="job in professions"
@@ -134,7 +134,7 @@
                             >
                         </el-cascader>
                     </el-form-item>
-                    <el-form-item class="w-18 mr-1">
+                    <el-form-item class="w-21">
                         <el-input v-model="form.present_addr2"></el-input>
                     </el-form-item>
                 </el-row>
@@ -191,7 +191,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="医保类型" class="w-13 mr-2">
+                    <el-form-item label="医保类型" class="w-12 mr-2">
                         <el-select v-model="form.settlement_type" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="type in settlement_types"
@@ -233,10 +233,10 @@
                         />
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="新生儿出生体重（克）" :max="8000" class="w-16 mr-3">
+                    <el-form-item label="新生儿出生体重（克）" :max="8000" class="w-16 mr-5">
                         <el-input-number v-model="form.newborn_birth_weight" controls-position="right"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="新生儿入院体重（克）" :max="8000" class="w-17">
+                    <el-form-item label="新生儿入院体重（克）" :max="8000" class="w-15">
                         <el-input-number v-model="form.newborn_admit_weight" controls-position="right"></el-input-number>
                     </el-form-item>
                 </el-row>
@@ -247,16 +247,16 @@
                     </el-form-item>
                 </el-row>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .4rem 0;">二、门诊慢特病诊疗信息</p>
+                    <p class="subtitle-line">二、门诊慢特病诊疗信息</p>
                 </el-row>
                 <el-row>
-                    <el-form-item label="诊断科别" class="w-16 mr-2">
+                    <el-form-item label="诊断科别" class="w-17 mr-2">
                         <el-cascader
                             v-model="form.diag_specialty"
                             :options="specialties"
                         ></el-cascader>
                     </el-form-item>
-                    <el-form-item label="就诊日期" class="w-13">
+                    <el-form-item label="就诊日期" class="w-17">
                         <el-date-picker 
                         v-model="form.diag_date" 
                         type="date" 
@@ -273,7 +273,7 @@
                 label-with="100px"
                 class="demo-dynamic label-emphasize-light"
                 >
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row class="first-row">
                         <el-form-item label="病种名称" class="w-12 mr-1">
                         </el-form-item>
                         <el-form-item label="病种代码" class="w-12 mr-1">
@@ -289,40 +289,35 @@
                         :key="info.key"
                         style="height: auto !important;"
                         >
-                            <el-row style="width:100%; padding-left:0rem !important; margin:.2rem 0 .5rem 0;">
-                                <el-col :span="23.8">
-                                    <el-row>
-                                        <el-form-item class="w-12 mr-1">
-                                            <el-input v-model="info.disease_name"></el-input>
-                                        </el-form-item>
-                                        <el-form-item class="w-12 mr-1">
-                                            <el-input v-model="info.disease_code"></el-input>
-                                        </el-form-item>
-                                        <el-form-item class="w-12 mr-1">
-                                            <el-input v-model="info.op_name"></el-input>
-                                        </el-form-item>
-                                        <el-form-item class="w-12">
-                                            <el-input v-model="info.op_code"></el-input>
-                                        </el-form-item>
-                                        
-                                    </el-row>
-                                </el-col>
-                                <el-col :span="0.2">
-                                    <el-button class="remove-op" @click.prevent="removeDiagInfo(info)">-</el-button>
-                                </el-col>
+                            <el-row class="repeat-row">
+                                <el-row>
+                                    <el-form-item class="w-12 mr-2">
+                                        <el-input v-model="info.disease_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-12 mr-2">
+                                        <el-input v-model="info.disease_code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-12 mr-2">
+                                        <el-input v-model="info.op_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-12">
+                                        <el-input v-model="info.op_code"></el-input>
+                                    </el-form-item>
+                                    <el-button class="remove-spdiag" @click.prevent="removeDiagInfo(info)">-</el-button>
+                                </el-row>
                             </el-row>   
                         </el-form-item>
                         <el-row justify="end">
-                            <el-button class="add-op" style="margin-right:.9rem" @click="addDiagInfo">+ 信息</el-button>
+                            <el-button class="add-op" style="margin-top:1rem; margin-right:.9rem; line-height:20px !important" @click="addDiagInfo">+ 信息</el-button>
                         </el-row>  
                     </el-row>
                     
                 </el-form>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .4rem 0;">三、住院诊疗信息</p>
+                    <p class="subtitle-line">三、住院诊疗信息</p>
                 </el-row>
                 <el-row>
-                    <el-form-item label="住院医疗类型" class="w-12 mr-3">
+                    <el-form-item label="住院医疗类型" class="w-17 mr-4">
                         <el-select v-model="form.hosp_reason" placeholder="请选择" style="width:100%">
                             <el-option
                                 v-for="reason in hosp_reasons"
@@ -332,7 +327,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="入院途径" class="w-12 mr-3">
+                    <el-form-item label="入院途径" class="w-17 mr-4">
                         <el-select v-model="form.admit_path" placeholder="请选择" style="width: 17rem;">
                             <el-option
                                 v-for="path in admit_paths"
@@ -342,7 +337,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <el-form-item label="治疗类别" class="w-18 mr-2">
+                    <el-form-item label="治疗类别" class="w-17">
                         <el-cascader
                             v-model="form.heal_type"
                             :options="heal_types"
@@ -351,7 +346,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="入院时间" class="w-12 mr-2">
+                    <el-form-item label="入院时间" class="w-17 mr-4">
                         <el-date-picker
                         popper-class="datehr"
                         v-model="form.admit_time" 
@@ -363,7 +358,7 @@
                         placeholder="选择日期时间">
                         </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="入院科别" class="w-16 mr-2">
+                    <el-form-item label="入院科别" class="w-17 mr-4">
                         <el-cascader
                             v-model="form.admit_specialty"
                             :options="specialties"
@@ -377,7 +372,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="出院时间" class="w-12 mr-2">
+                    <el-form-item label="出院时间" class="w-17 mr-4">
                         <el-date-picker
                         popper-class="datehr"
                         v-model="form.release_time" 
@@ -389,27 +384,27 @@
                         placeholder="选择日期时间">
                         </el-date-picker>
                     </el-form-item>
-                    <el-form-item label="出院科别" class="w-16 mr-2">
+                    <el-form-item label="出院科别" class="w-17 mr-4">
                         <el-cascader
                             v-model="form.release_specialty"
                             :options="specialties"
                         ></el-cascader>
                     </el-form-item>
                     <el-form-item label="实际入院天数:" class="w-6"></el-form-item>
-                    <span class="el-form-item__label w-12">{{getHospDuration()}}</span>
+                    <span class="el-form-item__label w-11">{{getHospDuration()}}</span>
                     <el-row>
-                        <el-form-item label="门（急）诊诊断（西医诊断）" style="width:39rem; margin-right:2rem !important; height: auto !important">
+                        <el-form-item label="门（急）诊诊断（西医诊断）" style="width:38rem; margin-right:4rem !important; height: auto !important">
                             <el-input v-model="form.w_emergency_diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
                         </el-form-item>
-                        <el-form-item label="疾病代码" class="w-10">
+                        <el-form-item label="疾病代码" class="w-17">
                             <el-input v-model="form.w_disease_code"></el-input>
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="门（急）诊诊断（中医诊断）" style="width:39rem; margin-right:2rem !important; height: auto !important">
+                        <el-form-item label="门（急）诊诊断（中医诊断）" style="width:38rem; margin-right:4rem !important; height: auto !important">
                             <el-input v-model="form.t_emergency_diag" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
                         </el-form-item>
-                        <el-form-item label="疾病代码" class="w-10">
+                        <el-form-item label="疾病代码" class="w-17">
                             <el-input v-model="form.t_disease_code"></el-input>
                         </el-form-item>
                     </el-row>
@@ -546,15 +541,18 @@
                         <el-input-number v-model="form.diag_cnt" controls-position="right"></el-input-number>
                     </el-form-item>
                 </el-row>
-
+                <el-row>
+                    <p class="sub-subtitle"
+                    style="width: 100%; margin: 1.5rem 1rem 0 1rem; padding:0.2rem;">主要手术</p>
+                </el-row>
                 <el-form
                 :model="form.other_ops"
                 ref="form.other_ops"
                 label-with="100px"
-                class="demo-dynamic label-emphasize-light"
+                class="demo-dynamic label-emphasize-black"
                 >
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
-                        <el-form-item label="名称" class="w-7 mr-1">
+                    <el-row style="margin:0rem 1rem 0rem 1rem;">
+                        <el-form-item label="名称" class="w-8 mr-1">
                         </el-form-item>
                         <el-form-item label="代码" class="w-7 mr-1">
                         </el-form-item>
@@ -564,69 +562,15 @@
                         <el-form-item label="麻醉姓名" class="w-7 mr-1"></el-form-item>
                         <el-form-item label="麻醉代码" class="w-7"></el-form-item>
                     </el-row>
-                    <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
-                            <el-row>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.code"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.code"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-8 mr-1">
-                                    <el-select v-model="form.main_op.anaesthesia_type" placeholder="请选择">
-                                        <el-option
-                                            v-for="type in anaesthesia_types"
-                                            :key="type.value"
-                                            :label="type.label"
-                                            :value="type.value"
-                                        ></el-option>
-                                    </el-select>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.operator_name"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.operator_code"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7 mr-1">
-                                    <el-input v-model="form.main_op.anaesthetist_name"></el-input>
-                                </el-form-item>
-                                <el-form-item class="w-7">
-                                    <el-input v-model="form.main_op.anaesthetist_code"></el-input>
-                                </el-form-item>
-                            </el-row>
-                            <el-row>
-                                <el-form-item label="手术起止时间" class="w-25 mr-2">
-                                    <el-date-picker
-                                    popper-class="datehr"
-                                    v-model="form.main_op.op_time"
-                                    type="datetimerange"
-                                    start-placeholder="Start Date"
-                                    end-placeholder="End Date"
-                                    :default-time="defaultTime1"
-                                    />
-                                </el-form-item>
-                                <el-form-item label="麻醉起止时间" class="w-25">
-                                    <el-date-picker
-                                    popper-class="datehr"
-                                    v-model="form.main_op.anaesthesia_time"
-                                    type="datetimerange"
-                                    start-placeholder="Start Date"
-                                    end-placeholder="End Date"
-                                    :default-time="defaultTime1"
-                                    />
-                                </el-form-item>
-                            </el-row>
-                    </el-row>    
                     <el-form-item
-                    v-for="(op) in form.other_ops"
+                    v-for="(op) in form.main_ops"
                     :key="op.key"
                     style="height: auto !important;"
                     >
-                        <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
+                        <el-row class="operations" style="padding-left:1rem !important; margin:0rem 0 .5rem 0;">
                                 <el-row>
-                                    <el-form-item class="w-7 mr-1">
-                                        <el-input v-model="op.code"></el-input>
+                                    <el-form-item class="w-8 mr-1">
+                                        <el-input v-model="op.name"></el-input>
                                     </el-form-item>
                                     <el-form-item class="w-7 mr-1">
                                         <el-input v-model="op.code"></el-input>
@@ -655,7 +599,7 @@
                                     </el-form-item>
                                 </el-row>
                                 <el-row>
-                                    <el-form-item label="手术起止时间" class="w-25 mr-2">
+                                    <el-form-item label="手术起止时间" class="w-25 mr-1">
                                         <el-date-picker
                                         popper-class="datehr"
                                         v-model="op.op_time"
@@ -663,6 +607,9 @@
                                         start-placeholder="Start Date"
                                         end-placeholder="End Date"
                                         :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
+
+                                        @change="opTimeOnChange"
                                         />
                                     </el-form-item>
                                     <el-form-item label="麻醉起止时间" class="w-25">
@@ -673,13 +620,110 @@
                                         start-placeholder="Start Date"
                                         end-placeholder="End Date"
                                         :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
                                         />
                                     </el-form-item>
-                                    <el-button @click.prevent="removeOtherOp(op)">-</el-button>
+                                    <el-button class="starBtn" @click.prevent="moveToOtherOp(op)">
+                                        <el-icon><StarFilled/></el-icon>
+                                    </el-button>
+                                    <el-button class="delOpBtn" @click.prevent="removeMainOp(op)">
+                                        <el-icon><Close/></el-icon>
+                                    </el-button>
                                 </el-row>
                         </el-row>                            
                     </el-form-item>
-                    <el-row justify="space-between">
+                    <el-row>
+                        <p class="sub-subtitle"
+                        style="width: 100%; margin: .5rem 1rem 0 1rem; padding:0.2rem;">其他手术</p>
+                    </el-row>
+                </el-form>
+                <el-form
+                :model="form.other_ops"
+                ref="form.other_ops"
+                label-with="100px"
+                class="demo-dynamic label-emphasize-black"
+                >
+                    <el-row style="margin:0rem 1rem 0rem 1rem;">
+                        <el-form-item label="名称" class="w-8 mr-1">
+                        </el-form-item>
+                        <el-form-item label="代码" class="w-7 mr-1">
+                        </el-form-item>
+                        <el-form-item label="麻醉方式" class="w-8 mr-1"></el-form-item>
+                        <el-form-item label="术者姓名" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="术者代码" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="麻醉姓名" class="w-7 mr-1"></el-form-item>
+                        <el-form-item label="麻醉代码" class="w-7"></el-form-item>
+                    </el-row>
+                    <el-form-item
+                    v-for="(op) in form.other_ops"
+                    :key="op.key"
+                    style="height: auto !important;"
+                    >
+                        <el-row class="operations" style="padding-left:1rem !important; margin:0rem 0 .5rem 0;">
+                                <el-row>
+                                    <el-form-item class="w-8 mr-1">
+                                        <el-input v-model="op.name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-8 mr-1">
+                                        <el-select v-model="op.anaesthesia_type" placeholder="请选择">
+                                            <el-option
+                                                v-for="type in anaesthesia_types"
+                                                :key="type.value"
+                                                :label="type.label"
+                                                :value="type.value"
+                                            ></el-option>
+                                        </el-select>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.operator_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.operator_code"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7 mr-1">
+                                        <el-input v-model="op.anaesthetist_name"></el-input>
+                                    </el-form-item>
+                                    <el-form-item class="w-7">
+                                        <el-input v-model="op.anaesthetist_code"></el-input>
+                                    </el-form-item>
+                                </el-row>
+                                <el-row>
+                                    <el-form-item label="手术起止时间" class="w-25 mr-1">
+                                        <el-date-picker
+                                        popper-class="datehr"
+                                        v-model="op.op_time"
+                                        type="datetimerange"
+                                        start-placeholder="Start Date"
+                                        end-placeholder="End Date"
+                                        :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
+                                        />
+                                    </el-form-item>
+                                    <el-form-item label="麻醉起止时间" class="w-25">
+                                        <el-date-picker
+                                        popper-class="datehr"
+                                        v-model="op.anaesthesia_time"
+                                        type="datetimerange"
+                                        start-placeholder="Start Date"
+                                        end-placeholder="End Date"
+                                        :default-time="defaultTime1"
+                                        value-format="YYYY-MM-DD hh:MM"
+                                        />
+                                    </el-form-item>
+                                    
+                                    <el-button class="starBtn" @click.prevent="moveToMainOp(op)">
+                                        <el-icon><Star/></el-icon>
+                                    </el-button>
+                                    <el-button class="delOpBtn" @click.prevent="removeOtherOp(op)">
+                                        <el-icon><Close/></el-icon>
+                                    </el-button>
+                                </el-row>
+                        </el-row>                            
+                    </el-form-item>
+                    <el-row justify="space-between" style="margin-top:.2rem;margin-bottom:.5rem;padding-left:1rem;">
                         <el-form-item label="手术及操作代码计数" :max="8000" class="w-12">
                             <el-input-number v-model="form.op_cnt" controls-position="right"></el-input-number>
                         </el-form-item>
@@ -718,9 +762,7 @@
                             </label>
                         </span>
                     </el-form-item>
-                </el-row>
-                <el-row>
-                    <el-form-item label="颅脑损伤患者昏迷时间： 入院前">
+                    <el-form-item label="颅脑损伤患者昏迷时间： 入院前" class="ml-6">
                         <span>
                             <el-input-number
                                 v-model="form.pre_admit_coma.days"
@@ -753,7 +795,7 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="入院后" class="ml-10">
+                    <el-form-item label="入院后" style="margin-left:40.9rem">
                         <span>
                             <el-input-number
                                 v-model="form.post_admit_coma.days"
@@ -785,14 +827,27 @@
                         </span>
                     </el-form-item>
                 </el-row>
-                <el-row>
+                <el-row style="margin:0rem 1rem">
+                    <el-row style="width:100%">
+                        <p class="sub-subtitle"
+                        style="width: 100%; padding:0.2rem; margin:1rem 0 0 0">重症监护病房</p>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="重症监护病房类型" class="w-18">
+                        </el-form-item>
+                        <el-form-item label="进重症监护室时间" class="w-13">
+                        </el-form-item>
+                        <el-form-item label="出重症监护室时间" class="w-15"></el-form-item>
+                        <el-form-item label="合计" class="w-8"></el-form-item>
+                    </el-row>
                     <el-form-item
                     v-for="(cu) in form.CU_usage"
                     :key="cu.key"
                     >
+                        
                         <el-row>
-                            <el-form-item label="重症监护病房类型">
-                                <el-select v-model="cu.CU_type" placeholder="请选择">
+                            <el-form-item class="w-15 mr-3">
+                                <el-select v-model="cu.CU_type" placeholder="请选择" style="width:100%">
                                     <el-option
                                         v-for="type in CU_types"
                                         :key="type.value"
@@ -802,7 +857,7 @@
                                     </el-option>
                                 </el-select>
                             </el-form-item>
-                            <el-form-item class="w-10">
+                            <el-form-item class="w-25 mr-3">
                                 <el-date-picker
                                 v-model="cu.time"
                                 type="datetimerange"
@@ -812,24 +867,33 @@
                                 @change="cuTimeOnChange(cu)"
                                 />
                             </el-form-item>
-                            <el-form-item label="合计:" class="w-5">
-                            </el-form-item>
-                            <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{cu.total_hr}}时{{cu.total_min}}分</span>
+                            <span class="el-form-item__label w-8 mr-1" style="padding-right:0px !important">{{cu.total_hr}}时{{cu.total_min}}分</span>
                             <el-button class="remove-diag" @click.prevent="removeCU(cu)">-</el-button>
                         </el-row>
                         
                     </el-form-item>
-                    <el-row justify="end">
-                        <el-button class="add-op" style="margin-right:.9rem" @click="addCU">+</el-button>
+                    <el-row justify="end" style="width:100%">
+                        <el-button class="add-op" style="margin-right:0rem !important" @click="addCU">+ CU</el-button>
                     </el-row>  
                 </el-row>
-                <el-row>
+                <el-row style="margin:0rem 1rem 0rem 1rem">
+                    <el-row style="width:100%">
+                        <p class="sub-subtitle"
+                        style="width: 100%; padding:0.2rem; margin:1rem 0 0 0">输血</p>
+                    </el-row>
+                    <el-row>
+                        <el-form-item label="输血品种" class="w-20">
+                        </el-form-item>
+                        <el-form-item label="输血量" class="w-20">
+                        </el-form-item>
+                        <el-form-item label="输血计量单位" class="w-15"></el-form-item>
+                    </el-row>
                     <el-form-item
                     v-for="(blood) in form.transfusion"
                     :key="blood.key"
                     >
                         <el-row>
-                            <el-form-item label="输血品种">
+                            <el-form-item class="w-15 mr-5">
                                 <el-cascader
                                 v-model="blood.blood_type"
                                 :options="blood_types"
@@ -837,36 +901,37 @@
                                 ></el-cascader>
                                 
                             </el-form-item>
-                            <el-form-item label="输血量" class="w-12 mr-2">
-                                <el-input-number v-model="blood.blood_volume" controls-position="right"></el-input-number>
+                            <el-form-item class="w-15 mr-5">
+                                <el-input-number 
+                                style="width:100%"
+                                v-model="blood.blood_volume" 
+                                controls-position="right"></el-input-number>
                             </el-form-item>
-                            <el-form-item label="输血计量单位" class="label-emphasize w-5">
-                            </el-form-item>
-                            <span class="el-form-item__label w-7 mr-1" style="padding-right:0px !important">{{blood.volume_unit}}</span>
+                            <span class="el-form-item__label w-15" style="padding-right:0px !important">{{blood.volume_unit}}</span>
                             <el-button class="remove-diag" @click.prevent="removeTransfusion(blood)">-</el-button>
                         </el-row>
                         
                     </el-form-item>
-                    <el-row justify="end">
-                        <el-button class="add-op" style="margin-right:.9rem" @click="addTransfusion">+</el-button>
+                    <el-row justify="end" style="width:100%">
+                        <el-button class="add-op" style="margin-right:0rem;" @click="addTransfusion">+ 输血</el-button>
                     </el-row>  
                 </el-row>
-                <el-row>
-                    <el-form-item label="特级护理天数" class="w-11 mr-2">
+                <el-row style="margin-top:1rem">
+                    <el-form-item label="特级护理天数" class="w-14 mr-1">
                         <el-input-number v-model="form.special_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="一级护理天数" class="w-11 mr-2">
+                    <el-form-item label="一级护理天数" class="w-14 mr-1">
                         <el-input-number v-model="form.lvl1_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="二级护理天数" class="w-11 mr-2">
+                    <el-form-item label="二级护理天数" class="w-14 mr-1">
                         <el-input-number v-model="form.lvl2_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
-                    <el-form-item label="三级护理天数" class="w-11">
+                    <el-form-item label="三级护理天数" class="w-14">
                         <el-input-number v-model="form.lvl3_care_days" controls-position="right"></el-input-number>
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="离院方式" class="label-emphasize">
+                    <el-form-item label="离院方式" class="label-emphasize w-14">
                         <el-select v-model="form.release_type" placeholder="请选择">
                             <el-option
                                 v-for="type in release_types"
@@ -876,7 +941,7 @@
                             ></el-option>
                         </el-select>
                     </el-form-item>
-                    <span>
+                    <span class="ml-1">
                         <el-form-item v-if="form.release_type===release_types[1].value" label="拟接收医疗机构名称">
                             <el-input v-model="form.accept_hosp_2"></el-input>
                         </el-form-item>
@@ -898,51 +963,41 @@
                     </el-form-item>
                 </el-row>
                 <el-row>
-                    <el-form-item label="主诊医师姓名" class="w-12 mr-1">
+                    <el-form-item label="主诊医师姓名" class="w-14 mr-1">
                         <el-input v-model="form.physician_name"></el-input>
                     </el-form-item>
-                    <el-form-item label="主诊医师代码" class="w-12 mr-1">
+                    <el-form-item label="主诊医师代码" class="w-14 mr-1">
                         <el-input v-model="form.physician_code"></el-input>
                     </el-form-item>
-                    <el-form-item label="责任护士姓名" class="w-12 mr-2">
+                    <el-form-item label="责任护士姓名" class="w-14 mr-1">
                         <el-input v-model="form.nurse_ic_name"></el-input>
                     </el-form-item>
-                    <el-form-item label="责任护士代码" class="w-12">
+                    <el-form-item label="责任护士代码" class="w-14">
                         <el-input v-model="form.nurse_ic_code"></el-input>
                     </el-form-item>
                 </el-row>
                 <el-row class="subtitle">
-                    <p style="width: 100%; margin: .4rem 0;">四、医疗收费信息</p>
+                    <p class="subtitle-line">四、医疗收费信息</p>
                 </el-row>
                 <el-row>
-                    <el-col :span="10">
-                        <el-row>
-                            <el-form-item label="业务流水号" class="w-10 mr-1">
-                                <el-input v-model="form.biz_sn"></el-input>
-                            </el-form-item>
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="票据代码" class="w-10 mr-1">
-                                <el-input v-model="form.bill_code"></el-input>
-                            </el-form-item>
-                        </el-row>
-                        <el-row>
-                            <el-form-item label="票据号码" class="w-10 mr-1">
-                                <el-input v-model="form.bill_num"></el-input>
-                            </el-form-item>
-                        </el-row>
-                    </el-col>
-                    <el-col :span="14">
-                        <el-row>
-                            <el-date-picker
-                            v-model="form.settle_duration"
-                            type="daterange"
-                            range-separator="至"
-                            start-placeholder="起始日"
-                            end-placeholder="结束日"
-                            />
-                        </el-row>
-                    </el-col>
+                    <el-form-item label="业务流水号" class="w-10 mr-3">
+                        <el-input v-model="form.biz_sn"></el-input>
+                    </el-form-item>
+                    <el-form-item label="票据代码" class="w-10 mr-3">
+                        <el-input v-model="form.bill_code"></el-input>
+                    </el-form-item>
+                    <el-form-item label="票据号码" class="w-10 mr-3">
+                        <el-input v-model="form.bill_num"></el-input>
+                    </el-form-item>
+                    <el-form-item label="结算期间" class="w-20">
+                        <el-date-picker
+                        v-model="form.settle_duration"
+                        type="daterange"
+                        range-separator="至"
+                        start-placeholder="起始日"
+                        end-placeholder="结束日"
+                        />
+                    </el-form-item>
                 </el-row>
                 <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
                     <el-form-item label="项目名称" class="label-emphasize w-5 mr-5">
@@ -958,7 +1013,7 @@
                     <el-form-item label="其他" class="w-5">
                     </el-form-item>
                 </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="床位费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1007,7 +1062,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="诊察费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item  class="w-7 mr-3">
@@ -1056,7 +1111,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="检查费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1105,7 +1160,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="化验费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1154,7 +1209,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="治疗费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1203,7 +1258,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="手术费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1252,7 +1307,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="护理费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1301,7 +1356,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="卫生材料费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1350,7 +1405,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="西药费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1399,7 +1454,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="中药饮片费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1448,7 +1503,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="中成药费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1497,7 +1552,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="一般诊疗费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1546,7 +1601,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="挂号费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1595,7 +1650,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="其他费" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1644,7 +1699,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item :label="form.special_fee.title" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1693,7 +1748,7 @@
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
-                    <el-row style="padding-left:1rem !important; margin:1rem 0rem 0rem 0rem;">
+                    <el-row style="padding-left:1rem !important; margin:0rem 0rem 0rem 0rem;">
                         <el-form-item label="金额合计" class="w-5 mr-5">
                         </el-form-item>
                         <el-form-item class="w-7 mr-3">
@@ -1738,71 +1793,79 @@
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="医保统筹基金支付" class="w-15">
+                        <el-form-item label="医保统筹基金支付" class="w-18" style="margin-top:.5rem">
                             <el-input-number
                                 v-model="form.insurance_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
+                                class="ml-3"
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
                     <el-row>
                         <span>
                             <el-form-item label="补充医疗保险支付" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="职工大额补助">
+                            <el-form-item label="职工大额补助" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.staff_subsidy"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="居民大病保险">
+                            <el-form-item label="居民大病保险" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.residence_insurance"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="公务员医疗补助">
+                            <el-form-item label="公务员医疗补助" class="w-15">
                                 <el-input-number
                                 v-model="form.public_servant_subsidy"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
                     </el-row>
                     <el-row>
-                        <el-form-item label="医疗救助支付" class="w-15">
+                        <el-form-item label="医疗救助支付" class="w-18">
                             <el-input-number
                                 v-model="form.health_aid_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%; margin-left:4.5rem"
                             ></el-input-number>
                         </el-form-item>
                     </el-row>
                     <el-row>
                         <span>
                             <el-form-item label="其他支付" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="企业补充">
+                            <el-form-item label="企业补充" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.enterprise_supp"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="商业保险">
+                            <el-form-item label="商业保险" class="w-15">
                                 <el-input-number
                                 v-model="form.biz_insurance"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
@@ -1810,20 +1873,22 @@
                     <el-row>
                         <span>
                             <el-form-item label="个人负担" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="个人自付">
+                            <el-form-item label="个人自付" class="w-15 mr-2">
                                 <el-input-number
                                 v-model="form.partial_self_purchase"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="个人自费">
+                            <el-form-item label="个人自费" class="w-15">
                                 <el-input-number
                                 v-model="form.self_purchase"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
@@ -1831,27 +1896,29 @@
                     <el-row>
                         <span>
                             <el-form-item label="个人支付" class="label-emphasize w-10"></el-form-item>
-                            <el-form-item label="个人账户支付">
+                            <el-form-item label="个人账户支付" class="w-15 mr-2">
                                 <el-input-number
-                                v-model="form.account"
+                                v-model="form.account_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
-                            <el-form-item label="个人现金支付">
+                            <el-form-item label="个人现金支付" class="w-15 mr-2">
                                 <el-input-number
-                                v-model="form.cash"
+                                v-model="form.cash_pay"
                                 :precision="2"
                                 :controls="false"
                                 :min="0"
+                                style="width:100%"
                                 ></el-input-number>
                             </el-form-item>
                         </span>
                     </el-row>
                     <el-row>
-                        <el-form-item label="医疗支付方式" class="label-emphasize w-15">
-                            <el-select v-model="form.payment_type" placeholder="请选择">
+                        <el-form-item label="医疗支付方式" class="label-emphasize w-25">
+                            <el-select v-model="form.payment_type" placeholder="请选择" style="width:100%;margin-left:4.5rem">
                                 <el-option
                                     v-for="type in payment_types"
                                     :key="type.value"
@@ -1863,44 +1930,42 @@
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="定点医疗机构填报部门" class="w-10 mr-2">
+                        <el-form-item label="定点医疗机构填报部门" class="w-17 mr-5">
                             <el-input v-model="form.designated_med_report_unit"></el-input>
                         </el-form-item>
-                        <el-form-item label="医保经办机构" class="w-10 mr-2">
+                        <el-form-item label="医保经办机构" class="w-17 mr-5">
                             <el-input v-model="form.health_insurance_org"></el-input>
                         </el-form-item>
-                        <el-form-item label="代码" class="w-10">
+                        <el-form-item label="代码" class="w-15">
                             <el-input v-model="form.health_insurance_org_code"></el-input>
                         </el-form-item>
                     </el-row>
                     <el-row>
-                        <el-form-item label="定点医疗机构填报人" class="w-10 mr-2">
+                        <el-form-item label="定点医疗机构填报人" class="w-17 mr-5">
                             <el-input v-model="form.designated_med_report_person"></el-input>
                         </el-form-item>
-                        <el-form-item label="医保机构经办人" class="w-10 mr-2">
+                        <el-form-item label="医保机构经办人" class="w-17 mr-5">
                             <el-input v-model="form.health_insurance_person"></el-input>
                         </el-form-item>
-                        <el-form-item label="代码" class="w-10">
+                        <el-form-item label="代码" class="w-15">
                             <el-input v-model="form.health_insurance_person_code"></el-input>
                         </el-form-item>
                     </el-row>
-                    <el-row>
+                    <el-row justify="end" style="margin-top:2rem;margin-right:0;width:100%;padding-bottom:5rem;">
                         <el-form-item style="float:right !important">
                             <el-button 
                             class="cancel"
                             @click="cancelForm"
-                            style="margin:1rem 1rem 5rem 0;"
                             >取消</el-button>
                         </el-form-item>
                         <el-form-item style="float:right !important">
                             <el-button
                             @click="updateForm"
-                            style="margin:1rem 1rem 5rem 0;"
+                            class="ml-1"
                             >保存</el-button>
                         </el-form-item>
                     </el-row>
             </el-form>
-            
         </div>
     </div>
 </template>
@@ -1915,6 +1980,9 @@ import { useRoute, useRouter } from "vue-router";
 const route = useRoute()
 const router = useRouter()
 const defaultTime1 = [new Date(2000, 1, 1, 12, 0, 0)]
+const setTitle = onMounted(()=>{
+    document.title = '结算清单'
+})
 const getData = onMounted(async()=>{
     const homepage_id = route.params.homepage_id
     console.log('homepage_id:',homepage_id)
@@ -2139,7 +2207,7 @@ const addOtherOp = (op)=>{
         operator_code: '',
         anaesthetist_name: '',
         anaesthetist_code: '',
-        op_time: '',
+        op_time: [],
         anaesthesia_time: '',
     })
 }
@@ -2251,7 +2319,7 @@ let form:any = reactive({
         operator_code: '',
         anaesthetist_name: '',
         anaesthetist_code: '',
-        op_time: '',
+        op_time: [],
         anaesthesia_time: '',
     },
     other_ops: [
@@ -2263,7 +2331,7 @@ let form:any = reactive({
             operator_code: '',
             anaesthetist_name: '',
             anaesthetist_code: '',
-            op_time: '',
+            op_time: [],
             anaesthesia_time: '',
         }
     ],
