@@ -61,12 +61,42 @@
                             新建标准
                         </el-menu-item>
                 </el-sub-menu>
+                <!-- g2std -->
                 <el-sub-menu
                 :key="(i+3).toString()"
-                v-for="(tp,i) in types"
+                v-for="(tp,i) in g2types"
                 :index="(i+3).toString()" class="diag">
                     <template #title class="diag-title">{{names[tp]}}</template>
                         <el-sub-menu :index="(3+i).toString()+'-1'" class="check">
+                            <template #title>查看&修改</template>
+                            <el-menu-item
+                            v-for="g2std in g2std_list.filter(g=>g.type==tp)"
+                            :key="g2std.id"
+                            :index="'/edit-standards/general2/'+g2std.id"
+                            >
+                                {{g2std.name+' ('+g2std.id+')'}}
+                            </el-menu-item>
+                        </el-sub-menu>
+                        <!-- <el-sub-menu :index="(3+i).toString()+'-2'">
+                            <template #title>上传标准</template>
+                            <el-menu-item :index="'/edit-standards/upload-json-g/'+tp">
+                                上传json
+                            </el-menu-item>
+                            <el-menu-item :index="'/edit-standards/upload-xls-g/'+tp">
+                                上传xls
+                            </el-menu-item>
+                        </el-sub-menu> -->
+                        <el-menu-item index='' @click="newG2Std(tp)">
+                            新建标准
+                        </el-menu-item>
+                </el-sub-menu>
+                <!-- gstd -->
+                <el-sub-menu
+                :key="(i+3+g2types.length).toString()"
+                v-for="(tp,i) in types"
+                :index="(i+3+g2types.length).toString()" class="diag">
+                    <template #title class="diag-title">{{names[tp]}}</template>
+                        <el-sub-menu :index="(3+i+g2types.length).toString()+'-1'" class="check">
                             <template #title>查看&修改</template>
                             <el-menu-item
                             v-for="gstd in gstd_list.filter(g=>g.type==tp)"
@@ -76,7 +106,7 @@
                                 {{gstd.name+' ('+gstd.id+')'}}
                             </el-menu-item>
                         </el-sub-menu>
-                        <el-sub-menu :index="(3+i).toString()+'-2'">
+                        <el-sub-menu :index="(3+i+g2types.length).toString()+'-2'">
                             <template #title>上传标准</template>
                             <el-menu-item :index="'/edit-standards/upload-json-g/'+tp">
                                 上传json
@@ -109,6 +139,7 @@ import { onMounted, reactive, watch } from "vue-demi"
 import { useRouter, useRoute } from "vue-router"
 
 let types:string[] = reactive([])
+let g2types:string[] = reactive([])
 let names = ref({})
 interface SpecialtyStd {
     name: string
@@ -120,9 +151,14 @@ interface GStd {
     type: string
     name: string
 }
+interface G2Std {
+    type: string
+    name: string
+}
 let spstd_list:SpecialtyStd[] = reactive([])
 let dgstd_list:DiagStd[] = reactive([])
 let gstd_list:GStd[] = reactive([])
+let g2std_list:G2Std[] = reactive([])
 const router = useRouter()
 const route = useRoute()
 const key = ()=>route.path+Math.random()
@@ -132,6 +168,7 @@ const updateList = async ()=>{
     let applied_dgstd_id = null
     // applied gstds
     let applied_gstd_ids = null
+    let applied_g2std_ids = null
     // specialty
     await axios.get('/api/v1/get-standard/specialty')
         .then(response=>{
@@ -184,9 +221,10 @@ const updateList = async ()=>{
             console.log('applied_gstds:',response)
             applied_gstd_ids = response.data.standards
             names.value = response.data.names
-            console.log('type of names:',typeof(names))
-            console.log('names:',names)
-            console.log('names[NATIONALITY]:',names['NATIONALITY'])
+            console.log('type of names:',typeof(names.value))
+            console.log('names:',names.value)
+            console.log('names[NATIONALITY]:',names.value['NATIONALITY'])
+            console.log('applied_gstd_ids:',applied_gstd_ids)
             console.log('types:',Object.keys(applied_gstd_ids))
             types.length=0
             Object.keys(applied_gstd_ids).forEach(tp=>types.push(tp))
@@ -203,6 +241,36 @@ const updateList = async ()=>{
                 gstd_list.push(l)
             })
             console.log('gstd_list:',gstd_list)
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+    // g2stds
+    await axios.get('/api/v1/get-standard/g2stds')
+        .then(response=>{
+            console.log('applied_g2stds:',response)
+            applied_g2std_ids = response.data.standards
+            // names.value = response.data.names
+            // console.log('type of names:',typeof(names.value))
+            // console.log('names:',names.value)
+            // console.log('names[NATIONALITY]:',names.value['NATIONALITY'])
+            console.log('applied_g2std_ids:',applied_g2std_ids)
+            console.log('g2types:',Object.keys(applied_g2std_ids))
+            g2types.length=0
+            Object.keys(applied_g2std_ids).forEach(tp=>g2types.push(tp))
+            console.log(g2types)
+        })
+    await axios.get('/api/v1/get-all-g2stds/')
+        .then(response=>{
+            g2std_list.length = 0
+            console.log('all g2stds:',response)
+            response.data.g2std_list.forEach(l=>{
+                console.log('l:',l)
+                if(applied_g2std_ids[l.type]==l.id)
+                    l.name='🔶 '+l.name
+                g2std_list.push(l)
+            })
+            console.log('g2std_list:',g2std_list)
         })
         .catch(error=>{
             console.log(error)
@@ -266,6 +334,26 @@ const newGStd = async (type)=>{
             gstd_list.push(gstd_data)
             // 根据type决定跳转连接
             router.push('/edit-standards/general/'+temp_id)
+        })
+        .catch(error=>{
+            console.log(error)
+        })
+}
+const newG2Std = async (type)=>{
+    await axios.post('api/v1/post-standard/g2std/',{form:{name:'test',type:type,general:[]}})
+        .then(response=>{
+            console.log('response:',response)
+            if(!response)
+                return
+            let g2std_data = response.data.g2std
+            console.log('gstd_data:',g2std_data)
+            let temp_id = g2std_data.id
+            let temp_name = g2std_data.name
+            console.log('temp_id:',temp_id)
+            console.log('temp_name:',temp_name)
+            gstd_list.push(g2std_data)
+            // 根据type决定跳转连接
+            router.push('/edit-standards/general2/'+temp_id)
         })
         .catch(error=>{
             console.log(error)

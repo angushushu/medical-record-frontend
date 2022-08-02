@@ -1,33 +1,36 @@
 <template>
     <div class="container">
-        <!-- 修改国籍 -->
+        <!-- 修改二层通用目录 -->
         <el-dialog
         v-model="editDialogVisible"
         :title="type_name+'详情'"
         width="30%"
         center
         :destroy-on-close="true"
-        :before-close="editGeneralClose"
+        :before-close="editGeneral2Close"
         >
             <el-form>
-                <el-form-item label="代码" style="margin-bottom:.5rem !important;">
-                    <el-input v-model="tempGData.code" style="margin-left: 1rem !important"></el-input>
+                <el-form-item label="值" style="margin-bottom:.5rem !important;">
+                    <el-input v-model="tempG2Data.value" style="margin-left: 1rem !important"></el-input>
                 </el-form-item>
                 <el-form-item label="名称" style="margin-bottom:.5rem !important">
-                    <el-input v-model="tempGData.label"></el-input>
+                    <el-input v-model="tempG2Data.label"></el-input>
                 </el-form-item>
             </el-form>
             
+            <!-- <span>
+                It should be noted that the content will not be aligned in center by default
+            </span> -->
             <template #footer>
                 <span class="dialog-footer">
-                    <el-button @click="editGeneralClose">取消</el-button>
-                    <el-button type="primary" @click="editG" v-loading.fullscreen.lock="loading">
+                    <el-button @click="editGeneral2Close">取消</el-button>
+                    <el-button type="primary" @click="editG2" v-loading.fullscreen.lock="loading">
                         修改
                     </el-button>
                 </span>
             </template>
         </el-dialog>
-        <!-- 添加类型标准 -->
+        <!-- 添加科别 -->
         <el-dialog
         v-model="addDialogVisible"
         :title="'添加'+type_name"
@@ -38,17 +41,17 @@
         >
             <el-form>
                 <el-form-item label="值" style="margin-bottom:.5rem !important;">
-                    <el-input v-model="tempGData.code" style="margin-left: 1rem !important"></el-input>
+                    <el-input v-model="tempG2Data.value" style="margin-left: 1rem !important"></el-input>
                 </el-form-item>
                 <el-form-item label="名称" style="margin-bottom:.5rem !important">
-                    <el-input v-model="tempGData.label"></el-input>
+                    <el-input v-model="tempG2Data.label"></el-input>
                 </el-form-item>
             </el-form>
             
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="addDiagClose">取消</el-button>
-                    <el-button type="primary" @click="addDg" v-loading.fullscreen.lock="loading">
+                    <el-button type="primary" @click="addG2" v-loading.fullscreen.lock="loading">
                         添加
                     </el-button>
                 </span>
@@ -57,25 +60,22 @@
 
         <el-row justify="space-between">
             <span style="margin-top:1rem">
-                <el-button class="rename-dgstd" @click="rename()">{{name}}</el-button>
+                <el-button class="rename-spstd" @click="rename()">{{name}}</el-button>
             </span>
             <span>
-                <el-button class="add-dg" @click="append(data)">添加{{type_name}}</el-button>
-                <el-button class="add-dg" @click="applyGStd(id)">应用</el-button>
-                <el-button class="remove-dgstd" @click="removeGStd(id)">删除</el-button>
+                <el-button class="add-sp1" @click="append(data)">添加{{type_name}}</el-button>
+                <el-button class="add-sp1" @click="applyG2Std(id)">应用</el-button>
+                <el-button class="remove-spstd" @click="removeG2Std(id)">删除</el-button>
             </span>
             
         </el-row>
-
         <el-tree
         :data="list"
         :props="defaultProps"
         v-model="list"
-        node-key="code"
+        node-key="value"
         @node-click="handleNodeClick"
         :expand-on-click-node="false"
-        v-loading.lock="loading"
-        :height="200"
         >
             <template #default="{ node, data }">
                 <span class="custom-tree-node">
@@ -86,14 +86,16 @@
                             placement="right"
                             :show-after="600"
                         >
-                            <template #content>
-                                代码: {{data.code}}<br>
-                                名称：{{data.label}}<br>
-                            </template>
-                            <el-button class="check-node" @click="handleGClick(data)">[{{data.code}}] {{ node.label }}</el-button>
+                            <template #content>值: {{data.value}}<br>描述: {{data.description}}</template>
+                            <el-button class="check-node" @click="handleG2Click(data)">{{ node.label }}</el-button>
                         </el-tooltip>
                     </span>
                     <span>
+                        <circle-plus-filled
+                        v-if="isNotG2(node)"
+                        class="add-node"
+                        @click="append(data)"
+                        ></circle-plus-filled>
                         <circle-close-filled
                         class="remove-node"
                         @click="removeNode(node,data)"
@@ -114,15 +116,15 @@ import { onUnmounted, reactive, ref, watch } from "vue"
 import { onMounted } from "vue-demi"
 import { useRoute } from "vue-router"
 import { CirclePlusFilled, CircleCloseFilled } from "@element-plus/icons-vue"
-import { throwError } from 'element-plus/lib/utils'
 
 const router = useRoute()
+const route = useRoute()
 let list = ref([])
 const loading = ref(false)
 
-let editingGData = ref(null)
-let tempGData = ref(null)
-// let appendData = ref(null)
+let editingG2Data = ref(null)
+let tempG2Data = ref(null)
+let appendData = ref(null)
 
 let id = ref(router.params.id)
 let name = ref('')
@@ -136,33 +138,37 @@ const handleNodeClick = () => {
   console.log('clicked node')
     // centerDialogVisible = ref(true)
 }
-const handleGClick = (data)=>{
-    tempGData.value = Object.assign({},data)
-    editingGData.value = data
+const handleG2Click = (data)=>{
+    tempG2Data.value = Object.assign({},data)
+    editingG2Data.value = data
     
-    console.log('tempGData')
-    console.log(tempGData)
+    console.log('tempG2Data')
+    console.log(tempG2Data)
     editDialogVisible.value = true
 }
 const updateData = async ()=>{
-    if(router.path==='/edit-standards/upload-json-gstd') // 不知道为啥路由变了还会运行
+    if(router.path==='/edit-standards/upload-json-g2std') // 不知道为啥路由变了还会运行
         return
     id.value = router.params.id
     console.log(router.path)
     console.log('这里是'+id.value)
     loading.value = true
     await axios
-        .get('/api/v1/get-gstd/',{params:{id:id.value}})
-        .then(response=>{
-                console.log('response:',response)
-                name.value = response.data.gstd.name
-                type.value = response.data.gstd.type
+        .get('/api/v1/get-g2std/',{params:{id:id.value}})
+        .then(
+            response=>{
+                console.log('response.data:',response.data)
+                name.value = response.data.g2std.name
+                type.value = response.data.g2std.type
                 list.value.length=0
-                response.data.gstd.general.forEach(g=>{
-                    list.value.push(g)
+                response.data.g2std.general1.forEach(g1=>{
+                    // console.log(sp1)
+                    g1.children = g1.general2
+                    list.value.push(g1)
                 })
                 type_name.value = response.data.type_name
                 loading.value = false
+            // console.log(response.data)
         })
         .catch(error=>{
             console.log(error)
@@ -170,14 +176,22 @@ const updateData = async ()=>{
         })
 }
 const defaultProps = {
-    label: 'label',
+  children: 'children',
+  label: 'label',
+}
+const isNotG2 = (node)=>{
+    if(node.parent&&node.parent.data===list.value) {
+        return true
+    } else {
+        return false
+    }
 }
 const append = (data) => {
-    tempGData.value = {code:'',label:'',description:''}
+    tempG2Data.value = {value:'',label:'',description:''}
     addDialogVisible.value = true
-    console.log('tempGData:',tempGData)
-    // appendData = data
-    // console.log('appendData:',appendData)
+    console.log('tempG2Data:',tempG2Data)
+    appendData = data
+    console.log('appendData:',appendData)
 }
 const rename = async ()=>{
     await ElMessageBox.prompt('请输入标准新名称', '重命名', {
@@ -194,7 +208,7 @@ const rename = async ()=>{
         // console.log('现在的名字：',name.value)
         name.value = value
         console.log('现在的名字：',name.value)
-        updateGStd()
+        updateG2Std()
     })
     .catch(() => {
         ElMessage({
@@ -203,32 +217,32 @@ const rename = async ()=>{
         })
     })
 }
-const updateGStd = async () => {
+const updateG2Std = async () => {
     console.log('when updating, name:',name.value)
     loading.value = true
-    await axios.post('api/v1/update-standard/gstd/',{'id':id.value,'name':name.value,'general':list.value,'type':type.value})
+    await axios.post('api/v1/update-standard/g2std/',{'id':id.value,'name':name.value,'general1':list.value,'type':type.value})
         .then(response=>{
             console.log('submitted and got response:')
             console.log(response)
             emit('list-change','stay')
-            loading.value = false
         })
         .catch(error=>{
             console.log(error)
-            loading.value = false
         })
+    loading.value = false
+    
 }
 const removeNode = async (node, data) => {
     loading.value = true
     node.remove()
     console.log('new list:')
     console.log(list)
-    await updateGStd()
+    await updateG2Std()
 }
-const applyGStd = async(id) => {
+const applyG2Std = async(id) => {
     console.log('applying '+id)
     await ElMessageBox.confirm(
-        '这将改变病案首页的国籍标准，你确定吗？',
+        '这将改变病案首页的科别标准，你确定吗？',
         '警告！',
         {
         confirmButtonText: '确认',
@@ -237,7 +251,7 @@ const applyGStd = async(id) => {
         }
     ).then(() => {
         loading.value = true
-        axios.post('api/v1/set-standard/gstd/',{id:id,type:type.value})
+        axios.post('api/v1/set-standard/g2std/',{id:id,type:type.value})
             .then(response=>{
                 console.log(response)
                 emit('list-change','stay')
@@ -258,9 +272,9 @@ const applyGStd = async(id) => {
     })
     
 }
-const removeGStd = async (id) => {
+const removeG2Std = async (id) => {
     console.log('removing '+id)
-    await axios.post('api/v1/remove-gstd',{id:id})
+    await axios.post('api/v1/remove-g2std',{id:id})
         .then(response=>{
             console.log(response)
             emit('list-change','111')
@@ -272,14 +286,14 @@ const removeGStd = async (id) => {
 
 const addDiagClose = ()=>{
     addDialogVisible.value = false
-    // editingGData.value = null
+    // editingG2Data.value = null
     console.log('addDiagClose()')
     console.log(addDialogVisible)
 }
-const addDg = async ()=>{
-    console.log('addDg()')
+const addG2 = async ()=>{
+    console.log('addG2()')
     await ElMessageBox.confirm(
-        '这样做将增加一个'+type_name.value+'，你确定吗',
+        '这样做将增加一个科别，你确定吗',
         '警告',
         {
             confirmButtonText: '确认',
@@ -289,49 +303,47 @@ const addDg = async ()=>{
     )
     .then(() => {
         console.log('确认了')
-        // 检查重复code
-        list.value.forEach(dg => {
-            if(dg.code==tempGData.value.code){
-                ElMessage({
-                    type: 'error',
-                    message: '代码已存在',
-                })
-                throw "code exist"
-            }
-        });
         const newChild = { 
-            code: tempGData.value.code, 
-            label: tempGData.value.label, 
-            description: tempGData.value.description, 
+            value: tempG2Data.value.value, 
+            label: tempG2Data.value.label, 
+            description: tempG2Data.value.description, 
             // children: [] 
         }
         console.log('newChild:', newChild)
-        list.value.push(newChild)
-        console.log('list',list)
+        if(!appendData){
+            list.value.push(newChild)
+        } else {
+            if(!appendData.children) {
+                appendData.children = []
+            }
+            console.log('tempG2Data:',tempG2Data)
+            appendData.children.push(newChild)
+        }
+        console.log('pushed appendData:', appendData)
         list.value = [...list.value]
         console.log('list:', list.value)
         ElMessage({
             type: 'success',
             message: '修改成功',
         })
-        updateGStd()
+        updateG2Std()
         addDiagClose()
     })
     .catch(() => {
         console.log('取消了')
         ElMessage({
             type: 'info',
-            message: '动作已取消',
+            message: '已取消',
         })
     })
 }
-const editGeneralClose = ()=>{
+const editGeneral2Close = ()=>{
     editDialogVisible.value = false
-    // editingGData.value = null
-    console.log('editGeneralClose()')
+    // editingG2Data.value = null
+    console.log('editGeneral2Close()')
     console.log(editDialogVisible)
 }
-const editG = async ()=>{
+const editG2 = async ()=>{
     await ElMessageBox.confirm(
         '这样做将改变标准内容，你确定吗',
         '警告',
@@ -343,17 +355,17 @@ const editG = async ()=>{
     )
     .then(() => {
         console.log('确认了')
-        editingGData.value.code = tempGData.value.code // 检查code是否重复？
-        editingGData.value.label = tempGData.value.label
-        editingGData.value.description = tempGData.value.description
+        editingG2Data.value.value = tempG2Data.value.value // 检查value是否重复？
+        editingG2Data.value.label = tempG2Data.value.label
+        editingG2Data.value.description = tempG2Data.value.description
         console.log('list')
         console.log(list)
         ElMessage({
             type: 'success',
             message: '修改成功',
         })
-        updateGStd()
-        editGeneralClose()
+        updateG2Std()
+        editGeneral2Close()
     })
     .catch(() => {
         console.log('取消了')
@@ -365,7 +377,7 @@ const editG = async ()=>{
 }
 // reactive(()=>updateData())
 watch(
-    ()=>router.path,
+    ()=>route.path,
     (current, previous)=>{
         console.log(previous+'->'+current)
         updateData()
@@ -379,13 +391,13 @@ onMounted(updateData)
     padding-left: 5rem;
     padding-right: 5rem;
 }
-.el-button.remove-dgstd {
+.el-button.remove-spstd {
     margin: 1rem 0 1rem 1rem;
     border: 1px solid rgb(219, 219, 219) !important;
     background-color: rgb(219, 219, 219) !important;
     /* border-radius: 1rem !important; */
 }
-.el-button.remove-dgstd:hover {
+.el-button.remove-spstd:hover {
     color: rgb(255, 255, 255) !important;
     border: 1px solid rgb(201, 45, 45) !important;
     background-color: rgb(201, 45, 45) !important;
@@ -418,14 +430,14 @@ onMounted(updateData)
 .remove-node:hover {
     color: rgb(201, 45, 45) !important;
 }
-.rename-dgstd {
+.rename-spstd {
     font-size: 150%;
     font-weight: bold;
     padding-left: 0%;
     border: 0px !important;
     background-color: transparent !important;
 }
-.rename-dgstd:hover {
+.rename-spstd:hover {
     font-weight: bold;
     color: rgb(0, 133, 133) !important;
     padding-left: 0%;

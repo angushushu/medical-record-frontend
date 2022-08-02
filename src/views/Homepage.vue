@@ -2150,10 +2150,15 @@ export default {
         cancelForm() {
             this.$router.push('/')
         },
-        marriageOnChange(val) {
+        marriageOnChange(val) { // 应该看label而不是val
             console.log('婚姻状态')
             console.log(val)
             if(val==='2') {
+                // this.contact_relations.forEach(c => {
+                //     if(c.label=="配偶"){
+                //         c.disabled=false
+                //     }
+                // });
                 this.contact_relations[0].disabled=false
             } else {
                 this.contact_relations[0].disabled=true

@@ -14,6 +14,7 @@ import EditStandards from '../views/EditStandards.vue'
 import Specialties from '../views/Specialties.vue'
 import Diagnoses from '../views/Diagnoses.vue'
 import General from '../views/General.vue'
+import General2 from '../views/General2.vue'
 import Settlement from '../views/Settlement.vue'
 import SettleMain from '../views/SettleMain.vue'
 import SettleView from '../views/SettleView.vue'
@@ -78,6 +79,10 @@ const routes = [
       {
         path:'upload-xls-g/:type',
         component:UploadXlsG,
+      },
+      {
+        path:'general2/:id',
+        component:General2,
       },
     ]
   },

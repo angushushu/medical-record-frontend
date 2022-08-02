@@ -37,7 +37,7 @@
                 </el-table-column>
             </el-table>        
         </el-row>
-        <el-row justify="end">
+        <el-row justify="end" style="width:100%">
             <el-button class="add-homepage" @click="handleAdd">+ 病案</el-button>
         </el-row>
         <el-row justify="center" style="margin-top: 1rem !important;">
