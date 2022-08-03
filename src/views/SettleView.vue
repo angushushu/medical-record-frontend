@@ -980,13 +980,13 @@
                     <span class="ml-1">
                         <!-- *标准会变，需要考虑这里如何变更，暂时直接用文字匹配 -->
                         <!-- <el-form-item v-if="release_types.length>2&&form.release_type===release_types[1].value" label="拟接收医疗机构名称"> -->
-                        <el-form-item v-if="form.release_type==='医嘱转院'" label="拟接收医疗机构名称">
+                        <el-form-item v-show="isTrans2" label="拟接收医疗机构名称">
                             <el-input v-model="form.accept_hosp_2"></el-input>
                         </el-form-item>
                     </span>
                     <span>
                         <!-- <el-form-item v-if="release_types.length>3&&form.release_type===release_types[2].value" label="拟接收医疗机构名称"> -->
-                        <el-form-item v-if="form.release_type==='医嘱转社区卫生服务机构/乡镇卫生院'" label="拟接收医疗机构名称">
+                        <el-form-item v-show="isTrans3" label="拟接收医疗机构名称">
                             <el-input v-model="form.accept_hosp_3"></el-input>
                         </el-form-item>
                     </span>
@@ -2034,6 +2034,8 @@ let id_type_officer = ''
 let heal_type_w = '' // 西医 治疗类型
 let heal_type_t = '' // 中医 治疗类型
 let heal_type_wnt = '' // 中西医 治疗类型
+let release_type_trans_2 = ''
+let release_type_trans_3 = ''
 const getData = onMounted(async()=>{
     const homepage_id = route.params.homepage_id
     console.log('homepage_id:',homepage_id)
@@ -2201,6 +2203,12 @@ const queryDiag = async(query: string)=>{
         temp_diags.value = []
     }
 }
+const isTrans2 = computed(()=>{
+    return form.release_type===release_type_trans_2
+})
+const isTrans3 = computed(()=>{
+    return form.release_type===release_type_trans_3
+})
 const getChinaData = ()=>{
     if(regionData[regionData.length-1].label != '其他') {
         regionData.push({value: '000000', label: '其他'})
@@ -2852,7 +2860,7 @@ const loadStandard = onMounted(async ()=>{
         .catch(error=>{
             console.log(error)
         })
-    // contact_relations
+    // special person type
     await axios.get('/api/v1/get-standard/gstd/',{params:{type:'SPECIALPERSONTYPE'}})
         .then(response=>{
             console.log('applied_special_person_types:',response.data.generals)
@@ -2986,6 +2994,13 @@ const loadStandard = onMounted(async ()=>{
             response.data.generals.forEach(r=>{
                 console.log('r:',r)
                 release_types.push({value:r.code,label:r.label})
+                if(r.label==='医嘱转院'){
+                    release_type_trans_2=r.code
+                } else if(r.label==='医嘱转社区卫生服务机构/乡镇卫生院'){
+                    release_type_trans_3=r.code
+                }
+                console.log('release_type_trans_2:',release_type_trans_2)
+                console.log('release_type_trans_3:',release_type_trans_3)
             })
             console.log('current release_types:',release_types)
         })

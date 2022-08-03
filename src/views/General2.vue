@@ -147,11 +147,12 @@ const handleG2Click = (data)=>{
     editDialogVisible.value = true
 }
 const updateData = async ()=>{
-    if(router.path==='/edit-standards/upload-json-g2std') // 不知道为啥路由变了还会运行
+    if(router.path==='/edit-standards/upload-json-g2/'+type.value) // 不知道为啥路由变了还会运行
         return
     id.value = router.params.id
     console.log(router.path)
     console.log('这里是'+id.value)
+    // console.log('checking if corner case: /edit-standards/upload-json-g2/'+type.value.toString())
     loading.value = true
     await axios
         .get('/api/v1/get-g2std/',{params:{id:id.value}})

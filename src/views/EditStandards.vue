@@ -77,15 +77,15 @@
                                 {{g2std.name+' ('+g2std.id+')'}}
                             </el-menu-item>
                         </el-sub-menu>
-                        <!-- <el-sub-menu :index="(3+i).toString()+'-2'">
+                        <el-sub-menu :index="(3+i).toString()+'-2'">
                             <template #title>上传标准</template>
-                            <el-menu-item :index="'/edit-standards/upload-json-g/'+tp">
+                            <el-menu-item :index="'/edit-standards/upload-json-g2/'+tp">
                                 上传json
                             </el-menu-item>
-                            <el-menu-item :index="'/edit-standards/upload-xls-g/'+tp">
+                            <el-menu-item :index="'/edit-standards/upload-xls-g2/'+tp">
                                 上传xls
                             </el-menu-item>
-                        </el-sub-menu> -->
+                        </el-sub-menu>
                         <el-menu-item index='' @click="newG2Std(tp)">
                             新建标准
                         </el-menu-item>

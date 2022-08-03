@@ -10,6 +10,8 @@ import UploadJsonDg from '../views/UploadJsonDg.vue'
 import UploadXlsDg from '../views/UploadXlsDg.vue'
 import UploadJsonG from '../views/UploadJsonG.vue'
 import UploadXlsG from '../views/UploadXlsG.vue'
+import UploadJsonG2 from '../views/UploadJsonG2.vue'
+import UploadXlsG2 from '../views/UploadXlsG2.vue'
 import EditStandards from '../views/EditStandards.vue'
 import Specialties from '../views/Specialties.vue'
 import Diagnoses from '../views/Diagnoses.vue'
@@ -83,6 +85,14 @@ const routes = [
       {
         path:'general2/:id',
         component:General2,
+      },
+      {
+        path:'upload-json-g2/:type',
+        component:UploadJsonG2,
+      },
+      {
+        path:'upload-xls-g2/:type',
+        component:UploadXlsG2,
       },
     ]
   },

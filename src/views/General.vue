@@ -145,12 +145,14 @@ const handleGClick = (data)=>{
     editDialogVisible.value = true
 }
 const updateData = async ()=>{
-    if(router.path==='/edit-standards/upload-json-gstd') // 不知道为啥路由变了还会运行
+    if(router.path==='/edit-standards/upload-json-g/'+type.value) // 不知道为啥路由变了还会运行
         return
     id.value = router.params.id
     console.log(router.path)
     console.log('这里是'+id.value)
+    console.log('checking if corner case: /edit-standards/upload-json-g/'+type.value.toString())
     loading.value = true
+    // path 变了会报错，不过不影响使用
     await axios
         .get('/api/v1/get-gstd/',{params:{id:id.value}})
         .then(response=>{

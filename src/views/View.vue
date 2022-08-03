@@ -247,7 +247,7 @@
                             </el-select>
                         </el-form-item>
                         <!-- 针对其他关系可进行说明 -->
-                        <el-form-item v-show="this.form.contact_relation==='8'" label="其他关系说明" class="w-18">
+                        <el-form-item v-show="this.form.contact_relation===this.contact_relation_other_value" label="其他关系说明" class="w-18">
                             <el-input :disabled="this.non_editable" v-model="form.contact_other_description"></el-input>
                         </el-form-item>
                     </el-row>
@@ -335,8 +335,30 @@
                         <span class="el-form-item__label w-12">{{getHospDuration()}}</span>
                     </el-row>
                     <el-row class="label-emphasize" style="height: auto !important">
-                        <el-form-item label="门（急）诊诊断" style="width:39rem; margin-right:2rem !important; height: auto !important">
+                        <!-- <el-form-item label="门（急）诊诊断" style="width:39rem; margin-right:2rem !important; height: auto !important">
                             <el-input :disabled="this.non_editable" v-model="form.diagnosis" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                        </el-form-item> -->
+                        <el-form-item label="门（急）诊诊断" style="width:39rem; margin-right:2rem !important; height: auto !important">
+                            <el-select
+                            v-model="form.diagnosis"
+                            multiple
+                            filterable
+                            remote
+                            placeholder="添加诊断"
+                            :remote-method="queryDiag"
+                            :loading="diags_loading"
+                            collapse-tags
+                            :collapse-tags-tooltip="true"
+                            default-first-option
+                            class="diag-box"
+                            >
+                                <el-option
+                                v-for="diag in temp_diags"
+                                :key="diag.code"
+                                :label="diag.label"
+                                :value="diag.code"
+                                />
+                            </el-select>
                         </el-form-item>
                         <el-form-item label="疾病编码" style="width:17rem; height:26px !important">
                             <el-input :disabled="this.non_editable" v-model="form.disease_code"></el-input>
@@ -347,8 +369,30 @@
                     </el-row>
                     <el-form-item style="height: auto !important;">
                         <el-row class="label-emphasize" style="margin-left:1rem">
-                            <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important">
+                            <!-- <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important">
                                 <el-input :disabled="this.non_editable" v-model="form.main_diag.release" :autosize="{ minRows: 1, maxRows: 6 }" type="textarea"></el-input>
+                            </el-form-item> -->
+                            <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important">
+                                <el-select
+                                v-model="form.main_diag.release"
+                                multiple
+                                filterable
+                                remote
+                                placeholder="添加诊断"
+                                :remote-method="queryDiag"
+                                :loading="diags_loading"
+                                collapse-tags
+                                :collapse-tags-tooltip="true"
+                                default-first-option
+                                class="diag-box"
+                                >
+                                    <el-option
+                                    v-for="diag in temp_diags"
+                                    :key="diag.code"
+                                    :label="diag.label"
+                                    :value="diag.code"
+                                    />
+                                </el-select>
                             </el-form-item>
                             <el-form-item label="疾病编码" class="w-15 mr-1">
                                 <el-input :disabled="this.non_editable" v-model="form.main_diag.code"></el-input>
@@ -383,8 +427,30 @@
                         style="height: auto !important;"
                         >
                             <el-row class="label-emphasize-light" style="padding-left:1rem; height: auto !important">
-                                <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important; vertical-align:bottom !important">
+                                <!-- <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important; vertical-align:bottom !important">
                                     <el-input :disabled="this.non_editable" v-model="diag.release" :autosize="{ minRows: 1, maxRows: 6 }"  type="textarea"></el-input>
+                                </el-form-item> -->
+                                <el-form-item label="出院诊断" style="width:26rem; margin-right:1rem !important; height: auto !important">
+                                    <el-select
+                                    v-model="diag.release"
+                                    multiple
+                                    filterable
+                                    remote
+                                    placeholder="添加诊断"
+                                    :remote-method="queryDiag"
+                                    :loading="diags_loading"
+                                    collapse-tags
+                                    :collapse-tags-tooltip="true"
+                                    default-first-option
+                                    class="diag-box"
+                                    >
+                                        <el-option
+                                        v-for="diag in temp_diags"
+                                        :key="diag.code"
+                                        :label="diag.label"
+                                        :value="diag.code"
+                                        />
+                                    </el-select>
                                 </el-form-item>
                                 <el-form-item label="疾病编码" class="w-15 mr-1">
                                     <el-input :disabled="this.non_editable" v-model="diag.code"></el-input>
@@ -403,7 +469,7 @@
                                 <el-button :disabled="this.non_editable" class="remove-diag" @click.prevent="removeDiag(diag)">-</el-button>
                             </el-row>
                         </el-form-item>
-                        <el-row justify="end">
+                        <el-row justify="end" style="width:100%">
                             <el-button :disabled="this.non_editable" class="add-diag" style="margin-right:.9rem" @click="addDiag">+ 其他诊断</el-button>
                         </el-row>
                         
@@ -418,11 +484,33 @@
                     </el-row>
                     <el-row class="label-emphasize">
                         <span class="mr-1" style="width:43rem">
-                            <el-form-item label="病理诊断" style="width:100%; height: auto !important; vertical-align:bottom !important">
+                            <!-- <el-form-item label="病理诊断" style="width:100%; height: auto !important; vertical-align:bottom !important">
                                 <el-input :disabled="this.non_editable"
                                 v-model="form.pathology.description" 
                                 :autosize="{ minRows: 1, maxRows: 3 }" 
                                 type="textarea"></el-input>
+                            </el-form-item> -->
+                           <el-form-item label="病理诊断" style="width:100%; height: auto !important; vertical-align:bottom !important">
+                                <el-select
+                                v-model="form.pathology.description"
+                                multiple
+                                filterable
+                                remote
+                                placeholder="添加诊断"
+                                :remote-method="queryDiag"
+                                :loading="diags_loading"
+                                collapse-tags
+                                :collapse-tags-tooltip="true"
+                                default-first-option
+                                class="diag-box"
+                                >
+                                    <el-option
+                                    v-for="diag in temp_diags"
+                                    :key="diag.code"
+                                    :label="diag.label"
+                                    :value="diag.code"
+                                    />
+                                </el-select>
                             </el-form-item>
                         </span>
                         <span>
@@ -547,9 +635,9 @@
                         :key="op.key"
                         style="height: auto !important;"
                         >
-                            <el-row class="ops" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0;">
+                            <el-row class="operations" style="padding-left:1rem !important; margin:.2rem 0 .5rem 0; width:100%">
                                 <el-col :span="23.8">
-                                    <el-row>
+                                    <el-row style="margin-right:1rem">
                                         <el-form-item label="手术及操作编码" class="w-13 mr-1">
                                             <el-input :disabled="this.non_editable" v-model="op.code"></el-input>
                                         </el-form-item>
@@ -572,7 +660,7 @@
                                                 ></el-option>
                                             </el-select>
                                         </el-form-item>
-                                        <el-form-item label="手术及操作名称" class="w-16 mr-1">
+                                        <el-form-item label="手术及操作名称" class="w-16">
                                             <el-input :disabled="this.non_editable" v-model="op.name"></el-input>
                                         </el-form-item>
                                     </el-row>
@@ -616,7 +704,7 @@
                                 </el-col>
                             </el-row>                            
                         </el-form-item>
-                        <el-row justify="end">
+                        <el-row justify="end" style="width:100%">
                             <el-button :disabled="this.non_editable" class="add-op" style="margin-right:.9rem" @click="addOp">+ 手术</el-button>
                         </el-row>
                     </el-form>
@@ -632,12 +720,12 @@
                             </el-select>
                         </el-form-item>
                         <span>
-                            <el-form-item v-if="form.release_type===release_types[1].value" label="拟接收医疗机构名称">
+                            <el-form-item v-if="form.release_type===release_type_trans_2" label="拟接收医疗机构名称">
                                 <el-input :disabled="this.non_editable" v-model="form.accept_hosp_2"></el-input>
                             </el-form-item>
                         </span>
                         <span>
-                            <el-form-item v-if="form.release_type===release_types[2].value" label="拟接收医疗机构名称">
+                            <el-form-item v-if="form.release_type===release_type_trans_3" label="拟接收医疗机构名称">
                                 <el-input :disabled="this.non_editable" v-model="form.accept_hosp_3"></el-input>
                             </el-form-item>
                         </span>
@@ -1115,6 +1203,21 @@ export default {
         return {
             non_editable: true,
             edit_class: 'edit',
+
+            //诊断
+            diag_list: [],
+            temp_diags: [],
+            diags_loading: false,
+
+            contact_relation_other_value: '',
+            contact_relation_partner_index: -1,
+            id_type_id_card: '',
+            id_type_passport: '',
+            id_type_officer: '',
+            marriage_stat_married: '',
+            release_type_trans_2: '',
+            release_type_trans_3: '',
+
             form: {
                 org_name: '',
                 org_code: '',
@@ -1168,16 +1271,16 @@ export default {
                 release_specialty: [],
                 release_sickroom: '',
                 hosp_duration: -1,
-                diagnosis: '',
+                diagnosis: [],
                 disease_code: '',
                 main_diag: {
-                    release: '',
+                    release: [],
                     code: '',
                     condition: ''
                 },
                 other_diags: [
                     {
-                        release: '',
+                        release: [],
                         code: '',
                         condition: ''
                     },
@@ -1276,52 +1379,52 @@ export default {
                 }
             },
             purchase_methods: [
-                {
-                    value: '1',
-                    label: '城镇职工基本医疗保险'
-                },
-                {
-                    value: '2',
-                    label: '城镇居民基本医疗保险'
-                },
-                {
-                    value: '3',
-                    label: '新型农村合作医疗'
-                },
-                {
-                    value: '4',
-                    label: '贫困救助'
-                },
-                {
-                    value: '5',
-                    label: '商业医疗保险'
-                },
-                {
-                    value: '6',
-                    label: '全公费'
-                },
-                {
-                    value: '7',
-                    label: '全自费'
-                },
-                {
-                    value: '8',
-                    label: '其他社会保险'
-                },
-                {
-                    value: '9',
-                    label: '其他'
-                },
+                // {
+                //     value: '1',
+                //     label: '城镇职工基本医疗保险'
+                // },
+                // {
+                //     value: '2',
+                //     label: '城镇居民基本医疗保险'
+                // },
+                // {
+                //     value: '3',
+                //     label: '新型农村合作医疗'
+                // },
+                // {
+                //     value: '4',
+                //     label: '贫困救助'
+                // },
+                // {
+                //     value: '5',
+                //     label: '商业医疗保险'
+                // },
+                // {
+                //     value: '6',
+                //     label: '全公费'
+                // },
+                // {
+                //     value: '7',
+                //     label: '全自费'
+                // },
+                // {
+                //     value: '8',
+                //     label: '其他社会保险'
+                // },
+                // {
+                //     value: '9',
+                //     label: '其他'
+                // },
             ],
             genders: [
-                {
-                    value: '1',
-                    label: '男'
-                },
-                {
-                    value: '2',
-                    label: '女'
-                }
+                // {
+                //     value: '1',
+                //     label: '男'
+                // },
+                // {
+                //     value: '2',
+                //     label: '女'
+                // }
             ],
             countries:[{
     			label: '热门国家',
@@ -1330,790 +1433,790 @@ export default {
     			label: '所有国家',
     			options: [
     			    {value:'Angola',label:'安哥拉'},
-					{value:'Afghanistan',label:'阿富汗'},
-					{value:'Albania',label:'阿尔巴尼亚'},
-					{value:'Algeria',label:'阿尔及利亚'},
-					{value:'Andorra',label:'安道尔共和国'},
-					{value:'Anguilla',label:'安圭拉岛'},
-					{value:'Antigua and Barbuda',label:'安提瓜和巴布达'},
-					{value:'Argentina',label:'阿根廷'},
-					{value:'Armenia',label:'亚美尼亚'},
-					{value:'Ascension',label:'阿森松'},
-					{value:'Australia',label:'澳大利亚'},
-					{value:'Austria',label:'奥地利'},
-					{value:'Azerbaijan',label:'阿塞拜疆'},
-					{value:'Bahamas',label:'巴哈马'},
-					{value:'Bahrain',label:'巴林'},
-					{value:'Bangladesh',label:'孟加拉国'},
-					{value:'Barbados',label:'巴巴多斯'},
-					{value:'Belarus',label:'白俄罗斯'},
-					{value:'Belgium',label:'比利时'},
-					{value:'Belize',label:'伯利兹'},
-					{value:'Benin',label:'贝宁'},
-					{value:'Bermuda Is',label:'百慕大群岛'},
-					{value:'Bolivia',label:'玻利维亚'},
-					{value:'Botswana',label:'博茨瓦纳'},
-					{value:'Brazil',label:'巴西'},
-					{value:'Brunei',label:'文莱'},
-					{value:'Bulgaria',label:'保加利亚'},
-					{value:'Burkina Faso',label:'布基纳法索'},
-					{value:'Burma',label:'缅甸'},
-					{value:'Burundi',label:'布隆迪'},
-					{value:'Cameroon',label:'喀麦隆'},
-					{value:'Canada',label:'加拿大'},
-					{value:'Cayman Is',label:'开曼群岛'},
-					{value:'Central African Republic',label:'中非共和国'},
-					{value:'Chad',label:'乍得'},
-					{value:'Chile',label:'智利'},
-					{value:'China',label:'中国'},
-					{value:'Colombia',label:'哥伦比亚'},
-					{value:'Congo',label:'刚果'},
-					{value:'Cook Is',label:'库克群岛'},
-					{value:'Costa Rica',label:'哥斯达黎加'},
-					{value:'Cuba',label:'古巴'},
-					{value:'Cyprus',label:'塞浦路斯'},
-					{value:'Czech Republic',label:'捷克'},
-					{value:'Denmark',label:'丹麦'},
-					{value:'Djibouti',label:'吉布提'},
-					{value:'Dominica Rep',label:'多米尼加共和国'},
-					{value:'Ecuador',label:'厄瓜多尔'},
-					{value:'Egypt',label:'埃及'},
-					{value:'EI Salvador',label:'萨尔瓦多'},
-					{value:'Estonia',label:'爱沙尼亚'},
-					{value:'Ethiopia',label:'埃塞俄比亚'},
-					{value:'Fiji',label:'斐济'},
-					{value:'Finland',label:'芬兰'},
-					{value:'France',label:'法国'},
-					{value:'French Guiana',label:'法属圭亚那'},
-					{value:'French Polynesia',label:'法属玻利尼西亚'},
-					{value:'Gabon',label:'加蓬'},
-					{value:'Gambia',label:'冈比亚'},
-					{value:'Georgia',label:'格鲁吉亚'},
-					{value:'Germany',label:'德国'},
-					{value:'Ghana',label:'加纳'},
-					{value:'Gibraltar',label:'直布罗陀'},
-					{value:'Greece',label:'希腊'},
-					{value:'Grenada',label:'格林纳达'},
-					{value:'Guam',label:'关岛'},
-					{value:'Guatemala',label:'危地马拉'},
-					{value:'Guinea',label:'几内亚'},
-					{value:'Guyana',label:'圭亚那'},
-					{value:'Haiti',label:'海地'},
-					{value:'Honduras',label:'洪都拉斯'},
-					{value:'Hungary',label:'匈牙利'},
-					{value:'Iceland',label:'冰岛'},
-					{value:'India',label:'印度'},
-					{value:'Indonesia',label:'印度尼西亚'},
-					{value:'Iran',label:'伊朗'},
-					{value:'Iraq',label:'伊拉克'},
-					{value:'Ireland',label:'爱尔兰'},
-					{value:'Israel',label:'以色列'},
-					{value:'Italy',label:'意大利'},
-					{value:'Ivory Coast',label:'科特迪瓦'},
-					{value:'Jamaica',label:'牙买加'},
-					{value:'Japan',label:'日本'},
-					{value:'Jordan',label:'约旦'},
-					{value:'Kampuchea (Cambodia )',label:'柬埔寨'},
-					{value:'Kazakstan',label:'哈萨克斯坦'},
-					{value:'Kenya',label:'肯尼亚'},
-					{value:'Korea',label:'韩国'},
-					{value:'Kuwait',label:'科威特'},
-					{value:'Kyrgyzstan',label:'吉尔吉斯坦'},
-					{value:'Laos',label:'老挝'},
-					{value:'Latvia',label:'拉脱维亚'},
-					{value:'Lebanon',label:'黎巴嫩'},
-					{value:'Lesotho',label:'莱索托'},
-					{value:'Liberia',label:'利比里亚'},
-					{value:'Libya',label:'利比亚'},
-					{value:'Liechtenstein',label:'列支敦士登'},
-					{value:'Lithuania',label:'立陶宛'},
-					{value:'Luxembourg',label:'卢森堡'},
-					{value:'Madagascar',label:'马达加斯加'},
-					{value:'Malawi',label:'马拉维'},
-					{value:'Malaysia',label:'马来西亚'},
-					{value:'Maldives',label:'马尔代夫'},
-					{value:'Mali',label:'马里'},
-					{value:'Malta',label:'马耳他'},
-					{value:'Mariana Is',label:'马里亚那群岛'},
-					{value:'Martinique',label:'马提尼克'},
-					{value:'Mauritius',label:'毛里求斯'},
-					{value:'Mexico',label:'墨西哥'},
-					{value:'Moldova',label:'摩尔多瓦'},
-					{value:'Monaco',label:'摩纳哥'},
-					{value:'Mongolia',label:'蒙古'},
-					{value:'Montserrat Is',label:'蒙特塞拉特岛'},
-					{value:'Morocco',label:'摩洛哥'},
-					{value:'Mozambique',label:'莫桑比克'},
-					{value:'Namibia',label:'纳米比亚'},
-					{value:'Nauru',label:'瑙鲁'},
-					{value:'Nepal',label:'尼泊尔'},
-					{value:'Netheriands Antilles',label:'荷属安的列斯'},
-					{value:'Netherlands',label:'荷兰'},
-					{value:'New Zealand',label:'新西兰'},
-					{value:'Nicaragua',label:'尼加拉瓜'},
-					{value:'Niger',label:'尼日尔'},
-					{value:'Nigeria',label:'尼日利亚'},
-					{value:'North Korea',label:'朝鲜'},
-					{value:'Norway',label:'挪威'},
-					{value:'Oman',label:'阿曼'},
-					{value:'Pakistan',label:'巴基斯坦'},
-					{value:'Panama',label:'巴拿马'},
-					{value:'Papua New Cuinea',label:'巴布亚新几内亚'},
-					{value:'Paraguay',label:'巴拉圭'},
-					{value:'Peru',label:'秘鲁'},
-					{value:'Philippines',label:'菲律宾'},
-					{value:'Poland',label:'波兰'},
-					{value:'Portugal',label:'葡萄牙'},
-					{value:'Puerto Rico',label:'波多黎各'},
-					{value:'Qatar',label:'卡塔尔'},
-					{value:'Reunion',label:'留尼旺'},
-					{value:'Romania',label:'罗马尼亚'},
-					{value:'Russia',label:'俄罗斯'},
-					{value:'Saint Lueia',label:'圣卢西亚'},
-					{value:'Saint Vincent',label:'圣文森特岛'},
-					{value:'Samoa Eastern',label:'东萨摩亚(美)'},
-					{value:'Samoa Western',label:'西萨摩亚'},
-					{value:'San Marino',label:'圣马力诺'},
-					{value:'Sao Tome and Principe',label:'圣多美和普林西比'},
-					{value:'Saudi Arabia',label:'沙特阿拉伯'},
-					{value:'Senegal',label:'塞内加尔'},
-					{value:'Seychelles',label:'塞舌尔'},
-					{value:'Sierra Leone',label:'塞拉利昂'},
-					{value:'Singapore',label:'新加坡'},
-					{value:'Slovakia',label:'斯洛伐克'},
-					{value:'Slovenia',label:'斯洛文尼亚'},
-					{value:'Solomon Is',label:'所罗门群岛'},
-					{value:'Somali',label:'索马里'},
-					{value:'South Africa',label:'南非'},
-					{value:'Spain',label:'西班牙'},
-					{value:'SriLanka',label:'斯里兰卡'},
-					{value:'St.Lucia',label:'圣卢西亚'},
-					{value:'St.Vincent',label:'圣文森特'},
-					{value:'Sudan',label:'苏丹'},
-					{value:'Suriname',label:'苏里南'},
-					{value:'Swaziland',label:'斯威士兰'},
-					{value:'Sweden',label:'瑞典'},
-					{value:'Switzerland',label:'瑞士'},
-					{value:'Syria',label:'叙利亚'},
-					{value:'Tajikstan',label:'塔吉克斯坦'},
-					{value:'Tanzania',label:'坦桑尼亚'},
-					{value:'Thailand',label:'泰国'},
-					{value:'Togo',label:'多哥'},
-					{value:'Tonga',label:'汤加'},
-					{value:'Trinidad and Tobago',label:'特立尼达和多巴哥'},
-					{value:'Tunisia',label:'突尼斯'},
-					{value:'Turkey',label:'土耳其'},
-					{value:'Turkmenistan',label:'土库曼斯坦'},
-					{value:'Uganda',label:'乌干达'},
-					{value:'Ukraine',label:'乌克兰'},
-					{value:'United Arab Emirates',label:'阿拉伯联合酋长国'},
-					{value:'United Kiongdom',label:'英国'},
-					{value:'United States of America',label:'美国'},
-					{value:'Uruguay',label:'乌拉圭'},
-					{value:'Uzbekistan',label:'乌兹别克斯坦'},
-					{value:'Venezuela',label:'委内瑞拉'},
-					{value:'Vietnam',label:'越南'},
-					{value:'Yemen',label:'也门'},
-					{value:'Yugoslavia',label:'南斯拉夫'},
-					{value:'Zimbabwe',label:'津巴布韦'},
-					{value:'Zaire',label:'扎伊尔'},
-					{value:'Zambia',label:'赞比亚'}
+					// {value:'Afghanistan',label:'阿富汗'},
+					// {value:'Albania',label:'阿尔巴尼亚'},
+					// {value:'Algeria',label:'阿尔及利亚'},
+					// {value:'Andorra',label:'安道尔共和国'},
+					// {value:'Anguilla',label:'安圭拉岛'},
+					// {value:'Antigua and Barbuda',label:'安提瓜和巴布达'},
+					// {value:'Argentina',label:'阿根廷'},
+					// {value:'Armenia',label:'亚美尼亚'},
+					// {value:'Ascension',label:'阿森松'},
+					// {value:'Australia',label:'澳大利亚'},
+					// {value:'Austria',label:'奥地利'},
+					// {value:'Azerbaijan',label:'阿塞拜疆'},
+					// {value:'Bahamas',label:'巴哈马'},
+					// {value:'Bahrain',label:'巴林'},
+					// {value:'Bangladesh',label:'孟加拉国'},
+					// {value:'Barbados',label:'巴巴多斯'},
+					// {value:'Belarus',label:'白俄罗斯'},
+					// {value:'Belgium',label:'比利时'},
+					// {value:'Belize',label:'伯利兹'},
+					// {value:'Benin',label:'贝宁'},
+					// {value:'Bermuda Is',label:'百慕大群岛'},
+					// {value:'Bolivia',label:'玻利维亚'},
+					// {value:'Botswana',label:'博茨瓦纳'},
+					// {value:'Brazil',label:'巴西'},
+					// {value:'Brunei',label:'文莱'},
+					// {value:'Bulgaria',label:'保加利亚'},
+					// {value:'Burkina Faso',label:'布基纳法索'},
+					// {value:'Burma',label:'缅甸'},
+					// {value:'Burundi',label:'布隆迪'},
+					// {value:'Cameroon',label:'喀麦隆'},
+					// {value:'Canada',label:'加拿大'},
+					// {value:'Cayman Is',label:'开曼群岛'},
+					// {value:'Central African Republic',label:'中非共和国'},
+					// {value:'Chad',label:'乍得'},
+					// {value:'Chile',label:'智利'},
+					// {value:'China',label:'中国'},
+					// {value:'Colombia',label:'哥伦比亚'},
+					// {value:'Congo',label:'刚果'},
+					// {value:'Cook Is',label:'库克群岛'},
+					// {value:'Costa Rica',label:'哥斯达黎加'},
+					// {value:'Cuba',label:'古巴'},
+					// {value:'Cyprus',label:'塞浦路斯'},
+					// {value:'Czech Republic',label:'捷克'},
+					// {value:'Denmark',label:'丹麦'},
+					// {value:'Djibouti',label:'吉布提'},
+					// {value:'Dominica Rep',label:'多米尼加共和国'},
+					// {value:'Ecuador',label:'厄瓜多尔'},
+					// {value:'Egypt',label:'埃及'},
+					// {value:'EI Salvador',label:'萨尔瓦多'},
+					// {value:'Estonia',label:'爱沙尼亚'},
+					// {value:'Ethiopia',label:'埃塞俄比亚'},
+					// {value:'Fiji',label:'斐济'},
+					// {value:'Finland',label:'芬兰'},
+					// {value:'France',label:'法国'},
+					// {value:'French Guiana',label:'法属圭亚那'},
+					// {value:'French Polynesia',label:'法属玻利尼西亚'},
+					// {value:'Gabon',label:'加蓬'},
+					// {value:'Gambia',label:'冈比亚'},
+					// {value:'Georgia',label:'格鲁吉亚'},
+					// {value:'Germany',label:'德国'},
+					// {value:'Ghana',label:'加纳'},
+					// {value:'Gibraltar',label:'直布罗陀'},
+					// {value:'Greece',label:'希腊'},
+					// {value:'Grenada',label:'格林纳达'},
+					// {value:'Guam',label:'关岛'},
+					// {value:'Guatemala',label:'危地马拉'},
+					// {value:'Guinea',label:'几内亚'},
+					// {value:'Guyana',label:'圭亚那'},
+					// {value:'Haiti',label:'海地'},
+					// {value:'Honduras',label:'洪都拉斯'},
+					// {value:'Hungary',label:'匈牙利'},
+					// {value:'Iceland',label:'冰岛'},
+					// {value:'India',label:'印度'},
+					// {value:'Indonesia',label:'印度尼西亚'},
+					// {value:'Iran',label:'伊朗'},
+					// {value:'Iraq',label:'伊拉克'},
+					// {value:'Ireland',label:'爱尔兰'},
+					// {value:'Israel',label:'以色列'},
+					// {value:'Italy',label:'意大利'},
+					// {value:'Ivory Coast',label:'科特迪瓦'},
+					// {value:'Jamaica',label:'牙买加'},
+					// {value:'Japan',label:'日本'},
+					// {value:'Jordan',label:'约旦'},
+					// {value:'Kampuchea (Cambodia )',label:'柬埔寨'},
+					// {value:'Kazakstan',label:'哈萨克斯坦'},
+					// {value:'Kenya',label:'肯尼亚'},
+					// {value:'Korea',label:'韩国'},
+					// {value:'Kuwait',label:'科威特'},
+					// {value:'Kyrgyzstan',label:'吉尔吉斯坦'},
+					// {value:'Laos',label:'老挝'},
+					// {value:'Latvia',label:'拉脱维亚'},
+					// {value:'Lebanon',label:'黎巴嫩'},
+					// {value:'Lesotho',label:'莱索托'},
+					// {value:'Liberia',label:'利比里亚'},
+					// {value:'Libya',label:'利比亚'},
+					// {value:'Liechtenstein',label:'列支敦士登'},
+					// {value:'Lithuania',label:'立陶宛'},
+					// {value:'Luxembourg',label:'卢森堡'},
+					// {value:'Madagascar',label:'马达加斯加'},
+					// {value:'Malawi',label:'马拉维'},
+					// {value:'Malaysia',label:'马来西亚'},
+					// {value:'Maldives',label:'马尔代夫'},
+					// {value:'Mali',label:'马里'},
+					// {value:'Malta',label:'马耳他'},
+					// {value:'Mariana Is',label:'马里亚那群岛'},
+					// {value:'Martinique',label:'马提尼克'},
+					// {value:'Mauritius',label:'毛里求斯'},
+					// {value:'Mexico',label:'墨西哥'},
+					// {value:'Moldova',label:'摩尔多瓦'},
+					// {value:'Monaco',label:'摩纳哥'},
+					// {value:'Mongolia',label:'蒙古'},
+					// {value:'Montserrat Is',label:'蒙特塞拉特岛'},
+					// {value:'Morocco',label:'摩洛哥'},
+					// {value:'Mozambique',label:'莫桑比克'},
+					// {value:'Namibia',label:'纳米比亚'},
+					// {value:'Nauru',label:'瑙鲁'},
+					// {value:'Nepal',label:'尼泊尔'},
+					// {value:'Netheriands Antilles',label:'荷属安的列斯'},
+					// {value:'Netherlands',label:'荷兰'},
+					// {value:'New Zealand',label:'新西兰'},
+					// {value:'Nicaragua',label:'尼加拉瓜'},
+					// {value:'Niger',label:'尼日尔'},
+					// {value:'Nigeria',label:'尼日利亚'},
+					// {value:'North Korea',label:'朝鲜'},
+					// {value:'Norway',label:'挪威'},
+					// {value:'Oman',label:'阿曼'},
+					// {value:'Pakistan',label:'巴基斯坦'},
+					// {value:'Panama',label:'巴拿马'},
+					// {value:'Papua New Cuinea',label:'巴布亚新几内亚'},
+					// {value:'Paraguay',label:'巴拉圭'},
+					// {value:'Peru',label:'秘鲁'},
+					// {value:'Philippines',label:'菲律宾'},
+					// {value:'Poland',label:'波兰'},
+					// {value:'Portugal',label:'葡萄牙'},
+					// {value:'Puerto Rico',label:'波多黎各'},
+					// {value:'Qatar',label:'卡塔尔'},
+					// {value:'Reunion',label:'留尼旺'},
+					// {value:'Romania',label:'罗马尼亚'},
+					// {value:'Russia',label:'俄罗斯'},
+					// {value:'Saint Lueia',label:'圣卢西亚'},
+					// {value:'Saint Vincent',label:'圣文森特岛'},
+					// {value:'Samoa Eastern',label:'东萨摩亚(美)'},
+					// {value:'Samoa Western',label:'西萨摩亚'},
+					// {value:'San Marino',label:'圣马力诺'},
+					// {value:'Sao Tome and Principe',label:'圣多美和普林西比'},
+					// {value:'Saudi Arabia',label:'沙特阿拉伯'},
+					// {value:'Senegal',label:'塞内加尔'},
+					// {value:'Seychelles',label:'塞舌尔'},
+					// {value:'Sierra Leone',label:'塞拉利昂'},
+					// {value:'Singapore',label:'新加坡'},
+					// {value:'Slovakia',label:'斯洛伐克'},
+					// {value:'Slovenia',label:'斯洛文尼亚'},
+					// {value:'Solomon Is',label:'所罗门群岛'},
+					// {value:'Somali',label:'索马里'},
+					// {value:'South Africa',label:'南非'},
+					// {value:'Spain',label:'西班牙'},
+					// {value:'SriLanka',label:'斯里兰卡'},
+					// {value:'St.Lucia',label:'圣卢西亚'},
+					// {value:'St.Vincent',label:'圣文森特'},
+					// {value:'Sudan',label:'苏丹'},
+					// {value:'Suriname',label:'苏里南'},
+					// {value:'Swaziland',label:'斯威士兰'},
+					// {value:'Sweden',label:'瑞典'},
+					// {value:'Switzerland',label:'瑞士'},
+					// {value:'Syria',label:'叙利亚'},
+					// {value:'Tajikstan',label:'塔吉克斯坦'},
+					// {value:'Tanzania',label:'坦桑尼亚'},
+					// {value:'Thailand',label:'泰国'},
+					// {value:'Togo',label:'多哥'},
+					// {value:'Tonga',label:'汤加'},
+					// {value:'Trinidad and Tobago',label:'特立尼达和多巴哥'},
+					// {value:'Tunisia',label:'突尼斯'},
+					// {value:'Turkey',label:'土耳其'},
+					// {value:'Turkmenistan',label:'土库曼斯坦'},
+					// {value:'Uganda',label:'乌干达'},
+					// {value:'Ukraine',label:'乌克兰'},
+					// {value:'United Arab Emirates',label:'阿拉伯联合酋长国'},
+					// {value:'United Kiongdom',label:'英国'},
+					// {value:'United States of America',label:'美国'},
+					// {value:'Uruguay',label:'乌拉圭'},
+					// {value:'Uzbekistan',label:'乌兹别克斯坦'},
+					// {value:'Venezuela',label:'委内瑞拉'},
+					// {value:'Vietnam',label:'越南'},
+					// {value:'Yemen',label:'也门'},
+					// {value:'Yugoslavia',label:'南斯拉夫'},
+					// {value:'Zimbabwe',label:'津巴布韦'},
+					// {value:'Zaire',label:'扎伊尔'},
+					// {value:'Zambia',label:'赞比亚'}
     			]
     		}],
             locations: getChinaData(),
             ethnicities:[
-                {
-                id: 1,
-                info: "汉族",
-                },
-                {
-                id: 2,
-                info: "壮族",
-                },
-                {
-                id: 3,
-                info: "满族",
-                },
-                {
-                id: 4,
-                info: "回族",
-                value: 4,
-                },
-                {
-                id: 5,
-                info: "苗族",
-                },
-                {
-                id: 6,
-                info: "维吾尔族",
-                },
-                {
-                id: 7,
-                info: "土家族",
-                },
-                {
-                id: 8,
-                info: "彝族",
-                },
-                {
-                id: 9,
-                info: "蒙古族",
-                },
-                {
-                id: 10,
-                info: "藏族",
-                },
-                {
-                id: 11,
-                info: "布依族",
-                },
-                {
-                id: 12,
-                info: "侗族",
-                },
-                {
-                id: 13,
-                info: "瑶族",
-                },
-                {
-                id: 14,
-                info: "朝鲜族",
-                },
-                {
-                id: 15,
-                info: "白族",
-                },
-                {
-                id: 16,
-                info: "哈尼族",
-                },
-                {
-                id: 17,
-                info: "哈萨克族",
-                },
-                {
-                id: 18,
-                info: "黎族",
-                },
-                {
-                id: 19,
-                info: "傣族",
-                },
-                {
-                id: 20,
-                info: "畲族",
-                },
-                {
-                id: 21,
-                info: "傈僳族",
-                },
-                {
-                id: 22,
-                info: "仡佬族",
-                },
-                {
-                id: 23,
-                info: "东乡族",
-                },
-                {
-                id: 24,
-                info: "高山族",
-                },
-                {
-                id: 25,
-                info: "拉祜族",
-                },
-                {
-                id: 26,
-                info: "水族",
-                },
-                {
-                id: 27,
-                info: "佤族",
-                },
-                {
-                id: 28,
-                info: "纳西族",
-                },
-                {
-                id: 29,
-                info: "羌族",
-                },
-                {
-                id: 30,
-                info: "土族",
-                },
-                {
-                id: 31,
-                info: "仫佬族",
-                },
-                {
-                id: 32,
-                info: "锡伯族",
-                },
-                {
-                id: 33,
-                info: "柯尔克孜族",
-                },
-                {
-                id: 34,
-                info: "达斡尔族",
-                },
-                {
-                id: 35,
-                info: "景颇族",
-                },
-                {
-                id: 36,
-                info: "毛南族",
-                },
-                {
-                id: 37,
-                info: "撒拉族",
-                },
-                {
-                id: 38,
-                info: "布朗族",
-                },
-                {
-                id: 39,
-                info: "塔吉克族",
-                },
-                {
-                id: 40,
-                info: "阿昌族",
-                },
-                {
-                id: 41,
-                info: "普米族",
-                },
-                {
-                id: 42,
-                info: "鄂温克族",
-                },
-                {
-                id: 43,
-                info: "怒族",
-                },
-                {
-                id: 44,
-                info: "京族",
-                },
-                {
-                id: 45,
-                info: "基诺族",
-                },
-                {
-                id: 46,
-                info: "德昂族",
-                },
-                {
-                id: 47,
-                info: "保安族",
-                },
-                {
-                id: 48,
-                info: "俄罗斯族",
-                },
-                {
-                id: 49,
-                info: "裕固族",
-                },
-                {
-                id: 50,
-                info: "乌孜别克族",
-                },
-                {
-                id: 51,
-                info: "门巴族",
-                },
-                {
-                id: 52,
-                info: "鄂伦春族",
-                },
-                {
-                id: 53,
-                info: "独龙族",
-                },
-                {
-                id: 54,
-                info: "塔塔尔族",
-                },
-                {
-                id: 55,
-                info: "赫哲族",
-                },
-                {
-                id: 56,
-                info: "珞巴族",
-                },
+                // {
+                // id: 1,
+                // info: "汉族",
+                // },
+                // {
+                // id: 2,
+                // info: "壮族",
+                // },
+                // {
+                // id: 3,
+                // info: "满族",
+                // },
+                // {
+                // id: 4,
+                // info: "回族",
+                // value: 4,
+                // },
+                // {
+                // id: 5,
+                // info: "苗族",
+                // },
+                // {
+                // id: 6,
+                // info: "维吾尔族",
+                // },
+                // {
+                // id: 7,
+                // info: "土家族",
+                // },
+                // {
+                // id: 8,
+                // info: "彝族",
+                // },
+                // {
+                // id: 9,
+                // info: "蒙古族",
+                // },
+                // {
+                // id: 10,
+                // info: "藏族",
+                // },
+                // {
+                // id: 11,
+                // info: "布依族",
+                // },
+                // {
+                // id: 12,
+                // info: "侗族",
+                // },
+                // {
+                // id: 13,
+                // info: "瑶族",
+                // },
+                // {
+                // id: 14,
+                // info: "朝鲜族",
+                // },
+                // {
+                // id: 15,
+                // info: "白族",
+                // },
+                // {
+                // id: 16,
+                // info: "哈尼族",
+                // },
+                // {
+                // id: 17,
+                // info: "哈萨克族",
+                // },
+                // {
+                // id: 18,
+                // info: "黎族",
+                // },
+                // {
+                // id: 19,
+                // info: "傣族",
+                // },
+                // {
+                // id: 20,
+                // info: "畲族",
+                // },
+                // {
+                // id: 21,
+                // info: "傈僳族",
+                // },
+                // {
+                // id: 22,
+                // info: "仡佬族",
+                // },
+                // {
+                // id: 23,
+                // info: "东乡族",
+                // },
+                // {
+                // id: 24,
+                // info: "高山族",
+                // },
+                // {
+                // id: 25,
+                // info: "拉祜族",
+                // },
+                // {
+                // id: 26,
+                // info: "水族",
+                // },
+                // {
+                // id: 27,
+                // info: "佤族",
+                // },
+                // {
+                // id: 28,
+                // info: "纳西族",
+                // },
+                // {
+                // id: 29,
+                // info: "羌族",
+                // },
+                // {
+                // id: 30,
+                // info: "土族",
+                // },
+                // {
+                // id: 31,
+                // info: "仫佬族",
+                // },
+                // {
+                // id: 32,
+                // info: "锡伯族",
+                // },
+                // {
+                // id: 33,
+                // info: "柯尔克孜族",
+                // },
+                // {
+                // id: 34,
+                // info: "达斡尔族",
+                // },
+                // {
+                // id: 35,
+                // info: "景颇族",
+                // },
+                // {
+                // id: 36,
+                // info: "毛南族",
+                // },
+                // {
+                // id: 37,
+                // info: "撒拉族",
+                // },
+                // {
+                // id: 38,
+                // info: "布朗族",
+                // },
+                // {
+                // id: 39,
+                // info: "塔吉克族",
+                // },
+                // {
+                // id: 40,
+                // info: "阿昌族",
+                // },
+                // {
+                // id: 41,
+                // info: "普米族",
+                // },
+                // {
+                // id: 42,
+                // info: "鄂温克族",
+                // },
+                // {
+                // id: 43,
+                // info: "怒族",
+                // },
+                // {
+                // id: 44,
+                // info: "京族",
+                // },
+                // {
+                // id: 45,
+                // info: "基诺族",
+                // },
+                // {
+                // id: 46,
+                // info: "德昂族",
+                // },
+                // {
+                // id: 47,
+                // info: "保安族",
+                // },
+                // {
+                // id: 48,
+                // info: "俄罗斯族",
+                // },
+                // {
+                // id: 49,
+                // info: "裕固族",
+                // },
+                // {
+                // id: 50,
+                // info: "乌孜别克族",
+                // },
+                // {
+                // id: 51,
+                // info: "门巴族",
+                // },
+                // {
+                // id: 52,
+                // info: "鄂伦春族",
+                // },
+                // {
+                // id: 53,
+                // info: "独龙族",
+                // },
+                // {
+                // id: 54,
+                // info: "塔塔尔族",
+                // },
+                // {
+                // id: 55,
+                // info: "赫哲族",
+                // },
+                // {
+                // id: 56,
+                // info: "珞巴族",
+                // },
                 // 版权声明：本文为CSDN博主「码农陈冠希」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
                 // 原文链接：https://blog.csdn.net/qq_48895397/article/details/121249251
             ],
             id_types: [
-                {
-                    value: '1',
-                    label: '身份证',
-                },
-                {
-                    value: '2',
-                    label: '护照',
-                },
-                {
-                    value: '3',
-                    label: '军官证',
-                },
+                // {
+                //     value: '1',
+                //     label: '身份证',
+                // },
+                // {
+                //     value: '2',
+                //     label: '护照',
+                // },
+                // {
+                //     value: '3',
+                //     label: '军官证',
+                // },
             ],
             professions: [
-                {
-                    value: '11',
-                    label: '国家公务员'
-                },
-                {
-                    value: '13',
-                    label: '专业技术人员'
-                },
-                {
-                    value: '17',
-                    label: '职员'
-                },
-                {
-                    value: '21',
-                    label: '企业管理人员'
-                },
-                {
-                    value: '24',
-                    label: '工人'
-                },
-                {
-                    value: '27',
-                    label: '农民'
-                },
-                {
-                    value: '31',
-                    label: '学生'
-                },
-                {
-                    value: '37',
-                    label: '现役军人'
-                },
-                {
-                    value: '51',
-                    label: '自由职业者'
-                },
-                {
-                    value: '54',
-                    label: '个体经营者'
-                },
-                {
-                    value: '70',
-                    label: '无业人员'
-                },
-                {
-                    value: '80',
-                    label: '退（离）修人员'
-                },
-                {
-                    value: '90',
-                    label: '其他'
-                },
+                // {
+                //     value: '11',
+                //     label: '国家公务员'
+                // },
+                // {
+                //     value: '13',
+                //     label: '专业技术人员'
+                // },
+                // {
+                //     value: '17',
+                //     label: '职员'
+                // },
+                // {
+                //     value: '21',
+                //     label: '企业管理人员'
+                // },
+                // {
+                //     value: '24',
+                //     label: '工人'
+                // },
+                // {
+                //     value: '27',
+                //     label: '农民'
+                // },
+                // {
+                //     value: '31',
+                //     label: '学生'
+                // },
+                // {
+                //     value: '37',
+                //     label: '现役军人'
+                // },
+                // {
+                //     value: '51',
+                //     label: '自由职业者'
+                // },
+                // {
+                //     value: '54',
+                //     label: '个体经营者'
+                // },
+                // {
+                //     value: '70',
+                //     label: '无业人员'
+                // },
+                // {
+                //     value: '80',
+                //     label: '退（离）修人员'
+                // },
+                // {
+                //     value: '90',
+                //     label: '其他'
+                // },
             ],
             marriage_stats: [
-                {
-                    value: '1',
-                    label: '未婚'
-                },
-                {
-                    value: '2',
-                    label: '已婚'
-                },
-                {
-                    value: '3',
-                    label: '丧偶'
-                },
-                {
-                    value: '4',
-                    label: '离婚'
-                },
-                {
-                    value: '9',
-                    label: '其他'
-                },
+                // {
+                //     value: '1',
+                //     label: '未婚'
+                // },
+                // {
+                //     value: '2',
+                //     label: '已婚'
+                // },
+                // {
+                //     value: '3',
+                //     label: '丧偶'
+                // },
+                // {
+                //     value: '4',
+                //     label: '离婚'
+                // },
+                // {
+                //     value: '9',
+                //     label: '其他'
+                // },
             ],
             contact_relations: [
-                {
-                    value: '1',
-                    label: '配偶',
-                    disabled: true
-                },
-                {
-                    value: '2',
-                    label: '子'
-                },
-                {
-                    value: '3',
-                    label: '女'
-                },
-                {
-                    value: '4',
-                    label: '孙子，孙女或外孙子，外孙女'
-                },
-                {
-                    value: '5',
-                    label: '父母'
-                },
-                {
-                    value: '6',
-                    label: '祖父母或外祖父母'
-                },
-                {
-                    value: '8',
-                    label: '其他'
-                }
+                // {
+                //     value: '1',
+                //     label: '配偶',
+                //     disabled: true
+                // },
+                // {
+                //     value: '2',
+                //     label: '子'
+                // },
+                // {
+                //     value: '3',
+                //     label: '女'
+                // },
+                // {
+                //     value: '4',
+                //     label: '孙子，孙女或外孙子，外孙女'
+                // },
+                // {
+                //     value: '5',
+                //     label: '父母'
+                // },
+                // {
+                //     value: '6',
+                //     label: '祖父母或外祖父母'
+                // },
+                // {
+                //     value: '8',
+                //     label: '其他'
+                // }
             ],
             admit_paths: [
-                {
-                    value: '1',
-                    label: '经由本院急诊、门诊诊疗后入院'
-                },
-                {
-                    value: '2',
-                    label: '经由其他医疗机构诊治后转诊入院'
-                },
-                {
-                    value: '3',
-                    label: '其他途径入院'
-                }
+                // {
+                //     value: '1',
+                //     label: '经由本院急诊、门诊诊疗后入院'
+                // },
+                // {
+                //     value: '2',
+                //     label: '经由其他医疗机构诊治后转诊入院'
+                // },
+                // {
+                //     value: '3',
+                //     label: '其他途径入院'
+                // }
             ],
             // 待补充
             specialties: [
-                {
-                    value: '50',
-                    label: '中医科',
-                    children: [
-                        {
-                            value: '01',
-                            label: '内科专业',
-                            children: [
-                                {
-                                    value: '01',
-                                    label: '肺病科专业'
-                                },
-                                {
-                                    value: '02',
-                                    label: '脾胃病科专业'
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {}
+                // {
+                //     value: '50',
+                //     label: '中医科',
+                //     children: [
+                //         {
+                //             value: '01',
+                //             label: '内科专业',
+                //             children: [
+                //                 {
+                //                     value: '01',
+                //                     label: '肺病科专业'
+                //                 },
+                //                 {
+                //                     value: '02',
+                //                     label: '脾胃病科专业'
+                //                 }
+                //             ]
+                //         }
+                //     ]
+                // },
+                // {}
             ],
             ad_conditions: [
-                {
-                    value: '1',
-                    label: '有'
-                },
-                {
-                    value: '2',
-                    label: '临床未确定'
-                },
-                {
-                    value: '3',
-                    label: '情况不明'
-                },
-                {
-                    value: '4',
-                    label: '无'
-                }
+                // {
+                //     value: '1',
+                //     label: '有'
+                // },
+                // {
+                //     value: '2',
+                //     label: '临床未确定'
+                // },
+                // {
+                //     value: '3',
+                //     label: '情况不明'
+                // },
+                // {
+                //     value: '4',
+                //     label: '无'
+                // }
             ],
             blood_groups: [
-                {
-                    value: '1',
-                    label: 'A'
-                },
-                {
-                    value: '2',
-                    label: 'B'
-                },
-                {
-                    value: '3',
-                    label: 'O'
-                },
-                {
-                    value: '4',
-                    label: 'AB'
-                },
-                {
-                    value: '5',
-                    label: '不详'
-                },
-                {
-                    value: '6',
-                    label: '未查'
-                },
+                // {
+                //     value: '1',
+                //     label: 'A'
+                // },
+                // {
+                //     value: '2',
+                //     label: 'B'
+                // },
+                // {
+                //     value: '3',
+                //     label: 'O'
+                // },
+                // {
+                //     value: '4',
+                //     label: 'AB'
+                // },
+                // {
+                //     value: '5',
+                //     label: '不详'
+                // },
+                // {
+                //     value: '6',
+                //     label: '未查'
+                // },
             ],
             rhs: [
-                {
-                    value: '1',
-                    label: '阴'
-                },
-                {
-                    value: '2',
-                    label: '阳'
-                },
-                {
-                    value: '3',
-                    label: '不详'
-                },
-                {
-                    value: '4',
-                    label: '未查'
-                }
+                // {
+                //     value: '1',
+                //     label: '阴'
+                // },
+                // {
+                //     value: '2',
+                //     label: '阳'
+                // },
+                // {
+                //     value: '3',
+                //     label: '不详'
+                // },
+                // {
+                //     value: '4',
+                //     label: '未查'
+                // }
             ],
             record_qualities: [
-                {
-                    value: '1',
-                    label: '甲'
-                },
-                {
-                    value: '2',
-                    label: '乙'
-                },
-                {
-                    value: '3',
-                    label: '丙'
-                },
+                // {
+                //     value: '1',
+                //     label: '甲'
+                // },
+                // {
+                //     value: '2',
+                //     label: '乙'
+                // },
+                // {
+                //     value: '3',
+                //     label: '丙'
+                // },
             ],
             op_lvls: [
-                {
-                    value: '1',
-                    label: '一级手术'
-                },
-                {
-                    value: '2',
-                    label: '二级手术'
-                },
-                {
-                    value: '3',
-                    label: '三级手术'
-                },
-                {
-                    value: '4',
-                    label: '四级手术'
-                },
+                // {
+                //     value: '1',
+                //     label: '一级手术'
+                // },
+                // {
+                //     value: '2',
+                //     label: '二级手术'
+                // },
+                // {
+                //     value: '3',
+                //     label: '三级手术'
+                // },
+                // {
+                //     value: '4',
+                //     label: '四级手术'
+                // },
             ],
             wh_lvls: [
-                {
-                    value: '0',
-                    label: '0类切口'
-                },
-                {
-                    value: '1',
-                    label: 'I类切口',
-                    children: [
-                        {
-                            value: '1',
-                            label: '甲'
-                        },
-                        {
-                            value: '2',
-                            label: '乙'
-                        },
-                        {
-                            value: '3',
-                            label: '丙'
-                        },
-                        {
-                            value: '4',
-                            label: '其他'
-                        }
-                    ]
-                },
-                {
-                    value: '2',
-                    label: 'II类切口',
-                    children: [
-                        {
-                            value: '1',
-                            label: '甲'
-                        },
-                        {
-                            value: '2',
-                            label: '乙'
-                        },
-                        {
-                            value: '3',
-                            label: '丙'
-                        },
-                        {
-                            value: '4',
-                            label: '其他'
-                        }
-                    ]
-                },
-                {
-                    value: '1',
-                    label: 'III类切口',
-                    children: [
-                        {
-                            value: '1',
-                            label: '甲'
-                        },
-                        {
-                            value: '2',
-                            label: '乙'
-                        },
-                        {
-                            value: '3',
-                            label: '丙'
-                        },
-                        {
-                            value: '4',
-                            label: '其他'
-                        }
-                    ]
-                }
+                // {
+                //     value: '0',
+                //     label: '0类切口'
+                // },
+                // {
+                //     value: '1',
+                //     label: 'I类切口',
+                //     children: [
+                //         {
+                //             value: '1',
+                //             label: '甲'
+                //         },
+                //         {
+                //             value: '2',
+                //             label: '乙'
+                //         },
+                //         {
+                //             value: '3',
+                //             label: '丙'
+                //         },
+                //         {
+                //             value: '4',
+                //             label: '其他'
+                //         }
+                //     ]
+                // },
+                // {
+                //     value: '2',
+                //     label: 'II类切口',
+                //     children: [
+                //         {
+                //             value: '1',
+                //             label: '甲'
+                //         },
+                //         {
+                //             value: '2',
+                //             label: '乙'
+                //         },
+                //         {
+                //             value: '3',
+                //             label: '丙'
+                //         },
+                //         {
+                //             value: '4',
+                //             label: '其他'
+                //         }
+                //     ]
+                // },
+                // {
+                //     value: '1',
+                //     label: 'III类切口',
+                //     children: [
+                //         {
+                //             value: '1',
+                //             label: '甲'
+                //         },
+                //         {
+                //             value: '2',
+                //             label: '乙'
+                //         },
+                //         {
+                //             value: '3',
+                //             label: '丙'
+                //         },
+                //         {
+                //             value: '4',
+                //             label: '其他'
+                //         }
+                //     ]
+                // }
             ],
             anaesthesia_types: [
-                {
-                    value: '1',
-                    label: '全麻'
-                },
-                {
-                    value: '2',
-                    label: '局麻'
-                },
-                {
-                    value: '3',
-                    label: '硬膜外麻'
-                },
+                // {
+                //     value: '1',
+                //     label: '全麻'
+                // },
+                // {
+                //     value: '2',
+                //     label: '局麻'
+                // },
+                // {
+                //     value: '3',
+                //     label: '硬膜外麻'
+                // },
             ],
             release_types: [
-                {
-                    value: '1',
-                    label: '医嘱离院'
-                },
-                {
-                    value: '2',
-                    label: '医嘱转院'
-                },
-                {
-                    value: '3',
-                    label: '医嘱转社区卫生服务机构/乡镇卫生院'
-                },
-                {
-                    value: '4',
-                    label: '非医嘱离院'
-                },
-                {
-                    value: '5',
-                    label: '死亡'
-                },
-                {
-                    value: '6',
-                    label: '其他'
-                },
+                // {
+                //     value: '1',
+                //     label: '医嘱离院'
+                // },
+                // {
+                //     value: '2',
+                //     label: '医嘱转院'
+                // },
+                // {
+                //     value: '3',
+                //     label: '医嘱转社区卫生服务机构/乡镇卫生院'
+                // },
+                // {
+                //     value: '4',
+                //     label: '非医嘱离院'
+                // },
+                // {
+                //     value: '5',
+                //     label: '死亡'
+                // },
+                // {
+                //     value: '6',
+                //     label: '其他'
+                // },
             ]
         }
     },
@@ -2125,30 +2228,307 @@ export default {
     computed: {
         idNumVal: {
             get() {
-                if(this.form.id_type==='1')
+                if(this.form.id_type===this.id_type_id_card)
                     return this.form.id_card_num
-                else if(this.form.id_type==='2')
+                else if(this.form.id_type===this.id_type_passport)
                     return this.form.passport_num
-                else if(this.form.id_type==='3')
+                else if(this.form.id_type===this.id_type_officer)
                     return this.form.officer_num
             },
             set(val) {
-                if(this.form.id_type==='1')
+                if(this.form.id_type===this.id_type_id_card)
                     this.form.id_card_num = val
-                else if(this.form.id_type==='2')
+                else if(this.form.id_type===this.id_type_passport)
                     this.form.passport_num = val
-                else if(this.form.id_type==='3')
+                else if(this.form.id_type===this.id_type_officer)
                     this.form.officer_num = val
             }
         }
     },
     methods: {
+        async queryDiag(query) {
+            if(query) {
+                this.diags_loading = true
+                await axios
+                    .get('/api/v1/query-diag/',{params:{query: query}})
+                    .then(response=>{
+                        console.log(response)
+                        console.log(response.data.result)
+                        this.temp_diags.length = 0
+                        response.data.result.forEach(d => {
+                            this.temp_diags.push(d)
+                        });
+                        this.diags_loading = false
+                    })
+                    .catch(error=>{
+                        console.log(error)
+                        // diags_loading.value = true
+                    })
+            } else {
+                this.temp_diags = []
+            }
+        },
         async loadStandard() {
             await axios.get('/api/v1/get-standard/specialty')
                 .then(response=>{
                     console.log('appliedspstd:',response)
                     this.specialties = response.data.specialties
                     console.log('current specialties:',this.specialties)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // purchase methods
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'PURCHASEMETHOD'}})
+                    .then(response=>{
+                        console.log('applied_purchase_methods:',response.data.generals)
+                        response.data.generals.forEach(p => {
+                            console.log('p:',p)
+                            this.purchase_methods.push({value:p.code,label:p.label})
+                            console.log('current purchase_methods:',this.purchase_methods)
+                        });
+                    })
+                    .catch(error=>{
+                        console.log(error)
+                    })
+            // genders
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'GENDER'}})
+                    .then(response=>{
+                        console.log('applied_gender:',response.data.generals)
+                        response.data.generals.forEach(g => {
+                            console.log('g:',g)
+                            this.genders.push({value:g.code,label:g.label})
+                            console.log('current genders:',this.genders)
+                        });
+                    })
+                    .catch(error=>{
+                        console.log(error)
+                    })
+            // nationalities
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'NATIONALITY'}})
+                .then(response=>{
+                    this.countries[0].options.length = 0 // 如果有china放到默认
+                    this.countries[1].options.length = 0
+                    console.log('applied_nationality:',response.data.generals)
+                    response.data.generals.forEach(n=>{
+                        console.log('n:',n)
+                        this.countries[1].options.push({value:n.code,label:n.label})
+                        if(n.label=='中国'){
+                            this.countries[0].options.push({value:n.code,label:n.label})
+                        }
+                    })
+                    // specialties.value = response.data.specialties
+                    console.log('current nationalities:',this.countries)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // ethnicities
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'ETHNICITY'}})
+                .then(response=>{
+                    // ethnicities.length = 0
+                    console.log('applied_nationality:',response.data.generals)
+                    response.data.generals.forEach(e=>{
+                        console.log('e:',e)
+                        this.ethnicities.push({id:e.code,info:e.label})
+                    })
+                    // specialties.value = response.data.specialties
+                    console.log('current ethnicities:',this.ethnicities)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // id types
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'IDTYPE'}})
+                .then(response=>{
+                    // id_types.length = 0
+                    console.log('applied_id_types:',response.data.generals)
+                    response.data.generals.forEach(i=>{
+                        console.log('i:',i)
+                        if(i.label=='身份证') this.id_type_id_card = i.code
+                        if(i.label=='护照') this.id_type_passport = i.code
+                        if(i.label=='军官证') this.id_type_officer = i.code
+                        this.id_types.push({value:i.code,label:i.label})
+                    })
+                    // specialties.value = response.data.specialties
+                    console.log('current id_types:',this.id_types)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // professions
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'PROFESSION'}})
+                .then(response=>{
+                    this.professions.length = 0
+                    console.log('applied_professions:',response.data.generals)
+                    response.data.generals.forEach(p=>{
+                        console.log('p:',p)
+                        this.professions.push({value:p.code,label:p.label})
+                    })
+                    // specialties.value = response.data.specialties
+                    console.log('current professions:',this.professions)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // marriage stats
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'MARRIAGESTAT'}})
+                .then(response=>{
+                    console.log('applied_marriage_stats:',response.data.generals)
+                    response.data.generals.forEach(p=>{
+                        console.log('p:',p)
+                        this.marriage_stats.push({value:p.code,label:p.label})
+                        if(p.label==='已婚'){
+                            this.marriage_stat_married = p.code
+                        }
+                    })
+                    // specialties.value = response.data.specialties
+                    console.log('current marriage_stats:',this.marriage_stats)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // contact_relations
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'CONTACTRELATION'}})
+                .then(response=>{
+                    console.log('applied_contact_relations:',response.data.generals)
+                    response.data.generals.forEach(c=>{
+                        console.log('c:',c)
+                        if(c.label=='其他') {
+                            this.contact_relation_other_value = c.code
+                        }
+                        if(c.label=='配偶') { // 标准会变，暂时用label来决定是否保留
+                            this.contact_relation_partner_index = this.contact_relations.length
+                            this.contact_relations.push({value:c.code,label:c.label,disabled:false})
+                        } else {
+                            this.contact_relations.push({value:c.code,label:c.label})
+                        }
+                    })
+                    console.log('current contact_relations:',this.contact_relations)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // admit paths
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'ADMITPATH'}})
+                .then(response=>{
+                    console.log('applied_admit_paths:',response.data.generals)
+                    response.data.generals.forEach(a=>{
+                        console.log('a:',a)
+                        this.admit_paths.push({value:a.code,label:a.label})
+                    })
+                    console.log('current admit_paths:',this.admit_paths)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // ad_condition
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'ADMITCONDITION'}})
+                .then(response=>{
+                    console.log('applied_ad_conditions:',response.data.generals)
+                    response.data.generals.forEach(a=>{
+                        console.log('a:',a)
+                        this.ad_conditions.push({value:a.code,label:a.label})
+                    })
+                    console.log('current ad_conditions:',this.ad_conditions)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // blood_groups
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'BLOODGROUP'}})
+                .then(response=>{
+                    console.log('applied_blood_group:',response.data.generals)
+                    response.data.generals.forEach(b=>{
+                        console.log('b:',b)
+                        this.blood_groups.push({value:b.code,label:b.label})
+                    })
+                    console.log('current blood_groups:',this.blood_groups)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // rhs
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'RH'}})
+                .then(response=>{
+                    console.log('applied_rhs:',response.data.generals)
+                    response.data.generals.forEach(r=>{
+                        console.log('r:',r)
+                        this.rhs.push({value:r.code,label:r.label})
+                    })
+                    console.log('current rhs:',this.rhs)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // record_qualities
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'RECORDQUALITY'}})
+                .then(response=>{
+                    console.log('record_qualities:',response.data.generals)
+                    response.data.generals.forEach(r=>{
+                        console.log('r:',r)
+                        this.record_qualities.push({value:r.code,label:r.label})
+                    })
+                    console.log('current record_qualities:',this.record_qualities)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // op_lvls
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'OPLVL'}})
+                .then(response=>{
+                    console.log('op_lvls:',response.data.generals)
+                    response.data.generals.forEach(o=>{
+                        console.log('o:',o)
+                        this.op_lvls.push({value:o.code,label:o.label})
+                    })
+                    console.log('current op_lvls:',this.op_lvls)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // wound_healing_lvl need to change model to 2 layers
+            await axios.get('/api/v1/get-standard/g2std/',{params:{type:'WOUNDHEALINGLVL'}})
+                .then(response=>{
+                    console.log('wh_lvls:',response.data.general1)
+                    response.data.general1.forEach(w=>{
+                        console.log('w:',w)
+                        this.wh_lvls.push(w)
+                    })
+                    console.log('current wh_lvls:',this.wh_lvls)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // anaesthesia_types
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'ANAESTHESIATYPE'}})
+                .then(response=>{
+                    console.log('applied_anaesthesia_types:',response.data.generals)
+                    response.data.generals.forEach(a=>{
+                        console.log('a:',a)
+                        this.anaesthesia_types.push({value:a.code,label:a.label})
+                    })
+                    console.log('current anaesthesia_types:',this.anaesthesia_types)
+                })
+                .catch(error=>{
+                    console.log(error)
+                })
+            // release_types
+            await axios.get('/api/v1/get-standard/gstd/',{params:{type:'RELEASETYPE'}})
+                .then(response=>{
+                    console.log('applied_release_types:',response.data.generals)
+                    response.data.generals.forEach(r=>{
+                        console.log('r:',r)
+                        this.release_types.push({value:r.code,label:r.label})
+                        if(r.label==='医嘱转院'){
+                            this.release_type_trans_2=r.code
+                        } else if(r.label==='医嘱转社区卫生服务机构/乡镇卫生院'){
+                            this.release_type_trans_3=r.code
+                        }
+                        console.log('release_type_trans_2:',this.release_type_trans_2)
+                        console.log('release_type_trans_3:',this.release_type_trans_3)
+                    })
+                    console.log('current release_types:',this.release_types)
                 })
                 .catch(error=>{
                     console.log(error)
@@ -2223,10 +2603,12 @@ export default {
         marriageOnChange(val) {
             console.log('婚姻状态')
             console.log(val)
-            if(val==='2') {
-                this.contact_relations[0].disabled=false
+            if(val===this.marriage_stat_married) {
+                console.log('contact_relation_partner_index:',this.contact_relation_partner_index)
+                this.contact_relations[this.contact_relation_partner_index].disabled=false
             } else {
-                this.contact_relations[0].disabled=true
+                console.log('contact_relation_partner_index:',this.contact_relation_partner_index)
+                this.contact_relations[this.contact_relation_partner_index].disabled=true
                 this.form.contact_relation=''
             }
         },
