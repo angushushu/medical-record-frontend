@@ -1983,6 +1983,15 @@ const defaultTime1 = [new Date(2000, 1, 1, 12, 0, 0)]
 const setTitle = onMounted(()=>{
     document.title = '结算清单'
 })
+let contact_relation_other_value = ''
+let id_type_id_card = ''
+let id_type_passport = ''
+let id_type_officer = ''
+let heal_type_w = '' // 西医 治疗类型
+let heal_type_t = '' // 中医 治疗类型
+let heal_type_wnt = '' // 中西医 治疗类型
+let release_type_trans_2 = ''
+let release_type_trans_3 = ''
 const getData = onMounted(async()=>{
     const homepage_id = route.params.homepage_id
     console.log('homepage_id:',homepage_id)
@@ -2529,6 +2538,15 @@ const release_heal_types = [
         label: '中医',
     },
 ]
+const healTypeIsW = computed(()=>{
+    return (form.heal_type[0]===heal_type_w||(form.heal_type[0]===heal_type_wnt&&release_heal_type.value=='1'))
+})
+const healTypeIsT = computed(()=>{
+    return (form.heal_type[0]===heal_type_t||(form.heal_type[0]===heal_type_wnt&&release_heal_type.value=='2'))
+})
+const healTypeIsWnt = computed(()=>{
+    return (form.heal_type[0]===heal_type_wnt)
+})
 const loadStandard = onMounted(async ()=>{
     await axios.get('/api/v1/get-standard/specialty')
         .then(response=>{

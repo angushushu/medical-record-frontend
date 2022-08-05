@@ -66,6 +66,7 @@ const submitUpload = () => {
 }
 
 const submitDone = ()=>{
+    console.log('with proxy u get:'+proxy.$api+'upload-std/json-dg/')
     emit('list-change','111')
 }
 

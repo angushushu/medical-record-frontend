@@ -354,6 +354,7 @@
                             :collapse-tags-tooltip="true"
                             default-first-option
                             class="diag-box"
+                            @change="test"
                             >
                                 <el-option
                                 v-for="diag in temp_diags"
@@ -2197,6 +2198,9 @@ export default {
         }
     },
     methods: {
+        test (){
+            console.log('diagnosis:',this.form.diagnosis)
+        },
         async queryDiag(query) {
             if(query) {
                 this.diags_loading = true

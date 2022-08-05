@@ -447,7 +447,7 @@
                         </el-form-item>
                     </el-row>
                 </el-row>
-                <el-row v-show="form.heal_type == heal_type_wnt">
+                <el-row v-show="healTypeIsWnt">
                     <el-form-item label="出院诊断类别" class="w-10">
                         <el-select v-model="release_heal_type" placeholder="请选择" style="width:100%">
                             <el-option
@@ -461,7 +461,7 @@
                 </el-row>
                 <!-- 针对西医 -->
                 <el-form
-                v-show="form.heal_type[0] == heal_type_w||(form.heal_type[0]==heal_type_wnt&&release_heal_type==1)"
+                v-show="healTypeIsW"
                 :model="form.western_release"
                 ref="form.western_release"
                 label-with="100px"
@@ -515,7 +515,7 @@
                     </el-row>
                 </el-form>
                 <el-form
-                v-show="form.heal_type[0] == heal_type_t||(form.heal_type[0]==heal_type_wnt&&release_heal_type==2)"
+                v-show="healTypeIsT"
                 :model="form.traditional_release"
                 ref="form.traditional_release"
                 label-with="100px"
@@ -2359,7 +2359,10 @@ const opTimeOnChange = ()=>{
 }
 const test = ()=>{
     console.log(form.heal_type)
-    console.log(form.heal_type[0])
+    console.log('heal_type_wnt:',heal_type_wnt)
+    console.log('form.heal_type[0]:',form.heal_type[0])
+    console.log(form.heal_type[0]===heal_type_wnt)
+    console.log(form.heal_type[0]===heal_type_w||(form.heal_type[0]===heal_type_wnt&&release_heal_type.value=='1'))
 }
 const formRef = ref<FormInstance>()
 let form:any = reactive({
@@ -2676,6 +2679,15 @@ const release_heal_types = [
         label: '中医',
     },
 ]
+const healTypeIsW = computed(()=>{
+    return (form.heal_type[0]===heal_type_w||(form.heal_type[0]===heal_type_wnt&&release_heal_type.value=='1'))
+})
+const healTypeIsT = computed(()=>{
+    return (form.heal_type[0]===heal_type_t||(form.heal_type[0]===heal_type_wnt&&release_heal_type.value=='2'))
+})
+const healTypeIsWnt = computed(()=>{
+    return (form.heal_type[0]===heal_type_wnt)
+})
 const loadStandard = onMounted(async ()=>{
     await axios.get('/api/v1/get-standard/specialty')
         .then(response=>{
@@ -2828,11 +2840,11 @@ const loadStandard = onMounted(async ()=>{
             // heal_types = response.data.general1
             response.data.general1.forEach(h=>{
                 if(h.label==='中西医') {
-                    heal_type_wnt = h.code
+                    heal_type_wnt = h.value
                 } else if(h.label==='西医'){
-                    heal_type_w = h.code
+                    heal_type_w = h.value
                 } else if(h.label==='中医'){
-                    heal_type_t = h.code
+                    heal_type_t = h.value
                 }
                 console.log('h:',h)
                 heal_types.push(h)
