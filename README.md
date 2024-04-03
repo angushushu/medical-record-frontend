@@ -4,6 +4,8 @@
 
 [install Vue.js](https://vuejs.org/guide/quick-start)
 
+[后端](https://github.com/angushushu/medical-record-backend)
+
 删除node_modules
 删除package-lock.json
 (不要更新dependency，否则需要额外修复)
