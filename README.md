@@ -2,7 +2,7 @@
 
 [后端](https://github.com/angushushu/medical-record-backend)
 
-**使用*:*
+**使用:**
 [install node.js](https://nodejs.org/en/learn/getting-started/how-to-install-nodejs)<br>
 [install Vue.js](https://vuejs.org/guide/quick-start)<br>
 删除node_modules<br>
